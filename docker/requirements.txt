@@ -1,0 +1,10 @@
+django==3.0.3
+djangorestframework==3.11.0
+djangorestframework-jwt==1.11.0
+django-filter==2.1.0
+django-cors-headers==3.0.0
+django-extensions==2.1.2
+django-debug-toolbar==1.11
+django-rest-swagger==2.2.0
+requests==2.19.1
+pyyaml==3.13
