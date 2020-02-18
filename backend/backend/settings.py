@@ -60,7 +60,24 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE  # debug toolbar
+
+    def show_toolbar(request):
+        """
+        Settings to show debug toolbar because we use docker (we have too much OS for INTERNAL_IPS settings)
+        """
+        return True
+
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_TOOLBAR_CALLBACK': 'backend.settings.show_toolbar',
+    }
+
 ROOT_URLCONF = 'backend.urls'
+
+MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
 'DEFAULT_PERMISSION_CLASSES': (
