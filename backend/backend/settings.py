@@ -33,8 +33,11 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
+    # 'corsheaders',
     'rest_framework',
+    'rest_framework_jwt',
+    'rest_framework_swagger',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,8 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'django_filters',
-    'rest_framework_jwt',
-    'rest_framework_swagger',
+
     # 'drf_yasg',
     'api_library',
 ]
