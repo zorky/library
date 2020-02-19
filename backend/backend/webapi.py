@@ -16,4 +16,5 @@ def webapi():
         if getattr(x, 'webapi_url', None):
             urls = "{}.{}".format(x.module.__name__, x.webapi_url['module_url'])
             urlpatterns.append(url(x.webapi_url['regex'], include(urls)))
+    print('{}'.format(urlpatterns))
     return urlpatterns

@@ -20,14 +20,13 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from rest_framework_swagger.views import get_swagger_view
 
-from .webapi import webapi
+schema_view = get_swagger_view(title='Api plateforme')
 
-schema_view = get_swagger_view(title='Api')
-
-urlpatterns = webapi()
-
-urlpatterns += [url(r'^$', schema_view),
-                url(r'^admin/', admin.site.urls)]
+urlpatterns = [
+    url(r'^$', schema_view),
+    url(r'library/', include('api_library.urls')),
+    url(r'^admin/', admin.site.urls)
+]
 
 import debug_toolbar
 
