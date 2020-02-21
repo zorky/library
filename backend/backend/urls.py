@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+# backend/urls.py
 
 from django.contrib import admin
 from django.conf import settings
@@ -25,15 +26,15 @@ schema_view = get_swagger_view(title='Api plateforme')
 
 urlpatterns = [
     url(r'^$', schema_view),
-    url(r'library/', include('api_library.urls')),
+    url(r'^library/', include('api_library.urls')),
     url(r'^admin/', admin.site.urls)
 ]
 
 # urlpatterns += [
-# #     url(r'^api-token-auth/', obtain_jwt_token, name='api-token-auth'),
-# #     url(r'^api-token-refresh/', refresh_jwt_token, name='api-token-refresh'),
-# #     url(r'^api-token-verify/', verify_jwt_token, name="api-token-verify"),
-# # ]
+#     url(r'^api-token-auth/', obtain_jwt_token, name='api-token-auth'),
+#     url(r'^api-token-refresh/', refresh_jwt_token, name='api-token-refresh'),
+#     url(r'^api-token-verify/', verify_jwt_token, name="api-token-verify"),
+# ]
 
 if settings.DEBUG:
     import debug_toolbar
