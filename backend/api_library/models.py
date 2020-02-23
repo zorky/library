@@ -23,6 +23,8 @@ class Book(TimeStampedModel):
 
     author = models.ForeignKey(Author, related_name='books', null=False, on_delete=models.CASCADE)
 
+    enabled = models.BooleanField(default=True, help_text='disponible ou non')
+
     def __str__(self):
         return '{} : {}'.format(self.name, self.author)
 
