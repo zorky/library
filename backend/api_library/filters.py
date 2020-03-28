@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django_filters import FilterSet, filters, BaseInFilter, NumberFilter
+from django_filters import FilterSet, filters, BaseInFilter, NumberFilter, BooleanFilter
 
 from .models import Book, Author
 
@@ -31,6 +31,7 @@ class AuthorFilter(FilterSet):
 class BookFilter(FilterSet):
     pages =  filters.RangeFilter(field_name='nb_pages')
     author__in = IntegerInFilter(field_name='author', lookup_expr='in')
+    author_isnull = BooleanFilter(field_name='author', lookup_expr='isnull')
 
     class Meta:
         model = Book
