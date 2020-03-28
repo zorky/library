@@ -25,7 +25,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     ordering = ['first_name', '-last_name']
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.select_related('author').all()
+    queryset = Book.objects.prefetch_related('author__books').select_related('author').all()
     serializer_class = BookSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)

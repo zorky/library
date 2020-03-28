@@ -10,13 +10,14 @@ class BookSimpleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AuthorSerializer(serializers.ModelSerializer):
-    # books = BookSimpleSerializer(many=True, read_only=True)
+    books = BookSimpleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Author
         fields = '__all__'
 
 class BookSerializer(serializers.ModelSerializer):
-    # author_obj = AuthorSerializer(source='author', read_only=True)
+    author_obj = AuthorSerializer(source='author', read_only=True)
 
     class Meta:
         model = Book
