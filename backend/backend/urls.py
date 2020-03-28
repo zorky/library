@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token, impersonate_jwt_token
 from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Api plateforme')
@@ -30,11 +30,12 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls)
 ]
 
-# urlpatterns += [
-#     url(r'^api-token-auth/', obtain_jwt_token, name='api-token-auth'),
-#     url(r'^api-token-refresh/', refresh_jwt_token, name='api-token-refresh'),
-#     url(r'^api-token-verify/', verify_jwt_token, name="api-token-verify"),
-# ]
+urlpatterns += [
+    url(r'^api-token-auth/', obtain_jwt_token, name='api-token-auth'),
+    url(r'^api-token-refresh/', refresh_jwt_token, name='api-token-refresh'),
+    url(r'^api-token-verify/', verify_jwt_token, name="api-token-verify"),
+    url(r'^api-token-impersonate/', impersonate_jwt_token, name="impersonate")
+]
 
 if settings.DEBUG:
     import debug_toolbar
@@ -42,5 +43,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns = [
         url(r'^__debug__/', include(debug_toolbar.urls)),
-        # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
     ] + urlpatterns

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import datetime
 
 from django.conf.global_settings import gettext_noop
 
@@ -100,6 +101,12 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+}
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.auth.jwt.jwt_response_payload_handler',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=4),
 }
 
 TEMPLATES = [

@@ -1,6 +1,7 @@
 django==2.2.10
 djangorestframework==3.11.0
-djangorestframework-jwt==1.11.0
+#djangorestframework-jwt==1.11.0
+drf-jwt==1.15.1
 django-filter==2.2.0
 django-cors-headers==3.2.1
 coreapi==2.3.3
