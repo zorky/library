@@ -24,6 +24,9 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
     ordering = ['first_name', '-last_name']
 
+    pagination_class = LimitOffsetPagination
+    page_size = 10
+
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.prefetch_related('author__books').select_related('author').all()
     serializer_class = BookSerializer
