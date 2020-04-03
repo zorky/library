@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-title>Livres</mat-card-title>
+  <mat-card-content>
+    <mat-card-actions align="end" style="padding-right: 10px;">
+      <button mat-raised-button
+              matBadge="{{books ? books.length : 0}}" matBadgePosition="after"
+              matBadgeColor="accent" matBadgeOverlap="true" matBadgeSize="large"
+              (click)="fetchBooks($event)">
+        Charger les livres
+      </button>
+    </mat-card-actions>
+    <mat-progress-bar *ngIf="loading"
+                      [mode]="'indeterminate'" color="warn"></mat-progress-bar>
+    <mat-divider></mat-divider>
+<!--    <pre>{{books|json}}</pre>-->
+    <mat-list>
+      <mat-list-item *ngFor="let book of books">
+        <p mat-line>
+          <span mat-list-icon><mat-icon>book</mat-icon></span>
+          <span>{{book.name}}</span>
+        </p>
+        <p mat-line><app-author-display [author]="book?.author_obj"></app-author-display></p>
+        <p mat-line><mat-divider class="mat-divider-dashed"></mat-divider></p>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
