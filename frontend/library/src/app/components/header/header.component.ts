@@ -6,7 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Input() layout = "end center"
+  @Input() layout = 'end center';
   constructor() { }
 
   ngOnInit(): void {
