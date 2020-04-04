@@ -1,8 +1,8 @@
 <mat-card>
   <mat-card-title>Edition d'un livre</mat-card-title>
   <mat-card-content>
-    <div [formGroup]="bookForm">
-      <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
+    <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
+    <div [formGroup]="bookForm" *ngIf="bookForm">
       <div fxLayout="column">
         <mat-form-field>
           <label>
@@ -41,7 +41,6 @@
   <mat-card-actions align="end">
     <button  mat-raised-button color="primary"
              matTooltipPosition="above" matTooltip="Enregistrer le livre"
-             (click)="save()" [disabled]="bookForm.invalid">Enregister</button>
-<!--    [disabled]="bookForm.invalid"-->
+             (click)="save()" [disabled]="bookForm?.invalid">Enregister</button>
   </mat-card-actions>
 </mat-card>

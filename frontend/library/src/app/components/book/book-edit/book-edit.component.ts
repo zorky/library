@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {finalize} from 'rxjs/operators';
@@ -67,4 +67,14 @@ export class BookEditComponent implements OnInit {
       enabled: [book ? book.enabled : true]
     });
   }
+
+  // private _initForm(book: Book = null) {
+  //   this.bookForm = new FormGroup({
+  //     id:  new FormControl([book ? book.id : 0]),
+  //     name: new FormControl([book?.name, [Validators.required, Validators.maxLength(this.maxName)]]),
+  //     author: new FormControl([book?.author, Validators.required]),
+  //     nb_pages: new FormControl([book?.nb_pages, Validators.required]),
+  //     enabled: new FormControl([book ? book.enabled : true])
+  //   });
+  // }
 }
