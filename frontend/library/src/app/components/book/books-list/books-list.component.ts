@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SubSink} from '../../services/subsink';
+import {ActivatedRoute, Router} from '@angular/router';
+import {finalize} from 'rxjs/operators';
 
-import {finalize} from "rxjs/operators";
-import {Book, BookService} from "../../services";
+import {SubSink} from '../../../services/subsink';
+import {Book, BookService} from '../../../services';
 
 @Component({
   selector: 'app-books-list',
@@ -14,7 +15,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
   books: Book[];
   loading = false;
 
-  constructor(private bookSvc: BookService) { }
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private bookSvc: BookService) { }
 
   ngOnInit(): void {
   }
@@ -29,6 +32,14 @@ export class BooksListComponent implements OnInit, OnDestroy {
         console.log(books);
         this.books = books;
       });
+  }
+
+  editBook(book: Book) {
+    this.router.navigate(['/book/edit', {id: book.id}], {relativeTo: this.route.parent});
+  }
+
+  addBook() {
+    this.router.navigate(['/book/edit', {id: 0}], {relativeTo: this.route.parent});
   }
 
   ngOnDestroy(): void {

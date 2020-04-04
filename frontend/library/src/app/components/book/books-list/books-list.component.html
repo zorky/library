@@ -2,6 +2,7 @@
   <mat-card-title>Livres</mat-card-title>
   <mat-card-content>
     <mat-card-actions align="end" style="padding-right: 10px;">
+      <button mat-raised-button (click)="addBook()">Ajouter un livre</button>
       <button mat-raised-button
               matBadge="{{books ? books.length : 0}}" matBadgePosition="after"
               matBadgeColor="accent" matBadgeOverlap="true" matBadgeSize="large"
@@ -16,8 +17,8 @@
     <mat-list>
       <mat-list-item *ngFor="let book of books">
         <p mat-line>
-          <span mat-list-icon><mat-icon>book</mat-icon></span>
           <span>{{book.name}}</span>
+          <span mat-list-icon><button mat-icon-button (click)="editBook(book)"><mat-icon>create</mat-icon></button></span>
         </p>
         <p mat-line><app-author-display [author]="book?.author_obj"></app-author-display></p>
         <p mat-line><mat-divider class="mat-divider-dashed"></mat-divider></p>

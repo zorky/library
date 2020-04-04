@@ -1,0 +1,47 @@
+<mat-card>
+  <mat-card-title>Edition d'un livre</mat-card-title>
+  <mat-card-content>
+    <div [formGroup]="bookForm">
+      <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
+      <div fxLayout="column">
+        <mat-form-field>
+          <label>
+            <input matInput
+                   maxlength="{{maxName}}"
+                   placeholder="Nom du livre"
+                   formControlName="name" required>
+          </label>
+          <mat-hint align="end"><code>{{bookForm.get('name').value?.length}}</code> / <code>{{maxName}}</code></mat-hint>
+        </mat-form-field>
+
+        <mat-form-field fxFlex="10%">
+          <label>
+            <input matInput
+                   type="number"
+                   placeholder="Nombre de pages"
+                   formControlName="nb_pages" required>
+          </label>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Auteur *"
+                     formControlName="author"
+                      [matTooltip]="'Sélectionner l\'auteur du livre...'">
+            <ng-container>
+              <mat-option *ngFor="let author of(authors$ | async)" [value]="author.id">
+                {{author.first_name}} {{author.last_name}}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox formControlName="enabled">Disponible</mat-checkbox>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button  mat-raised-button color="primary"
+             matTooltipPosition="above" matTooltip="Enregistrer le livre"
+             (click)="save()" [disabled]="bookForm.invalid">Enregister</button>
+<!--    [disabled]="bookForm.invalid"-->
+  </mat-card-actions>
+</mat-card>

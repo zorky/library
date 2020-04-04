@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 /**
@@ -7,13 +7,19 @@ import {Observable} from 'rxjs';
 export abstract class ServiceGeneric<T> {
   protected constructor(private http: HttpClient) {
   }
-
+  /**
+   * Postionnement entête content-type en application/json
+   * @private
+   */
+  static _setHeadersJson(): HttpHeaders {
+    const headers = new HttpHeaders();
+    return headers.append('content-type', 'application/json');
+  }
   /**
    * Pour obtenir l'url "root" de l'API souhaitée
    * Exemple : `${environment.baseUrl}/plateform/books/`;
    */
   abstract getRootUrl(urlApp?: string): string;
-
   /**
    * Obtient la liste des entités T
    */
@@ -37,7 +43,7 @@ export abstract class ServiceGeneric<T> {
    */
   public create(object: T) {
     const url = this._getUrl();
-    return this.http.post(url, JSON.stringify(object));
+    return this.http.post(url, JSON.stringify(object), {headers: ServiceGeneric._setHeadersJson()});
   }
 
   /**
@@ -48,6 +54,15 @@ export abstract class ServiceGeneric<T> {
   public update(object: T, key: string = 'id') {
     const url = this._getUrl(object[key]);
     return this.http.put(url, object);
+  }
+
+  /**
+   * update ou create selon l'id d'une entité (0 ou > 0)
+   * @param object
+   * @param key
+   */
+  public updateOrcreate(object, key: string = 'id'): Observable<any> {
+    return (key in object && object[key]) ? this.update(object, key) : this.create(object);
   }
 
   /**

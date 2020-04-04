@@ -5,9 +5,8 @@ export interface Book {
   name: string;
   nb_pages: number;
   enabled: boolean;
-
+  author: number;
+  author_obj?: Author;
   dt_created?: string;
   dt_updated?: string;
-
-  author_obj?: Author;
 }
