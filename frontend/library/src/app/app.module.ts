@@ -11,13 +11,15 @@ import {MaterialModule} from './modules/material.module';
 import { BooksListComponent } from './components/books-list/books-list.component';
 import { AuthorDisplayComponent } from './components/author/author-display/author-display.component';
 import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksListComponent,
     AuthorDisplayComponent,
-    HeaderComponent
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     FormsModule,
