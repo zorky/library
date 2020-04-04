@@ -1,4 +1,4 @@
-django==3.0.4
+django==3.0.5
 djangorestframework==3.11.0
 #djangorestframework-jwt==1.11.0
 drf-jwt==1.15.1
