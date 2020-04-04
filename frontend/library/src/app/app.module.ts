@@ -10,12 +10,14 @@ import {FormsModule} from '@angular/forms';
 import {MaterialModule} from './modules/material.module';
 import { BooksListComponent } from './components/books-list/books-list.component';
 import { AuthorDisplayComponent } from './components/author/author-display/author-display.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksListComponent,
-    AuthorDisplayComponent
+    AuthorDisplayComponent,
+    HeaderComponent
   ],
   imports: [
     FormsModule,
