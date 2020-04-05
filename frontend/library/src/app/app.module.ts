@@ -15,13 +15,14 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AuthorEditComponent } from './components/author/author-edit/author-edit.component';
 import { BookEditComponent } from './components/book/book-edit/book-edit.component';
 import {AppRoutingModule} from './app.routing';
-import {NgxFormlyModule} from './modules/formly.module';
 import { AuthorEditFormlyComponent } from './components/author/author-edit-formly/author-edit-formly.component';
-import {FormlyModule} from "@ngx-formly/core";
-import {FormlyMaterialModule} from "@ngx-formly/material";
 import { BookEditFormlyComponent } from './components/book/book-edit-formly/book-edit-formly.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AuthorsListComponent } from './components/author/authors-list/authors-list.component';
+import {FormlyModule} from '@ngx-formly/core';
+import {FormlyMaterialModule} from '@ngx-formly/material';
+import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
+// import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
 
 @NgModule({
   declarations: [
@@ -41,13 +42,19 @@ import { AuthorsListComponent } from './components/author/authors-list/authors-l
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
+
     FormsModule,
     ReactiveFormsModule,
+
     MaterialModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+
+    FormlyMatDatepickerModule,
+    // FormlyMatToggleModule,
     FormlyModule.forRoot(),
     FormlyMaterialModule,
+
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
   ],
   providers: [],
   bootstrap: [AppComponent]
