@@ -29,7 +29,6 @@ export class BooksListComponent implements OnInit, OnDestroy {
       .fetchAll()
       .pipe(finalize(() => this.loading = false))
       .subscribe((books) => {
-        console.log(books);
         this.books = books;
       });
   }

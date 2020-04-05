@@ -14,7 +14,12 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AuthorEditComponent } from './components/author/author-edit/author-edit.component';
 import { BookEditComponent } from './components/book/book-edit/book-edit.component';
-import {AppRoutingModule} from "./app.routing";
+import {AppRoutingModule} from './app.routing';
+import {NgxFormlyModule} from './modules/formly.module';
+import { AuthorEditFormlyComponent } from './components/author/author-edit-formly/author-edit-formly.component';
+import {FormlyModule} from "@ngx-formly/core";
+import {FormlyMaterialModule} from "@ngx-formly/material";
+import { BookEditFormlyComponent } from './components/book/book-edit-formly/book-edit-formly.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +29,9 @@ import {AppRoutingModule} from "./app.routing";
     HeaderComponent,
     FooterComponent,
     AuthorEditComponent,
-    BookEditComponent
+    BookEditComponent,
+    AuthorEditFormlyComponent,
+    BookEditFormlyComponent
   ],
   imports: [
     HttpClientModule,
@@ -34,7 +41,9 @@ import {AppRoutingModule} from "./app.routing";
     ReactiveFormsModule,
     MaterialModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+    FormlyModule.forRoot(),
+    FormlyMaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
