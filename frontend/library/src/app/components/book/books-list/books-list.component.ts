@@ -20,9 +20,10 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
+    this.fetchBooks();
   }
 
-  fetchBooks(event) {
+  fetchBooks() {
     this.loading = true;
     this.books = [];
     this.subSink.sink = this.bookSvc

@@ -1,3 +1,30 @@
 <mat-toolbar class="mat-elevation-z6" color="primary" fxLayoutAlign="{{layout}}">
   <span><a [routerLink]="['/']">Mes livres</a></span><mat-icon>account_balance</mat-icon>
+  <button mat-icon-button [matMenuTriggerFor]="libraryMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+
+  <!-- menu principal -->
+  <mat-menu #libraryMenu="matMenu" xPosition="before">
+    <button mat-menu-item [matMenuTriggerFor]="booksMenu">Livres</button>
+    <button mat-menu-item [matMenuTriggerFor]="authorMenu">Auteurs</button>
+  </mat-menu>
+  <!-- menu livres -->
+  <mat-menu #booksMenu="matMenu">
+    <button mat-menu-item (click)="go('/books')">
+      Liste
+    </button>
+    <button mat-menu-item (click)="go('/book/edit')">
+      Ajouter un livre
+    </button>
+  </mat-menu>
+  <!-- menu auteurs -->
+  <mat-menu #authorMenu="matMenu">
+    <button mat-menu-item (click)="go('/authors')">
+      Liste
+    </button>
+    <button mat-menu-item (click)="go('/author/edit')">
+      Ajouter un auteur
+    </button>
+  </mat-menu>
 </mat-toolbar>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {finalize} from 'rxjs/operators';
+import {filter, finalize} from 'rxjs/operators';
 
 import {SubSink} from '../../../services/subsink';
 import {Author, AuthorService, Book, BookService} from '../../../services';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-book-edit',
@@ -18,11 +19,12 @@ export class BookEditComponent implements OnInit {
   authors$: Observable<Author[]>;
   isUpdateMode = false;
   loading = false;
+  disabled = false;
+  formDirty = false;
   subSink = new SubSink();
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
-              private fb: FormBuilder,
+  constructor(private router: Router, private route: ActivatedRoute,
+              private fb: FormBuilder, public snackBar: MatSnackBar,
               private authorSvc: AuthorService,
               private bookSvc: BookService) {
   }
@@ -33,9 +35,26 @@ export class BookEditComponent implements OnInit {
   }
 
   save() {
-    this.bookSvc.updateOrcreate(this.bookForm.value).subscribe((data) => {
-      console.log(data);
+    this.disabled = this.loading = true;
+    this.bookSvc
+      .updateOrcreate(this.bookForm.value)
+      .pipe(finalize(() => this.disabled = this.loading = false))
+      .subscribe((book: Book) => {
+        this.snackBar.
+          open(`"${book.name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
+          'Livre',
+          {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+        this._initForm(book);
     });
+  }
+  goList() {
+    this.router.navigate(['/books']);
+  }
+  getLabelCancelOrReturn() {
+    if (this.formDirty) {
+      return 'Abandonner et retourner sur la liste';
+    }
+    return 'Retourner sur la liste';
   }
 
   private _initBookIfUpdate() {
@@ -46,7 +65,6 @@ export class BookEditComponent implements OnInit {
         .fetch(id)
         .pipe(finalize(() => this.loading = false))
         .subscribe((book: Book) => {
-          this.isUpdateMode = true;
           this._initForm(book);
         });
     } else {
@@ -59,6 +77,7 @@ export class BookEditComponent implements OnInit {
   }
 
   private _initForm(book: Book = null) {
+    this.isUpdateMode = book && book.id > 0;
     this.bookForm = this.fb.group({
       id: [book ? book.id : 0],
       name: [book?.name, [Validators.required, Validators.maxLength(this.maxName)]],
@@ -66,15 +85,8 @@ export class BookEditComponent implements OnInit {
       nb_pages: [book?.nb_pages, Validators.required],
       enabled: [book ? book.enabled : true]
     });
+    this.subSink.sink = this.bookForm.valueChanges.subscribe(values =>  {
+      this.formDirty = true;
+    });
   }
-
-  // private _initForm(book: Book = null) {
-  //   this.bookForm = new FormGroup({
-  //     id:  new FormControl([book ? book.id : 0]),
-  //     name: new FormControl([book?.name, [Validators.required, Validators.maxLength(this.maxName)]]),
-  //     author: new FormControl([book?.author, Validators.required]),
-  //     nb_pages: new FormControl([book?.nb_pages, Validators.required]),
-  //     enabled: new FormControl([book ? book.enabled : true])
-  //   });
-  // }
 }

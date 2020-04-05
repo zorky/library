@@ -4,18 +4,22 @@ import {BooksListComponent} from './components/book/books-list/books-list.compon
 import {BookEditComponent} from './components/book/book-edit/book-edit.component';
 import {AuthorEditFormlyComponent} from './components/author/author-edit-formly/author-edit-formly.component';
 import {BookEditFormlyComponent} from './components/book/book-edit-formly/book-edit-formly.component';
+import {NotFoundComponent} from "./components/not-found/not-found.component";
+import {AuthorEditComponent} from "./components/author/author-edit/author-edit.component";
 
 const appRoutes: Routes = [
   {
     path: '',
     children: [
       {path: '', component: BooksListComponent},
+      {path: 'books', component: BooksListComponent},
       {path: 'book/edit', component: BookEditComponent},
       {path: 'book-formly/edit', component: BookEditFormlyComponent},
+      {path: 'author/edit', component: AuthorEditComponent},
       {path: 'author-formly/edit', component: AuthorEditFormlyComponent}
     ]
   },
-  // {path: 'forbidden', component: PermissionDeniedComponent, canActivate: [ForbiddenGuard], runGuardsAndResolvers: 'always'},
+  {path: '**', component: NotFoundComponent},
 ];
 
 @NgModule({

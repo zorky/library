@@ -1,8 +1,38 @@
 <mat-card>
-  <mat-card-title>Edition d'un auteur</mat-card-title>
+  <mat-card-title>{{isUpdateMode ? 'Edition d\'un' : 'Nouvel'}} auteur</mat-card-title>
   <mat-card-content>
-    <div>
+    <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
+    <div [formGroup]="authorForm" *ngIf="authorForm">
+      <div fxLayout="column">
+        <mat-form-field>
+          <label>
+            <input matInput
+                   maxlength="{{maxInput}}"
+                   placeholder="Prénom"
+                   formControlName="first_name" required>
+          </label>
+          <mat-hint align="end"><code>{{authorForm.get('first_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
+        </mat-form-field>
 
+        <mat-form-field>
+          <label>
+            <input matInput
+                   maxlength="{{maxInput}}"
+                   placeholder="Nom"
+                   formControlName="last_name" required>
+          </label>
+          <mat-hint align="end"><code>{{authorForm.get('last_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
+        </mat-form-field>
+      </div>
     </div>
   </mat-card-content>
+  <mat-card-actions align="end">
+    <button  mat-button
+             matTooltipPosition="above" matTooltip="Retour à la liste"
+             [disabled]="disabled"
+             (click)="goList()">{{getLabelCancelOrReturn()}}</button>
+    <button  mat-raised-button color="primary"
+             matTooltipPosition="above" matTooltip="Enregistrer le livre"
+             (click)="save()" [disabled]="authorForm?.invalid || disabled">Enregister</button>
+  </mat-card-actions>
 </mat-card>

@@ -20,6 +20,8 @@ import { AuthorEditFormlyComponent } from './components/author/author-edit-forml
 import {FormlyModule} from "@ngx-formly/core";
 import {FormlyMaterialModule} from "@ngx-formly/material";
 import { BookEditFormlyComponent } from './components/book/book-edit-formly/book-edit-formly.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AuthorsListComponent } from './components/author/authors-list/authors-list.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { BookEditFormlyComponent } from './components/book/book-edit-formly/book
     AuthorEditComponent,
     BookEditComponent,
     AuthorEditFormlyComponent,
-    BookEditFormlyComponent
+    BookEditFormlyComponent,
+    NotFoundComponent,
+    AuthorsListComponent
   ],
   imports: [
     HttpClientModule,

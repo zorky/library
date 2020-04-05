@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title>Edition d'un livre</mat-card-title>
+  <mat-card-title>{{isUpdateMode ? 'Edition d\'un' : 'Nouveau'}} livre</mat-card-title>
   <mat-card-content>
     <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
     <div [formGroup]="bookForm" *ngIf="bookForm">
@@ -39,8 +39,12 @@
     </div>
   </mat-card-content>
   <mat-card-actions align="end">
+    <button  mat-button
+             matTooltipPosition="above" matTooltip="Retour à la liste"
+             [disabled]="disabled"
+             (click)="goList()">{{getLabelCancelOrReturn()}}</button>
     <button  mat-raised-button color="primary"
              matTooltipPosition="above" matTooltip="Enregistrer le livre"
-             (click)="save()" [disabled]="bookForm?.invalid">Enregister</button>
+             (click)="save()" [disabled]="bookForm?.invalid || disabled">Enregister</button>
   </mat-card-actions>
 </mat-card>
