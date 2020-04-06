@@ -7,14 +7,7 @@ import {Observable} from 'rxjs';
 export abstract class ServiceGeneric<T> {
   protected constructor(private http: HttpClient) {
   }
-  /**
-   * Postionnement entête content-type en application/json
-   * @private
-   */
-  static _setHeadersJson(): HttpHeaders {
-    const headers = new HttpHeaders();
-    return headers.append('content-type', 'application/json');
-  }
+
   /**
    * Pour obtenir l'url "root" de l'API souhaitée
    * Exemple : `${environment.baseUrl}/plateform/books/`;
@@ -43,7 +36,7 @@ export abstract class ServiceGeneric<T> {
    */
   public create(object: T) {
     const url = this._getUrl();
-    return this.http.post(url, JSON.stringify(object), {headers: ServiceGeneric._setHeadersJson()});
+    return this.http.post(url, JSON.stringify(object), {headers: this._setHeadersJson()});
   }
 
   /**
@@ -106,6 +99,15 @@ export abstract class ServiceGeneric<T> {
     return this.http.delete(url);
   }
 
+  /**
+   * Postionnement entête content-type en application/json
+   * pour POST
+   * @private
+   */
+  private _setHeadersJson(): HttpHeaders {
+    const headers = new HttpHeaders();
+    return headers.append('content-type', 'application/json');
+  }
   /***
    * PROTECTED
    ****/

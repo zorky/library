@@ -1,0 +1,31 @@
+<div mat-dialog-title>
+  {{dialogData.title}}
+</div>
+
+<div class="dialog-validation__body mat-typography">
+  <span *ngIf="dialogData?.message" [innerHTML]="dialogData.message | safeHtml" style="float: left;width: 100%;"></span>
+</div>
+
+<mat-dialog-actions fxLayoutAlign="{{dialogData.buttonJustify}}" style="float: right">
+  <ng-container *ngIf="dialogData.action === actionType.validation">
+    <button *ngIf="dialogData.buttonTextFalse" mat-raised-button
+            [color]="dialogData.buttonColorFalse"
+            [matDialogClose]="false">
+      {{ dialogData.buttonTextFalse }}
+    </button>
+    <button *ngIf="dialogData.buttonTextTrue" mat-raised-button
+            [color]="dialogData.buttonColorTrue"
+            (click)="save()" >
+      {{ dialogData.buttonTextTrue }}
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="dialogData.action === actionType.information">
+    <button mat-raised-button
+            [color]="dialogData.buttonColorTrue"
+            [matDialogClose]="true">
+      {{ 'Fermer' }}
+    </button>
+  </ng-container>
+
+</mat-dialog-actions>

@@ -6,6 +6,7 @@ import {AuthorEditFormlyComponent} from './components/author/author-edit-formly/
 import {BookEditFormlyComponent} from './components/book/book-edit-formly/book-edit-formly.component';
 import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {AuthorEditComponent} from "./components/author/author-edit/author-edit.component";
+import {AuthorsListComponent} from "./components/author/authors-list/authors-list.component";
 
 const appRoutes: Routes = [
   {
@@ -15,6 +16,7 @@ const appRoutes: Routes = [
       {path: 'books', component: BooksListComponent},
       {path: 'book/edit', component: BookEditComponent},
       {path: 'book-formly/edit', component: BookEditFormlyComponent},
+      {path: 'authors', component: AuthorsListComponent},
       {path: 'author/edit', component: AuthorEditComponent},
       {path: 'author-formly/edit', component: AuthorEditFormlyComponent}
     ]

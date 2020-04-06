@@ -22,6 +22,8 @@ import { AuthorsListComponent } from './components/author/authors-list/authors-l
 import {FormlyModule} from '@ngx-formly/core';
 import {FormlyMaterialModule} from '@ngx-formly/material';
 import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import {SafeHtmlPipe} from "./pipes/safe-html";
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
 
 @NgModule({
@@ -36,7 +38,10 @@ import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
     AuthorEditFormlyComponent,
     BookEditFormlyComponent,
     NotFoundComponent,
-    AuthorsListComponent
+    AuthorsListComponent,
+
+    ConfirmationDialogComponent,
+    SafeHtmlPipe
   ],
   imports: [
     HttpClientModule,
@@ -53,7 +58,6 @@ import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
     // FormlyMatToggleModule,
     FormlyModule.forRoot(),
     FormlyMaterialModule,
-
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
   ],
   providers: [],
