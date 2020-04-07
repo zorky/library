@@ -4,36 +4,45 @@
     <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
     <div [formGroup]="bookForm" *ngIf="bookForm">
       <div fxLayout="column">
-        <mat-form-field>
-          <label>
-            <input matInput
-                   maxlength="{{maxName}}"
-                   placeholder="Nom du livre"
-                   formControlName="name" required>
-          </label>
-          <mat-hint align="end"><code>{{bookForm.get('name').value?.length}}</code> / <code>{{maxName}}</code></mat-hint>
-        </mat-form-field>
-
-        <mat-form-field fxFlex="10%">
-          <label>
-            <input matInput
-                   type="number"
-                   placeholder="Nombre de pages"
-                   formControlName="nb_pages" required>
-          </label>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-select placeholder="Auteur *"
-                     formControlName="author"
-                      [matTooltip]="'Sélectionner l\'auteur du livre...'">
-            <ng-container>
-              <mat-option *ngFor="let author of(authors$ | async)" [value]="author.id">
-                {{author.first_name}} {{author.last_name}}
-              </mat-option>
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
+        <div>
+          <mat-form-field fxFlex="70">
+            <label>
+              <input matInput
+                     maxlength="{{maxName}}"
+                     placeholder="Nom du livre"
+                     formControlName="name" required>
+            </label>
+            <mat-hint align="end"><code>{{bookForm.get('name').value?.length}}</code> / <code>{{maxName}}</code></mat-hint>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field fxFlex="10%">
+            <label>
+              <input matInput
+                     type="number"
+                     placeholder="Nombre de pages"
+                     formControlName="nb_pages" required>
+            </label>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field fxFlex="50">
+            <mat-select placeholder="Auteur *"
+                       formControlName="author"
+                        [matTooltip]="'Sélectionner l\'auteur du livre...'">
+              <ng-container>
+                <mat-option *ngFor="let author of(authors$ | async)" [value]="author.id">
+                  {{author.first_name}} {{author.last_name}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          <button mat-icon-button (click)="addAuthor()"
+                  matTooltip="Je ne trouve pas l'auteur, j'en ajoute un"
+                  [color]="'warn'">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
         <mat-checkbox formControlName="enabled">Disponible</mat-checkbox>
       </div>
     </div>

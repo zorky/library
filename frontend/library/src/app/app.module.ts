@@ -24,6 +24,7 @@ import {FormlyMaterialModule} from '@ngx-formly/material';
 import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import {SafeHtmlPipe} from "./pipes/safe-html";
+import { AuthorContainerComponent } from './components/author/author-container/author-container.component';
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
 
 @NgModule({
@@ -41,7 +42,8 @@ import {SafeHtmlPipe} from "./pipes/safe-html";
     AuthorsListComponent,
 
     ConfirmationDialogComponent,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    AuthorContainerComponent
   ],
   imports: [
     HttpClientModule,

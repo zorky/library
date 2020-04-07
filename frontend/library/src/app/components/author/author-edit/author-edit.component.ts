@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from "@angular/router";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {finalize} from "rxjs/operators";
-import {Author, AuthorService, Book} from "../../../services";
-import {SubSink} from "../../../services/subsink";
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {finalize} from 'rxjs/operators';
+import {Author, AuthorService, Book} from '../../../services';
+import {SubSink} from '../../../services/subsink';
 
 @Component({
   selector: 'app-author-edit',
@@ -12,6 +12,9 @@ import {SubSink} from "../../../services/subsink";
   styleUrls: ['./author-edit.component.css']
 })
 export class AuthorEditComponent implements OnInit, OnDestroy {
+  @Input() onReturn = 'list';
+  @Output() authorUpdated = new EventEmitter<Author>();
+
   authorForm: FormGroup;
   maxInput = 25;
   loading = false;
@@ -44,10 +47,15 @@ export class AuthorEditComponent implements OnInit, OnDestroy {
           'Auteur',
           {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
         this._initForm(author);
+        console.log(author);
+        this.authorUpdated.emit(author);
       });
   }
   goList() {
-    this.router.navigate(['/authors']);
+    this.authorUpdated.emit(null);
+    if (this.onReturn === 'list') {
+      this.router.navigate(['/authors']);
+    }
   }
   getLabelCancelOrReturn() {
     if (this.formDirty) {

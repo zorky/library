@@ -3,10 +3,12 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {from, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {filter, finalize} from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 import {SubSink} from '../../../services/subsink';
 import {Author, AuthorService, Book, BookService} from '../../../services';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {AuthorContainerComponent} from '../../author/author-container/author-container.component';
 
 @Component({
   selector: 'app-book-edit',
@@ -24,7 +26,8 @@ export class BookEditComponent implements OnInit {
   subSink = new SubSink();
 
   constructor(private router: Router, private route: ActivatedRoute,
-              private fb: FormBuilder, public snackBar: MatSnackBar,
+              private fb: FormBuilder, private snackBar: MatSnackBar,
+              private dialog: MatDialog,
               private authorSvc: AuthorService,
               private bookSvc: BookService) {
   }
@@ -45,6 +48,18 @@ export class BookEditComponent implements OnInit {
           'Livre',
           {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
         this._initForm(book);
+    });
+  }
+  addAuthor() {
+    const dialogRef = this.dialog.open(AuthorContainerComponent, {});
+    dialogRef.updatePosition({top: '50px'});
+    dialogRef.updateSize('600px');
+    dialogRef.afterClosed().subscribe((result: Author) => {
+      if (result) {
+        console.log(result);
+        this._initAuthors();
+        this.bookForm.patchValue({author: result.id});
+      }
     });
   }
   goList() {
