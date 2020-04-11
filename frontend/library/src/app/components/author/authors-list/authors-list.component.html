@@ -5,6 +5,10 @@
   <mat-card-content>
     <mat-progress-bar *ngIf="loading"
                       [mode]="'indeterminate'" color="warn"></mat-progress-bar>
+    <mat-form-field floatLabel="never">
+      <input matInput #filter placeholder="Rechercher" matTooltip="Rechercher un auteur">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
     <mat-table #table [dataSource]="authors" matSort matSortDisableClear>
       <ng-container matColumnDef="last_name" >
         <mat-header-cell *matHeaderCellDef mat-sort-header>Auteur</mat-header-cell>

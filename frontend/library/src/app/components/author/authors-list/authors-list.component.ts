@@ -1,16 +1,18 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Author, AuthorService} from '../../../services';
-import {SubSink} from '../../../services/subsink';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {DialogData} from "../../confirmation-dialog/dialog-data.model";
-import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {catchError, finalize, map, startWith, switchMap} from "rxjs/operators";
-import {merge, of} from 'rxjs';
-import {MatSort} from "@angular/material/sort";
-import {Pagination} from "../../../services/base/pagination.model";
 import {MatPaginator} from "@angular/material/paginator";
+import {MatSort} from "@angular/material/sort";
+
+import {catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap, filter} from "rxjs/operators";
+import {BehaviorSubject, fromEvent, merge, of} from 'rxjs';
+
+import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
+import {Pagination} from "../../../services/base/pagination.model";
+import {Author, AuthorService} from '../../../services';
+import {SubSink} from '../../../services/subsink';
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -20,7 +22,7 @@ import {MatPaginator} from "@angular/material/paginator";
   templateUrl: './authors-list.component.html',
   styleUrls: ['./authors-list.component.css']
 })
-export class AuthorsListComponent implements OnInit, OnDestroy {
+export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   authors: Author[] = [];
   columns = ['last_name', 'books'];
   actions = ['action_delete', 'action_update'];
@@ -28,20 +30,21 @@ export class AuthorsListComponent implements OnInit, OnDestroy {
   loading = false;
   total = 0;
   PAGE_SIZE = 5;
+  private minFilter = 2;
+  private filterChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild('filter') filter: ElementRef;
 
   subSink = new SubSink();
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              private changeDetectorRefs: ChangeDetectorRef,
               public dialog: MatDialog, public snackBar: MatSnackBar,
               private authorSvc: AuthorService) { }
 
   ngOnInit(): void {
-    this._initDataTable();
   }
 
   /**
@@ -76,11 +79,33 @@ export class AuthorsListComponent implements OnInit, OnDestroy {
       }
     });
   }
+  applyLookup(keyword) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    // this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
   _toggleLoading(value) {
     setTimeout(() => this.loading = value);
   }
+
+  /**
+   * Init filtre recherche
+   * Se déclenche au bout de 400 ms, sur une chaîne > minFilter et non vide
+   * @private
+   */
+  _initFilter() {
+    this.subSink.sink = fromEvent(this.filter.nativeElement, 'keyup')
+      .pipe(debounceTime(400), distinctUntilChanged(),
+            filter(() => this.filter.nativeElement.value.length >= this.minFilter ||
+                                 this.filter.nativeElement.value.length === 0))
+      .subscribe(() => {
+        const filterValue = this.filter?.nativeElement?.value?.trim().toLowerCase();
+        this.paginator.pageIndex = 0;
+        this.filterChange.next(filterValue);
+      });
+  }
   _initDataTable() {
-    this.subSink.sink = merge(this.sort.sortChange, this.paginator.page)
+    this._initFilter();
+    this.subSink.sink = merge(this.sort.sortChange, this.paginator.page, this.filterChange)
       .pipe(
         startWith({}),
         switchMap(() => {
@@ -88,7 +113,8 @@ export class AuthorsListComponent implements OnInit, OnDestroy {
           return this.authorSvc
             .fetchAll(this.paginator.pageSize,
               this.paginator.pageIndex * this.paginator.pageSize,
-                    this.sort.active, this.sort.direction);
+                    this.sort.active, this.sort.direction,
+                    this.filterChange.value);
         }),
         map(data => {
           this._toggleLoading(false);
@@ -106,5 +132,9 @@ export class AuthorsListComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subSink.unsubscribe();
+  }
+
+  ngAfterViewInit(): void {
+    this._initDataTable();
   }
 }
