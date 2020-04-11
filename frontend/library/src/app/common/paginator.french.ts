@@ -21,6 +21,8 @@ export function getFrenchPaginatorIntl() {
   paginatorIntl.itemsPerPageLabel = 'Eléments par page :';
   paginatorIntl.nextPageLabel = 'page suivante';
   paginatorIntl.previousPageLabel = 'page précédente';
+  paginatorIntl.firstPageLabel = '1ère page';
+  paginatorIntl.lastPageLabel = 'dernière page';
   paginatorIntl.getRangeLabel = frenchRangeLabel;
 
   return paginatorIntl;
