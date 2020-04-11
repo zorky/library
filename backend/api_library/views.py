@@ -11,6 +11,7 @@ from .filters import BookFilter, AuthorFilter
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
 
+
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
@@ -19,8 +20,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     filterset_class = AuthorFilter
 
     search_fields = ['first_name', 'last_name']
-    # filterset_fields = ('last_name', 'first_name',)
-    ordering_fields = ('id', 'last_name',)
+    ordering_fields = ('id', 'last_name', 'books__name',)
 
     ordering = ['first_name', '-last_name']
 
@@ -35,7 +35,6 @@ class BookViewSet(viewsets.ModelViewSet):
     filterset_class = BookFilter
 
     search_fields = ['name', 'author__first_name', 'author__last_name']
-    # filterset_fields = ('name', 'nb_pages', 'author', 'author__last_name', 'author__first_name',)
     ordering_fields = ('id', 'name',)
 
     pagination_class = LimitOffsetPagination

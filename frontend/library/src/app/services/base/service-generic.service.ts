@@ -1,5 +1,9 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {map} from "rxjs/operators";
+import {Sort, SortDirection} from "@angular/material/sort";
+import {Pagination} from "./pagination.model";
+import {TemplatePaginationDjango} from "./pagination-django.model";
 
 /**
  * ServiceGeneric : fourniture d'un CRUD sur un type T
@@ -15,10 +19,26 @@ export abstract class ServiceGeneric<T> {
   abstract getRootUrl(urlApp?: string): string;
   /**
    * Obtient la liste des entités T
+   *
+   * @param {number} limit : le nombre maximim d'enregistrements
+   * @param {number} offset : à partir de quel enregistrement
+   * @param {string} sort : champ de tri
+   * @param {SortDirection} order : asc ou desc
+   * @param {string} keyword : chaine de recherche
+   * @param {Map<string, string>} extraParams : compléments de paramètres
    */
-  public fetchAll() {
+  public fetchAll(limit: number = null, offset: number = null,
+                  sort: string = null, order: SortDirection = null,
+                  keyword: string = null,
+                  extraParams: Map<string, string> = null) {
+    let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
+    if (sort && sort !== '') {
+      params = this._getSorting(sort, order, params);
+    }
     const url = this._getUrl();
-    return this.http.get<T[]>(url);
+    return this.http
+      .get(url, {params})
+      .pipe(map(response => this._getPagination(response, limit)));
   }
 
   /**
@@ -85,6 +105,113 @@ export abstract class ServiceGeneric<T> {
     return this._delete(id);
   }
 
+  /***
+   * PROTECTED
+   ****/
+
+  /**
+   * Détermine l'URL de l'API à utiliser, avec ou sans id
+   * @param id
+   * @protected
+   */
+  protected _getUrl(id = null) {
+    let url = this.getRootUrl();
+    if (id !== null) {
+      url = `${url}${id}/`;
+    }
+    return url;
+  }
+  /**
+   * Création des HttpParams à partir du Map<>
+   *
+   * @param {Map<string, string>} extraParams
+   * @return {HttpParams}
+   * @protected
+   */
+  protected _getUrlHttpExtraParams(extraParams: Map<string, string>): HttpParams {
+    let urlQS = new HttpParams();
+    if (extraParams !== null) {
+      extraParams.forEach((v, k) => {
+        urlQS = urlQS.set(k, v);
+      });
+    }
+    return urlQS;
+  }
+  /**
+   * Obtention des paramètres de pagination pour la construction de la querystring API
+   *
+   * @param {number} limit : nb. max d'objets / d'enregistrements à ramener [optionnel, si limit > 0]
+   * @param {number} offset : à partir de quel enregistrement [optionnel, selon limit]
+   * @param {string} keyword : texte de recherche [optionnel]
+   * @param {Map<string, any>} extraParams : complément de paramètres à envoyer [optionnel]
+   * @return {HttpParams}
+   * @protected
+   */
+  protected _getPaginationAndSearchAndExtraParams(limit: number, offset: number,
+                                                  keyword: string = null,
+                                                  extraParams: Map<string, any> = null): HttpParams {
+    let params: HttpParams = this._getUrlHttpExtraParams(extraParams);
+    if (limit) {
+      params = params.set('limit', limit.toString()).set('offset', offset.toString());
+    }
+    if (keyword && keyword !== '') {
+      params = params.set('search', keyword);
+    }
+    return params;
+  }
+  /**
+   * Enrichissement des HttpParams pour le sorting
+   *
+   * @param {string} sort : champ de tri
+   * @param {SortDirection} order : ordre de tri : 'asc' | 'desc'
+   * @param {HttpParams} params : params à compléter
+   * @return {HttpParams}
+   * @protected
+   */
+  protected _getSorting(sort: string, order: SortDirection, params: HttpParams) {
+    let orderDirection = '';
+    let orderField = '';
+    if (order) {
+      switch (order) {
+        case 'asc':
+          orderDirection = '';
+          break;
+        case 'desc':
+          orderDirection = '-';
+          break;
+      }
+    }
+    if (sort) {
+      orderField = `${orderDirection}${sort}`;
+      params = params.set('ordering', orderField);
+    }
+
+    return params;
+  }
+  /**
+   * Création de l'object Pagination : .list, .total, .totalView
+   * A partir de la pagination Django
+   * @param {Object} response : retour JSON de type TemplateObject { count: n, results: [{}] }
+   * @param {number} limit : limite de la liste d'objets ramenés, si limit null | 0 : la pagination Django n'est pas activée
+   * @return {Pagination}
+   * @protected
+   */
+  protected _getPagination(response, limit: number): Pagination<T> {
+    const pagination: Pagination<T> = new Pagination<T>();
+    if ('results' in response && limit > 0) {
+      const list = response as TemplatePaginationDjango<T>;
+      pagination.total = list.count;
+      pagination.list = list.results;
+      pagination.totalView = pagination.list.length;
+    } else {
+      const list = response as T[];
+      pagination.total = list.length;
+      pagination.list = list;
+      pagination.totalView = list.length;
+    }
+    return pagination;
+  }
+
   /****
    * PRIVATE
    ****/
@@ -101,27 +228,11 @@ export abstract class ServiceGeneric<T> {
 
   /**
    * Postionnement entête content-type en application/json
-   * pour POST
+   * pour le POST
    * @private
    */
   private _setHeadersJson(): HttpHeaders {
     const headers = new HttpHeaders();
     return headers.append('content-type', 'application/json');
-  }
-  /***
-   * PROTECTED
-   ****/
-
-  /**
-   * Détermine l'URL de l'API à utiliser, avec ou sans id
-   * @param id
-   * @protected
-   */
-  protected _getUrl(id = null) {
-    let url = this.getRootUrl();
-    if (id !== null) {
-      url = `${url}${id}/`;
-    }
-    return url;
   }
 }

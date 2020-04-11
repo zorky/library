@@ -25,6 +25,8 @@ import {FormlyMatDatepickerModule} from "@ngx-formly/material/datepicker";
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import {SafeHtmlPipe} from "./pipes/safe-html";
 import { AuthorContainerComponent } from './components/author/author-container/author-container.component';
+import {MatPaginatorIntl} from "@angular/material/paginator";
+import {getFrenchPaginatorIntl} from "./common/paginator.french";
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
 
 @NgModule({
@@ -62,7 +64,9 @@ import { AuthorContainerComponent } from './components/author/author-container/a
     FormlyMaterialModule,
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
   ],
-  providers: [],
+  providers: [
+    { provide: MatPaginatorIntl, useValue: getFrenchPaginatorIntl() }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

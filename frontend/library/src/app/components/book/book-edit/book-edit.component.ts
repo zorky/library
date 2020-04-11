@@ -9,6 +9,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {SubSink} from '../../../services/subsink';
 import {Author, AuthorService, Book, BookService} from '../../../services';
 import {AuthorContainerComponent} from '../../author/author-container/author-container.component';
+import {Pagination} from "../../../services/base/pagination.model";
 
 @Component({
   selector: 'app-book-edit',
@@ -18,7 +19,10 @@ import {AuthorContainerComponent} from '../../author/author-container/author-con
 export class BookEditComponent implements OnInit {
   bookForm: FormGroup;
   maxName = 100;
-  authors$: Observable<Author[]>;
+  /*
+    Observable liste des auteurs pour le select
+   */
+  authors$: Observable<Pagination<Author>>;
   isUpdateMode = false;
   loading = false;
   disabled = false;

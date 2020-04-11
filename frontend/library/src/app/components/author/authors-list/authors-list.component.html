@@ -5,36 +5,41 @@
   <mat-card-content>
     <mat-progress-bar *ngIf="loading"
                       [mode]="'indeterminate'" color="warn"></mat-progress-bar>
-    <mat-table #table [dataSource]="dataSource" matSort matSortDisableClear>
-    <ng-container matColumnDef="name" >
-      <mat-header-cell *matHeaderCellDef >Auteur</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{row.first_name}} {{row.last_name}}</mat-cell>
-    </ng-container>
+    <mat-table #table [dataSource]="authors" matSort matSortDisableClear>
+      <ng-container matColumnDef="last_name" >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Auteur</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{row.first_name}} {{row.last_name}}</mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="books" >
-      <mat-header-cell *matHeaderCellDef >Livres</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{getBooks(row)}}</mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="books" >
+        <mat-header-cell *matHeaderCellDef >Livres</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{getBooks(row)}}</mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="action_delete" >
-      <mat-header-cell *matHeaderCellDef [fxFlex]="5"></mat-header-cell>
-      <mat-cell *matCellDef="let row" [fxFlex]="5">
-        <button mat-icon-button (click)="deleteAuthor(row)"
-                matTooltip="Supprimer cet auteur"><mat-icon [color]="'warn'">delete</mat-icon></button>
-      </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="action_delete" >
+        <mat-header-cell *matHeaderCellDef [fxFlex]="5"></mat-header-cell>
+        <mat-cell *matCellDef="let row" [fxFlex]="5">
+          <button mat-icon-button (click)="deleteAuthor(row)"
+                  matTooltip="Supprimer cet auteur"><mat-icon [color]="'warn'">delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="action_update" >
-      <mat-header-cell *matHeaderCellDef [fxFlex]="5"></mat-header-cell>
-      <mat-cell *matCellDef="let row" [fxFlex]="5">
-        <button mat-icon-button (click)="editAuthor(row)"
-                matTooltip="Editer cet auteur"><mat-icon>edit</mat-icon></button>
-      </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="action_update" >
+        <mat-header-cell *matHeaderCellDef [fxFlex]="5"></mat-header-cell>
+        <mat-cell *matCellDef="let row" [fxFlex]="5">
+          <button mat-icon-button (click)="editAuthor(row)"
+                  matTooltip="Editer cet auteur"><mat-icon>edit</mat-icon></button>
+        </mat-cell>
+      </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator
+                   [length]="total"
+                   [pageSize]="PAGE_SIZE"
+                   [pageSizeOptions]="[2, 5, 10, 20, 50]"
+                   [showFirstLastButtons]="true"
+                   class="app-cm_data-table__paginator"></mat-paginator>
   </mat-card-content>
 </mat-card>

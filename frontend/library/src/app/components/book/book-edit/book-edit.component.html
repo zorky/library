@@ -31,7 +31,7 @@
                        formControlName="author"
                         [matTooltip]="'Sélectionner l\'auteur du livre...'">
               <ng-container>
-                <mat-option *ngFor="let author of(authors$ | async)" [value]="author.id">
+                <mat-option *ngFor="let author of(authors$ | async)?.list" [value]="author.id">
                   {{author.first_name}} {{author.last_name}}
                 </mat-option>
               </ng-container>

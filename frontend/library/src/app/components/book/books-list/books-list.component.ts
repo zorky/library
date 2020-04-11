@@ -8,6 +8,7 @@ import {SubSink} from '../../../services/subsink';
 import {Book, BookService} from '../../../services';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
 import {DialogData} from '../../confirmation-dialog/dialog-data.model';
+import {Pagination} from "../../../services/base/pagination.model";
 
 @Component({
   selector: 'app-books-list',
@@ -35,8 +36,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.subSink.sink = this.bookSvc
       .fetchAll()
       .pipe(finalize(() => this.loading = false))
-      .subscribe((books) => {
-        this.books = books;
+      .subscribe((books: Pagination<Book>) => {
+        this.books = books.list;
       });
   }
 
