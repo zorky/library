@@ -22,7 +22,7 @@ import {SubSink} from '../../../services/subsink';
   templateUrl: './authors-list.component.html',
   styleUrls: ['./authors-list.component.css']
 })
-export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   authors: Author[] = [];
   columns = ['last_name', 'books'];
   actions = ['action_delete', 'action_update'];
@@ -43,8 +43,8 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
               private route: ActivatedRoute,
               public dialog: MatDialog, public snackBar: MatSnackBar,
               private authorSvc: AuthorService) { }
-
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    this._initDataTable();
   }
 
   /**
@@ -74,14 +74,11 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
           this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
             'Auteur',
             {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+          this.paginator.pageIndex = 0;
           this._initDataTable();
         });
       }
     });
-  }
-  applyLookup(keyword) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    // this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   _toggleLoading(value) {
     setTimeout(() => this.loading = value);
@@ -103,18 +100,22 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filterChange.next(filterValue);
       });
   }
+
+  /**
+   * Initialisation data table, écoutes sur le tri, la pagination et la recherche
+   * @private
+   */
   _initDataTable() {
     this._initFilter();
     this.subSink.sink = merge(this.sort.sortChange, this.paginator.page, this.filterChange)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this._toggleLoading(true);
-          return this.authorSvc
-            .fetchAll(this.paginator.pageSize,
-              this.paginator.pageIndex * this.paginator.pageSize,
-                    this.sort.active, this.sort.direction,
-                    this.filterChange.value);
+      .pipe(startWith({}),
+            switchMap(() => {
+              this._toggleLoading(true);
+              return this.authorSvc
+                .fetchAll(this.paginator.pageSize,
+                    this.paginator.pageIndex * this.paginator.pageSize,
+                          this.sort.active, this.sort.direction,
+                          this.filterChange.value);
         }),
         map(data => {
           this._toggleLoading(false);
@@ -132,9 +133,5 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   ngOnDestroy(): void {
     this.subSink.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-    this._initDataTable();
   }
 }
