@@ -3,6 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {Author, AuthorService, Book} from '../../../services';
 import {FormlyFieldConfig} from "@ngx-formly/core";
 import {map} from "rxjs/operators";
+import {Pagination} from "../../../services/base/pagination.model";
 
 @Component({
   selector: 'app-book-edit-formly',
@@ -78,8 +79,8 @@ export class BookEditFormlyComponent implements OnInit {
         required: true,
         options: this.authorSvc
           .fetchAll()
-          .pipe(map((values: Author[], index: number) => {
-            return values.map((author: Author) => {
+          .pipe(map((values: Pagination<Author>, index: number) => {
+            return values.list.map((author: Author) => {
               return {value: author.id, label: `${author.first_name} ${author.last_name}` };
             });
         }))
