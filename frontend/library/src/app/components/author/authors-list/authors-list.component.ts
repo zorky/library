@@ -13,6 +13,7 @@ import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmatio
 import {Pagination} from "../../../services/base/pagination.model";
 import {Author, AuthorService} from '../../../services';
 import {SubSink} from '../../../services/subsink';
+import {AuthorContainerComponent} from "../author-container/author-container.component";
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -57,11 +58,17 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     }, '');
   }
   addAuthor() {
-    this.router.navigate(['/author/edit', {id: 0}], {relativeTo: this.route.parent});
+    this._openAuthorModale();
   }
   editAuthor(author: Author) {
-    this.router.navigate(['/author/edit', {id: author.id}], {relativeTo: this.route.parent});
+    this._openAuthorModale(author);
   }
+  /* addAuthor() {
+    this.router.navigate(['/author/edit', {id: 0}], {relativeTo: this.route.parent});
+  } */
+  /* editAuthor(author: Author) {
+    this.router.navigate(['/author/edit', {id: author.id}], {relativeTo: this.route.parent});
+  } */
   deleteAuthor(author: Author) {
     const data = new DialogData();
     data.title = 'Auteur';
@@ -77,6 +84,17 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
           this.paginator.pageIndex = 0;
           this._initDataTable();
         });
+      }
+    });
+  }
+  _openAuthorModale(author: Author = null) {
+    const data = author;
+    const dialogRef = this.dialog.open(AuthorContainerComponent, {data});
+    dialogRef.updatePosition({top: '50px'});
+    dialogRef.updateSize('600px');
+    dialogRef.afterClosed().subscribe((result: Author) => {
+      if (result) {
+        this._initDataTable();
       }
     });
   }

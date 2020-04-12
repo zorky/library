@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Author} from '../../../services';
 
 @Component({
@@ -8,8 +8,10 @@ import {Author} from '../../../services';
   styleUrls: ['./author-container.component.css']
 })
 export class AuthorContainerComponent implements OnInit {
-
-  constructor(public dialogRef: MatDialogRef<AuthorContainerComponent>) { }
+  author = this.data;
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: Author,
+              public dialogRef: MatDialogRef<AuthorContainerComponent>) {
+  }
 
   ngOnInit(): void {
   }
