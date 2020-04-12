@@ -11,7 +11,7 @@
                    placeholder="Prénom"
                    formControlName="first_name" required>
           </label>
-          <mat-hint align="end"><code>{{authorForm.get('first_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
+          <mat-hint align="end"><code>{{authorForm?.get('first_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
         </mat-form-field>
 
         <mat-form-field>
@@ -21,7 +21,7 @@
                    placeholder="Nom"
                    formControlName="last_name" required>
           </label>
-          <mat-hint align="end"><code>{{authorForm.get('last_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
+          <mat-hint align="end"><code>{{authorForm?.get('last_name').value?.length}}</code> / <code>{{maxInput}}</code></mat-hint>
         </mat-form-field>
       </div>
     </div>

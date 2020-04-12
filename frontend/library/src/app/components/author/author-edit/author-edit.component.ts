@@ -13,7 +13,7 @@ import {SubSink} from '../../../services/subsink';
 })
 export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
   @Input() author: Author;
-  @Input() onReturn = 'list';
+  @Input() onReturn = 'list'; // 'list' || ''
   @Output() authorUpdated = new EventEmitter<Author>();
 
   authorForm: FormGroup;
@@ -29,14 +29,25 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
               private authorSvc: AuthorService) {
   }
 
-  ngOnDestroy(): void {
-        this.subSink.unsubscribe();
-    }
-
   ngOnInit(): void {
     this._initAuthorIfUpdate();
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.author && changes.author.currentValue !== null && changes.author.isFirstChange() &&
+      changes.author.currentValue !== changes.author.previousValue) {
+      this._initForm(changes.author.currentValue);
+    }
+  }
+  ngOnDestroy(): void {
+    this.subSink.unsubscribe();
+  }
+  /**
+   * Sauvegarde de l'auteur
+   * A l'issue :
+   * - snackbar de confirmation
+   * - initialisation du formulaire avec les valeurs (notamment pour l'id qui peut changer de 0 à N si ajout)
+   * - notification Output de la sauvegarde
+   */
   save() {
     this.disabled = this.loading = true;
     this.authorSvc
@@ -45,13 +56,15 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe((author: Author) => {
         this.snackBar.
         open(`"${author.first_name} ${author.last_name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
-          'Auteur',
-          {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+          'Auteur', {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
         this._initForm(author);
-        console.log(author);
         this.authorUpdated.emit(author);
       });
   }
+
+  /**
+   * Retour à la liste selon le onReturn
+   */
   goList() {
     this.authorUpdated.emit(null);
     if (this.onReturn === 'list') {
@@ -62,7 +75,7 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
     if (this.formDirty) {
       return 'Abandonner';
     }
-    return 'Retourner';
+    return 'Fermer';
   }
 
   /**
@@ -70,6 +83,13 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
    *
    **/
 
+  /**
+   * Initialisation du FormGroup avec les contrôles : id, first_name, last_name
+   * - on met les valeurs dans le cas d'une modification le cas échéant
+   * - on écoute le valueChanges pour détecter toutes modifications des champs => changement du libellé du bouton de gauche
+   * @param {Author} author : l'auteur [optionnel]
+   * @private
+   */
   private _initForm(author: Author = null) {
     this.isUpdateMode = author && author.id > 0;
     this.authorForm = this.fb.group({
@@ -81,7 +101,13 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
       this.formDirty = true;
     });
   }
-  private _fetchAuthor(id) {
+
+  /**
+   * Recherche d'un auteur par son id, initialisation du formulaire avec ses valeurs
+   * @param {number} id : id de l'auteur recherché
+   * @private
+   */
+  private _fetchAuthor(id: number) {
     this.loading = true;
     this.subSink.sink = this.authorSvc
       .fetch(id)
@@ -90,22 +116,21 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
         this._initForm(author);
       });
   }
+
+  /**
+   * Si le component n'est pas inclus dans une modale (ie: la route est garnie par son id : /author/edit;id=1)
+   * Si l'author n'est pas injecté via l'Input
+   * alors une initialise le formulaire vide
+   * @private
+   */
   private _initAuthorIfUpdate() {
     const id = this.route.snapshot.params['id'];
     if (id && id !== '0') {
       this._fetchAuthor(id);
-    }
-    else {
+    } else {
       if (!this.author) {
         this._initForm();
       }
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.author && changes.author.currentValue !== null && changes.author.isFirstChange() &&
-        changes.author.currentValue !== changes.author.previousValue) {
-      this._initForm(changes.author.currentValue);
     }
   }
 }
