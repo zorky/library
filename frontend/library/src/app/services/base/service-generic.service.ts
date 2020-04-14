@@ -6,7 +6,7 @@ import {Pagination} from "./pagination.model";
 import {TemplatePaginationDjango} from "./pagination-django.model";
 
 /**
- * ServiceGeneric : fourniture d'un CRUD sur un type T
+ * ServiceGeneric : fourniture du CRUD sur un type T
  */
 export abstract class ServiceGeneric<T> {
   protected constructor(private http: HttpClient) {
@@ -30,7 +30,7 @@ export abstract class ServiceGeneric<T> {
   public fetchAll(limit: number = null, offset: number = null,
                   sort: string = null, order: SortDirection = null,
                   keyword: string = null,
-                  extraParams: Map<string, string> = null) {
+                  extraParams: Map<string, string> = null): Observable<Pagination<T>> {
     let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
     if (sort && sort !== '') {
       params = this._getSorting(sort, order, params);

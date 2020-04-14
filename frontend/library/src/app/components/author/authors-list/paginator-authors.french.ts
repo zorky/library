@@ -1,8 +1,8 @@
 import {MatPaginatorIntl} from "@angular/material/paginator";
 
-const frenchRangeLabel = (page: number, pageSize: number, length: number) => {
+const frenchAuthorRangeLabel = (page: number, pageSize: number, length: number) => {
   if (length === 0 || pageSize === 0) {
-    return `aucun élément trouvé`;
+    return `aucun auteur trouvé`;
   }
 
   length = Math.max(length, 0);
@@ -15,15 +15,15 @@ const frenchRangeLabel = (page: number, pageSize: number, length: number) => {
   return `${startIndex + 1} - ${endIndex} sur ${length}`;
 };
 
-export function getFrenchPaginatorIntl() {
+export function getAuthorFrenchPaginatorIntl() {
   const paginatorIntl = new MatPaginatorIntl();
 
-  paginatorIntl.itemsPerPageLabel = 'Eléments par page :';
+  paginatorIntl.itemsPerPageLabel = 'auteurs par page :';
   paginatorIntl.nextPageLabel = 'page suivante';
   paginatorIntl.previousPageLabel = 'page précédente';
   paginatorIntl.firstPageLabel = '1ère page';
   paginatorIntl.lastPageLabel = 'dernière page';
-  paginatorIntl.getRangeLabel = frenchRangeLabel;
+  paginatorIntl.getRangeLabel = frenchAuthorRangeLabel;
 
   return paginatorIntl;
 }

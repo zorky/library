@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {DialogData} from "../../confirmation-dialog/dialog-data.model";
 import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatPaginator} from "@angular/material/paginator";
+import {MatPaginator, MatPaginatorIntl} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 
 import {catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap, filter} from "rxjs/operators";
@@ -14,6 +14,7 @@ import {Pagination} from "../../../services/base/pagination.model";
 import {Author, AuthorService} from '../../../services';
 import {SubSink} from '../../../services/subsink';
 import {AuthorContainerComponent} from "../author-container/author-container.component";
+import {getAuthorFrenchPaginatorIntl} from "./paginator-authors.french";
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -21,23 +22,56 @@ import {AuthorContainerComponent} from "../author-container/author-container.com
 @Component({
   selector: 'app-authors-list',
   templateUrl: './authors-list.component.html',
-  styleUrls: ['./authors-list.component.css']
+  styleUrls: ['./authors-list.component.css'],
+  providers: [{ provide: MatPaginatorIntl, useValue: getAuthorFrenchPaginatorIntl() }]
 })
 export class AuthorsListComponent implements OnDestroy, AfterViewInit {
+  /**
+   * Datasource
+   */
   authors: Author[] = [];
-  columns = ['last_name', 'books'];
+  /**
+   * Champs à afficher
+   */
+  columns = ['auteur', 'books'];
+  /**
+   * Actions sur un auteur
+   */
   actions = ['action_delete', 'action_update'];
+  /**
+   * L'ensemble des colonnes à afficher : champs + actions
+   */
   displayedColumns = [...this.columns, ...this.actions];
-  loading = false;
+
+  /**
+   * Paramétres du paginator
+   */
   total = 0;
   PAGE_SIZE = 5;
+  /**
+   * progress bar on / off
+   */
+  loading = false;
+  /**
+   * Recherche d'auteurs, déclenchement au bout de 2 caractères
+   */
   private minFilter = 2;
+  /**
+   * Subject interne, pour lancer la recherche via api.search() à l'issue du fromEvent
+   */
   private filterChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
+  /**
+   * champ / input de recherche
+   */
+  @ViewChild('filter') filter: ElementRef;
+  /**
+   * lien vers les composants tri et paginator
+   */
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild('filter') filter: ElementRef;
-
+  /**
+   * Utilitaire subscribe / unsubscribe
+   */
   subSink = new SubSink();
 
   constructor(private router: Router,
@@ -48,6 +82,7 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     this._initDataTable();
   }
 
+
   /**
    * Livres de l'auteur
    * @param {Author} author : l'auteur
@@ -57,18 +92,36 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
       return i === 0 ? currentValue.name : `${acc}, ${currentValue.name}`;
     }, '');
   }
+  /**
+   * ACTIONS sur un auteur
+   */
+  /**
+   * Ajout d'un auteur via une modale
+   */
   addAuthor() {
     this._openAuthorModale();
   }
+  /**
+   * Edition d'un auteur via une modale
+   * @param {Author} author
+   */
   editAuthor(author: Author) {
     this._openAuthorModale(author);
   }
+
+  /**
+   * Alernatives pour l'ajout / édition via des routes vers une vue
+   */
   /* addAuthor() {
     this.router.navigate(['/author/edit', {id: 0}], {relativeTo: this.route.parent});
   } */
   /* editAuthor(author: Author) {
     this.router.navigate(['/author/edit', {id: author.id}], {relativeTo: this.route.parent});
   } */
+  /**
+   * Suppression d'un auteur, après confirmation
+   * @param {Author} author
+   */
   deleteAuthor(author: Author) {
     const data = new DialogData();
     data.title = 'Auteur';
@@ -87,6 +140,11 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
       }
     });
   }
+  /**
+   * Ouverture modale d'édition d'un auteur
+   * @param {Author} author
+   * @private
+   */
   _openAuthorModale(author: Author = null) {
     const data = author;
     const dialogRef = this.dialog.open(AuthorContainerComponent, {data});
@@ -98,13 +156,12 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
       }
     });
   }
-  _toggleLoading(value) {
-    setTimeout(() => this.loading = value);
-  }
-
   /**
    * Init filtre recherche
-   * Se déclenche au bout de 400 ms, sur une chaîne > minFilter et non vide
+   * Se déclenche au bout de 400 ms
+   * sur une chaîne différente que la précédente
+   * sur une chaîne > minFilter
+   * sur une chaîne non vide
    * @private
    */
   _initFilter() {
@@ -118,7 +175,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
         this.filterChange.next(filterValue);
       });
   }
-
   /**
    * Initialisation data table, écoutes sur le tri, la pagination et la recherche
    * @private
@@ -148,6 +204,9 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
         this.total = data.total;
         this.authors = data.list;
       });
+  }
+  _toggleLoading(value) {
+    setTimeout(() => this.loading = value);
   }
   ngOnDestroy(): void {
     this.subSink.unsubscribe();

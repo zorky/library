@@ -10,8 +10,8 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
     <mat-table #table [dataSource]="authors" matSort matSortDisableClear>
-      <ng-container matColumnDef="last_name" >
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Auteur</mat-header-cell>
+      <ng-container matColumnDef="auteur" >
+        <mat-header-cell *matHeaderCellDef mat-sort-header="last_name">Auteur</mat-header-cell>
         <mat-cell *matCellDef="let row">{{row.first_name}} {{row.last_name}}</mat-cell>
       </ng-container>
 
