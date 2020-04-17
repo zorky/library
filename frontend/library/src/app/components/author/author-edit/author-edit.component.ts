@@ -118,7 +118,7 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * Si le component n'est pas inclus dans une modale (ie: la route est garnie par son id : /author/edit;id=1)
+   * Si le component n'est pas inclus dans une modale alors la route est garnie par son id : /author/edit;id=1
    * Si l'author n'est pas injecté via l'Input
    * alors une initialise le formulaire vide
    * @private

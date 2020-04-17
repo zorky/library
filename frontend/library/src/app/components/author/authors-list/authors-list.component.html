@@ -2,15 +2,14 @@
   <mat-card-actions align="end" style="padding-right: 10px;">
     <button mat-raised-button (click)="addAuthor()">Ajouter un auteur</button>
   </mat-card-actions>
-  <mat-card-content [formGroup]="pageForm">
-    <mat-progress-bar *ngIf="loading"
-                      [mode]="'indeterminate'" color="warn"></mat-progress-bar>
+  <mat-card-content>
+    <mat-progress-bar *ngIf="loading" [mode]="'indeterminate'" color="warn"></mat-progress-bar>
     <!-- recherche auteurs -->
     <mat-form-field>
-      <input matInput
+      <input matInput type="text"
              placeholder="Rechercher un auteur"
              matTooltip="Rechercher un auteur sur son nom / prénom"
-             formControlName="search">
+             [formControl]="search">
     </mat-form-field>
     <!-- liste des auteurs --->
     <mat-table #table [dataSource]="authors" matSort matSortDisableClear>
@@ -43,11 +42,8 @@
       <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
-    <mat-paginator
-                   [length]="total"
-                   [pageSize]="PAGE_SIZE"
+    <mat-paginator [length]="total" [pageSize]="PAGE_SIZE"
                    [pageSizeOptions]="[2, 5, 10, 20, 50]"
-                   [showFirstLastButtons]="true"
-                   class="app-cm_data-table__paginator"></mat-paginator>
+                   [showFirstLastButtons]="true"></mat-paginator>
   </mat-card-content>
 </mat-card>

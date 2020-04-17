@@ -15,7 +15,7 @@ import {
   startWith,
   switchMap,
   filter,
-  tap
+  tap, concatMap
 } from "rxjs/operators";
 import {merge} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
@@ -38,9 +38,7 @@ import {ListParameters} from "../../../services/base/list-parameters.model";
   providers: [{ provide: MatPaginatorIntl, useValue: getAuthorFrenchPaginatorIntl() }]
 })
 export class AuthorsListComponent implements OnDestroy, AfterViewInit {
-  /**
-   * Datasource
-   */
+  /* Datasource */
   authors: Author[] = [];
   /**
    * Champs à afficher
@@ -64,18 +62,14 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    */
   loading = false;
   /**
-   * champ / input de recherche
-   */
-  @ViewChild('filter') filter: ElementRef;
-  /**
    * lien vers les composants tri et paginator
    */
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   /**
-   * Form pour le search
+   * FormControl pour la recherche
    */
-  pageForm: FormGroup = new FormGroup({search: new FormControl()});
+  search = new FormControl('');
   /**
    * Utilitaire subscribe / unsubscribe
    */
@@ -84,10 +78,8 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private dialog: MatDialog, public snackBar: MatSnackBar,
-              private fb: FormBuilder,
               private authorSvc: AuthorService) { }
   ngAfterViewInit(): void {
-    // this._initForm();
     this._initDataTable();
   }
 
@@ -163,7 +155,7 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     const parameters: ListParameters = {
       limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
       sort: this.sort.active, order: this.sort.direction,
-      keyword: this.pageForm.controls.search.value
+      keyword: this.search.value
     } as ListParameters;
     return this.authorSvc.fetchAll(parameters);
   }
@@ -172,7 +164,7 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   _initDataTable() {
-    const search$ = this.pageForm.controls.search.valueChanges
+    const search$ = this.search.valueChanges
       .pipe(debounceTime(400), distinctUntilChanged(),
             switchMap((value) => {
               this.paginator.pageIndex = 0;
