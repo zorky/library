@@ -2,13 +2,17 @@
   <mat-card-actions align="end" style="padding-right: 10px;">
     <button mat-raised-button (click)="addAuthor()">Ajouter un auteur</button>
   </mat-card-actions>
-  <mat-card-content>
+  <mat-card-content [formGroup]="pageForm">
     <mat-progress-bar *ngIf="loading"
                       [mode]="'indeterminate'" color="warn"></mat-progress-bar>
-    <mat-form-field floatLabel="never">
-      <input matInput #filter placeholder="Rechercher" matTooltip="Rechercher un auteur">
-      <mat-icon matSuffix>search</mat-icon>
+    <!-- recherche auteurs -->
+    <mat-form-field>
+      <input matInput
+             placeholder="Rechercher un auteur"
+             matTooltip="Rechercher un auteur sur son nom / prénom"
+             formControlName="search">
     </mat-form-field>
+    <!-- liste des auteurs --->
     <mat-table #table [dataSource]="authors" matSort matSortDisableClear>
       <ng-container matColumnDef="auteur" >
         <mat-header-cell *matHeaderCellDef mat-sort-header="last_name">Auteur</mat-header-cell>

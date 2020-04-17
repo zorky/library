@@ -5,9 +5,20 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatPaginator, MatPaginatorIntl} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
+import {concat, Observable, race} from 'rxjs';
 
-import {catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap, filter} from "rxjs/operators";
-import {BehaviorSubject, fromEvent, merge, of} from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  map,
+  startWith,
+  switchMap,
+  filter,
+  tap
+} from "rxjs/operators";
+import {merge} from 'rxjs';
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 
 import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
 import {Pagination} from "../../../services/base/pagination.model";
@@ -43,7 +54,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    * L'ensemble des colonnes à afficher : champs + actions
    */
   displayedColumns = [...this.columns, ...this.actions];
-
   /**
    * Paramétres du paginator
    */
@@ -54,14 +64,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    */
   loading = false;
   /**
-   * Recherche d'auteurs, déclenchement au bout de 2 caractères
-   */
-  private minFilter = 2;
-  /**
-   * Subject interne, pour lancer la recherche via api.search() à l'issue du fromEvent
-   */
-  private filterChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  /**
    * champ / input de recherche
    */
   @ViewChild('filter') filter: ElementRef;
@@ -71,18 +73,23 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   /**
+   * Form pour le search
+   */
+  pageForm: FormGroup = new FormGroup({search: new FormControl()});
+  /**
    * Utilitaire subscribe / unsubscribe
    */
   subSink = new SubSink();
 
   constructor(private router: Router,
               private route: ActivatedRoute,
-              public dialog: MatDialog, public snackBar: MatSnackBar,
+              private dialog: MatDialog, public snackBar: MatSnackBar,
+              private fb: FormBuilder,
               private authorSvc: AuthorService) { }
   ngAfterViewInit(): void {
+    // this._initForm();
     this._initDataTable();
   }
-
 
   /**
    * Livres de l'auteur
@@ -109,16 +116,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   editAuthor(author: Author) {
     this._openAuthorModale(author);
   }
-
-  /**
-   * Alernatives pour l'ajout / édition via des routes vers une vue
-   */
-  /* addAuthor() {
-    this.router.navigate(['/author/edit', {id: 0}], {relativeTo: this.route.parent});
-  } */
-  /* editAuthor(author: Author) {
-    this.router.navigate(['/author/edit', {id: author.id}], {relativeTo: this.route.parent});
-  } */
   /**
    * Suppression d'un auteur, après confirmation
    * @param {Author} author
@@ -158,53 +155,39 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     });
   }
   /**
-   * Init filtre recherche
-   * Se déclenche au bout de 400 ms
-   * sur une chaîne différente que la précédente
-   * sur une chaîne > minFilter
-   * sur une chaîne non vide
+   * Factorisation du switchMap
    * @private
    */
-  _initFilter() {
-    this.subSink.sink = fromEvent(this.filter.nativeElement, 'keyup')
-      .pipe(debounceTime(400), distinctUntilChanged(),
-            filter(() => this.filter.nativeElement.value.length >= this.minFilter ||
-                                 this.filter.nativeElement.value.length === 0))
-      .subscribe(() => {
-        const filterValue = this.filter?.nativeElement?.value?.trim().toLowerCase();
-        this.paginator.pageIndex = 0;
-        this.filterChange.next(filterValue);
-      });
+  _switchMap(): Observable<Pagination<Author>> {
+    this._toggleLoading(true);
+    const parameters: ListParameters = {
+      limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
+      sort: this.sort.active, order: this.sort.direction,
+      keyword: this.pageForm.controls.search.value
+    } as ListParameters;
+    return this.authorSvc.fetchAll(parameters);
   }
   /**
    * Initialisation data table, écoutes sur le tri, la pagination et la recherche
    * @private
    */
   _initDataTable() {
-    this._initFilter();
-    this.subSink.sink = merge(this.sort.sortChange, this.paginator.page, this.filterChange)
-      .pipe(startWith({}),
-            switchMap(() => {
-              this._toggleLoading(true);
-              const parameters: ListParameters = {
-                limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
-                sort: this.sort.active, order: this.sort.direction,
-                keyword: this.filterChange.value
-              } as ListParameters;
-              return this.authorSvc.fetchAll(parameters);
-        }),
-        map(data => {
-          this._toggleLoading(false);
-          return data;
-        }),
-        finalize(() => this._toggleLoading(false)),
-        catchError(() => {
-          this._toggleLoading(false);
-          return of(null);
-        })
-      ).subscribe((data: Pagination<Author>) => {
-        this.total = data.total;
-        this.authors = data.list;
+    const search$ = this.pageForm.controls.search.valueChanges
+      .pipe(debounceTime(400), distinctUntilChanged(),
+            switchMap((value) => {
+              this.paginator.pageIndex = 0;
+              return this._switchMap();
+            }));
+    const sortPaginate$ = merge(this.sort.sortChange, this.paginator.page)
+      .pipe(startWith({}), switchMap((values) => this._switchMap()));
+
+    this.subSink.sink = merge(search$, sortPaginate$)
+      .subscribe((data: Pagination<Author>) => {
+        this._toggleLoading(false);
+        if (data) {
+          this.total = data.total;
+          this.authors = data.list;
+        }
       });
   }
   _toggleLoading(value) {
