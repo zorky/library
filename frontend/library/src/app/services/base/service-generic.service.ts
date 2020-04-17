@@ -1,14 +1,20 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {map} from "rxjs/operators";
-import {Sort, SortDirection} from "@angular/material/sort";
-import {Pagination} from "./pagination.model";
-import {TemplatePaginationDjango} from "./pagination-django.model";
+import {AsyncSubject, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {Sort, SortDirection} from '@angular/material/sort';
+import {Pagination} from './pagination.model';
+import {TemplatePaginationDjango} from './pagination-django.model';
+import {ListParameters} from './list-parameters.model';
 
 /**
  * ServiceGeneric : fourniture du CRUD sur un type T
  */
 export abstract class ServiceGeneric<T> {
+  /**
+   * Cache d'éléments pour le fetchAll()
+   * @type {Pagination<T>}
+   */
+  protected cacheItems: AsyncSubject<Pagination<T>>;
   protected constructor(private http: HttpClient) {
   }
 
@@ -19,26 +25,13 @@ export abstract class ServiceGeneric<T> {
   abstract getRootUrl(urlApp?: string): string;
   /**
    * Obtient la liste des entités T
-   *
-   * @param {number} limit : le nombre maximim d'enregistrements
-   * @param {number} offset : à partir de quel enregistrement
-   * @param {string} sort : champ de tri
-   * @param {SortDirection} order : asc ou desc
-   * @param {string} keyword : chaine de recherche
-   * @param {Map<string, string>} extraParams : compléments de paramètres
+   * @param listParameters
    */
-  public fetchAll(limit: number = null, offset: number = null,
-                  sort: string = null, order: SortDirection = null,
-                  keyword: string = null,
-                  extraParams: Map<string, string> = null): Observable<Pagination<T>> {
-    let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
-    if (sort && sort !== '') {
-      params = this._getSorting(sort, order, params);
-    }
-    const url = this._getUrl();
-    return this.http
-      .get(url, {params})
-      .pipe(map(response => this._getPagination(response, limit)));
+  public fetchAll(listParameters: ListParameters = {} as ListParameters) {
+    return this._fetchAll(listParameters.limit, listParameters.offset,
+                          listParameters.sort, listParameters.order,
+                          listParameters.keyword, listParameters.extraParams,
+                          listParameters.withCache);
   }
 
   /**
@@ -108,7 +101,46 @@ export abstract class ServiceGeneric<T> {
   /***
    * PROTECTED
    ****/
-
+  /**
+   * Obtient la liste des entités T
+   *
+   * @param {number} limit : le nombre maximim d'enregistrements
+   * @param {number} offset : à partir de quel enregistrement
+   * @param {string} sort : champ de tri
+   * @param {SortDirection} order : asc ou desc
+   * @param {string} keyword : chaine de recherche
+   * @param {Map<string, string>} extraParams : compléments de paramètres
+   * @param {boolean} withCache : utilisation du cache ou non
+   */
+  protected _fetchAll(limit?: number, offset?: number,
+                      sort?: string, order?: SortDirection,
+                      keyword?: string,
+                      extraParams?: Map<string, string>,
+                      withCache?: boolean): Observable<Pagination<T>> {
+    let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
+    if (sort && sort !== '') {
+      params = this._getSorting(sort, order, params);
+    }
+    const url = this._getUrl();
+    if (! withCache) {
+      return this.http
+        .get(url, {params})
+        .pipe(map(response => this._getPagination(response, limit)));
+    } else {
+      if (! this.cacheItems) {
+        this.cacheItems = new AsyncSubject();
+        return this.http
+          .get<T[]>(url, {params})
+          .pipe(map(response => {
+            this.cacheItems.next(this._getPagination(response, limit));
+            this.cacheItems.complete();
+            return this._getPagination(response, limit);
+          }));
+      } else {
+        return this.cacheItems;
+      }
+    }
+  }
   /**
    * Détermine l'URL de l'API à utiliser, avec ou sans id
    * @param id

@@ -15,6 +15,7 @@ import {Author, AuthorService} from '../../../services';
 import {SubSink} from '../../../services/subsink';
 import {AuthorContainerComponent} from "../author-container/author-container.component";
 import {getAuthorFrenchPaginatorIntl} from "./paginator-authors.french";
+import {ListParameters} from "../../../services/base/list-parameters.model";
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -185,11 +186,12 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
       .pipe(startWith({}),
             switchMap(() => {
               this._toggleLoading(true);
-              return this.authorSvc
-                .fetchAll(this.paginator.pageSize,
-                    this.paginator.pageIndex * this.paginator.pageSize,
-                          this.sort.active, this.sort.direction,
-                          this.filterChange.value);
+              const parameters: ListParameters = {
+                limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
+                sort: this.sort.active, order: this.sort.direction,
+                keyword: this.filterChange.value
+              } as ListParameters;
+              return this.authorSvc.fetchAll(parameters);
         }),
         map(data => {
           this._toggleLoading(false);
