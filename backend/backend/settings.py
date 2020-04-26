@@ -86,6 +86,8 @@ CORS_ALLOW_HEADERS = (
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE  # debug toolbar
+    LOGIN_URL = 'rest_framework:login'
+    LOGOUT_URL = 'rest_framework:logout'
 
     def show_toolbar(request):
         """
@@ -183,6 +185,42 @@ CELERY_RESULT_BACKEND = 'redis://redis-plateform:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+
+# LOGS
+
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(module)s %(message)s'
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose'
+            }
+        },
+        'loggers': {
+            'django': {
+                'level': 'DEBUG',
+                'handlers': ['console'],
+                'propagate': True,
+            },
+            'django.db.backends': {
+                'level': 'ERROR',
+                'handlers': ['console'],
+                'propagate': False,
+            },
+            'django.utils.autoreload': {
+                'level': 'INFO',
+                'handlers': ['console'],
+                'propagate': False
+            }
+        },
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

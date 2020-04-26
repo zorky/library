@@ -1,7 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Book, BookService} from './services';
-import {SubSink} from "./services/subsink";
-import {finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',

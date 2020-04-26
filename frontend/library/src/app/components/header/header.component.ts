@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
+import {AuthService} from '../../services/authent/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +10,8 @@ import {Router} from "@angular/router";
 export class HeaderComponent implements OnInit {
   @Input() layout = 'end center';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,
+              public authentSvc: AuthService) { }
 
   ngOnInit(): void {
   }

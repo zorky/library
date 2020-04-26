@@ -52,6 +52,7 @@ export class BookEditComponent implements OnInit {
           'Livre',
           {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
         this._initForm(book);
+        this.formDirty = false;
     });
   }
   addAuthor() {

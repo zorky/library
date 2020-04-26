@@ -7,10 +7,12 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 
+import logging
+logger = logging.getLogger('django')
+
 from .filters import BookFilter, AuthorFilter
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer, BookAuthorSimpleSerializer
-
 
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.prefetch_related('books').all()
@@ -42,6 +44,10 @@ class BookViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = Book.objects.prefetch_related('author__books').select_related('author')
         return qs
+
+    def list(self, request, *args, **kwargs):
+        logger.debug('list books : {}'.format(self.request.user))
+        return super().list(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action == 'list':

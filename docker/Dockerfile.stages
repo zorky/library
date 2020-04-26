@@ -1,0 +1,27 @@
+ARG PYTHON_VERSION=3.7-slim-stretch
+
+FROM python:${PYTHON_VERSION} AS builder
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONIOENCODING=UTF-8
+RUN apt-get clean
+RUN apt-get update
+RUN mkdir /code && mkdir /static
+RUN apt-get clean
+RUN rm -fr /var/cache/apk/*
+WORKDIR /code
+COPY ./requirements/ /code/requirements/
+RUN pip install -U pip \
+  && pip wheel -w /code -r /code/requirements/requirements.txt
+
+FROM python:${PYTHON_VERSION}
+COPY --from=builder /code /code
+WORKDIR /code
+RUN pip install -U pip \
+    && pip install -r /code/requirements/requirements.txt \
+                   -f /code \
+    && rm -fr /code \
+    && rm -fr /root/.cache/pip/*
+EXPOSE 8100
+ADD . /code
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

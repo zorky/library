@@ -27,11 +27,19 @@ import {SafeHtmlPipe} from "./pipes/safe-html";
 import { AuthorContainerComponent } from './components/author/author-container/author-container.component';
 import {MatPaginatorIntl} from "@angular/material/paginator";
 import {getFrenchPaginatorIntl} from "./common/paginator.french";
+import {JwtModule} from "@auth0/angular-jwt";
+import {LoginComponent} from "./components/login/login.component";
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
+
+export function tokenGetter(): string {
+  return localStorage.getItem('token');
+}
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
+
     BooksListComponent,
     AuthorDisplayComponent,
     HeaderComponent,
@@ -49,6 +57,13 @@ import {getFrenchPaginatorIntl} from "./common/paginator.french";
   ],
   imports: [
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+        whitelistedDomains: ['localhost:4200', environment.host],
+        blacklistedRoutes: []
+      }
+    }),
     BrowserModule,
     BrowserAnimationsModule,
 

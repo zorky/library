@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  host: 'plateform',
   baseUrl: 'http://plateform',
 };
 

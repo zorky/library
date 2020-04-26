@@ -7,12 +7,15 @@ import {BookEditFormlyComponent} from './components/book/book-edit-formly/book-e
 import {NotFoundComponent} from "./components/not-found/not-found.component";
 import {AuthorEditComponent} from "./components/author/author-edit/author-edit.component";
 import {AuthorsListComponent} from "./components/author/authors-list/authors-list.component";
+import {LoginComponent} from "./components/login/login.component";
 
 const appRoutes: Routes = [
   {
     path: '',
     children: [
       {path: '', component: BooksListComponent},
+      {path: 'authent', component: LoginComponent},
+      {path: 'logout', component: LoginComponent},
       {path: 'books', component: BooksListComponent},
       {path: 'book/edit', component: BookEditComponent},
       {path: 'book-formly/edit', component: BookEditFormlyComponent},

@@ -6,8 +6,15 @@
 
   <!-- menu principal -->
   <mat-menu #libraryMenu="matMenu" xPosition="before">
+    <button mat-menu-item [matMenuTriggerFor]="authent">Authentification</button>
     <button mat-menu-item [matMenuTriggerFor]="booksMenu">Livres</button>
     <button mat-menu-item [matMenuTriggerFor]="authorMenu">Auteurs</button>
+  </mat-menu>
+  <!-- menu authentification -->
+  <mat-menu #authent="matMenu">
+    <button mat-menu-item (click)="go('/logout')">
+      {{authentSvc.isAuthenticated() ? 'Déconnexion' : 'Connexion'}}
+    </button>
   </mat-menu>
   <!-- menu livres -->
   <mat-menu #booksMenu="matMenu">
