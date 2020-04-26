@@ -176,6 +176,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# CELERY / REDIS
+
+CELERY_BROKER_URL = 'redis://redis-plateform:6379'
+CELERY_RESULT_BACKEND = 'redis://redis-plateform:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

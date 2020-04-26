@@ -23,5 +23,10 @@ services:
      - ./nginx/conf.d/plateform.conf:/etc/nginx/conf.d/plateform.conf
      - ../log/:/var/log/nginx/
 
+  redis-plateform:
+    image: redis
+    networks:
+      - api-plateform
+
 networks:
   api-plateform:

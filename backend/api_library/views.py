@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 
 from .filters import BookFilter, AuthorFilter
 from .models import Author, Book
-from .serializers import AuthorSerializer, BookSerializer
+from .serializers import AuthorSerializer, BookSerializer, BookAuthorSimpleSerializer
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -28,7 +28,6 @@ class AuthorViewSet(viewsets.ModelViewSet):
     page_size = 10
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.prefetch_related('author__books').select_related('author').all()
     serializer_class = BookSerializer
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
@@ -39,4 +38,17 @@ class BookViewSet(viewsets.ModelViewSet):
 
     pagination_class = LimitOffsetPagination
     page_size = 10
+
+    def get_queryset(self):
+        qs = Book.objects.prefetch_related('author__books').select_related('author')
+        return qs
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BookAuthorSimpleSerializer
+
+        return self.serializer_class
+
+    def get_serializer_context(self):
+        return super().get_serializer_context()
 
