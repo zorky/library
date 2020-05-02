@@ -1,14 +1,18 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {AsyncSubject, Observable} from 'rxjs';
-import {finalize, map, publishReplay, refCount} from 'rxjs/operators';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
+import {AsyncSubject, BehaviorSubject, Observable, of} from 'rxjs';
+import {catchError, finalize, map, publishReplay, refCount} from 'rxjs/operators';
 import {SortDirection} from '@angular/material/sort';
 import {Pagination} from './pagination.model';
 import {TemplatePaginationDjango} from './pagination-django.model';
 import {ListParameters} from './list-parameters.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Injectable, Injector} from '@angular/core';
+import {AppInjector} from '../../common/injector';
 
 /**
  * ServiceGeneric : fourniture du CRUD sur un type T
  */
+@Injectable({ providedIn: 'root' })
 export abstract class ServiceGeneric<T> {
   /**
    * Cache d'éléments pour le fetchAll()
@@ -16,8 +20,12 @@ export abstract class ServiceGeneric<T> {
    */
   protected cacheItems: AsyncSubject<Pagination<T>>;
   protected data: Observable<Pagination<T>>;
+  private snackBar: MatSnackBar;
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  public loading$ = this.loadingSubject.asObservable();
 
   protected constructor(private http: HttpClient) {
+    this.snackBar = AppInjector.getInjector().get(MatSnackBar);
   }
 
   /**
@@ -37,6 +45,9 @@ export abstract class ServiceGeneric<T> {
       listParameters?.withCache);
   }
 
+  /**
+   * suppression cache explicite
+   */
   clearCache() {
     this.data = null;
     this.cacheItems = null;
@@ -47,8 +58,13 @@ export abstract class ServiceGeneric<T> {
    * @param id : l'id recherché
    */
   public fetch(id) {
+    this.loadingSubject.next(true);
     const urlId = this._getUrl(id);
-    return this.http.get<T>(urlId);
+    return this.http
+      .get<T>(urlId)
+      .pipe(
+        finalize(() => this.loadingSubject.next(false)),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -56,10 +72,15 @@ export abstract class ServiceGeneric<T> {
    * @param object : l'objet à créer
    */
   public create(object: T) {
+    this.loadingSubject.next(true);
     const url = this._getUrl();
     return this.http
       .post(url, JSON.stringify(object),{headers: this._setHeadersJson()})
-      .pipe(finalize(() => this.clearCache()));
+      .pipe(finalize(() => {
+          this.clearCache();
+          this.loadingSubject.next(false);
+          }),
+            catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -68,8 +89,15 @@ export abstract class ServiceGeneric<T> {
    * @param key permet (optionnel) de préciser la prioprité clé de l'objet à modifier, par défaut 'id'
    */
   public update(object: T, key: string = 'id') {
+    this.loadingSubject.next(true);
     const url = this._getUrl(object[key]);
-    return this.http.put(url, object).pipe(finalize(() => this.clearCache()));
+    return this.http
+      .put(url, object)
+      .pipe(finalize(() => {
+          this.clearCache();
+          this.loadingSubject.next(false);
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -86,9 +114,17 @@ export abstract class ServiceGeneric<T> {
    * @param object l'objet à "patcher"
    * @param key permet (optionnel) de préciser la prioprité clé de l'objet à modifier, par défaut 'id'
    */
-  public patch(object: T, key: string = 'id'): Observable<T> {
+  public patch(object: T, key: string = 'id') {
+    this.loadingSubject.next(true);
     const url = this._getUrl(object[key]);
-    return this.http.patch<T>(url, object);
+    return this.http
+      .patch<T>(url, object)
+      .pipe(
+        finalize(() => {
+          this.loadingSubject.next(false);
+          this.clearCache();
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -126,19 +162,25 @@ export abstract class ServiceGeneric<T> {
                       keyword?: string,
                       extraParams?: Map<string, string>,
                       withCache?: boolean): Observable<Pagination<T>> {
+    this.loadingSubject.next(true);
     let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
     if (sort && sort !== '') {
       params = this._getSorting(sort, order, params);
     }
     const url = this._getUrl();
     if (!withCache) {
-      this.data = null;
-      this.cacheItems = null;
+      this.data = this.cacheItems = null;
       return this.http
         .get(url, {params})
-        .pipe(map(response => this._getPagination(response, limit)));
+        .pipe(
+          finalize(() => this.loadingSubject.next(false)),
+          map(response => this._getPagination(response, limit),
+          catchError((error) => of(this._catchError(error)))));
     } else {
-      return this._getCacheItemsMethod1(url, limit, params);
+      return this._getCacheItemsMethod1(url, limit, params)
+        .pipe(
+          finalize(() => this.loadingSubject.next(false)),
+          catchError((error) => of(this._catchError(error))));
     }
   }
 
@@ -298,8 +340,15 @@ export abstract class ServiceGeneric<T> {
    * @private
    */
   private _delete(id) {
+    this.loadingSubject.next(true);
     const url = this._getUrl(id);
-    return this.http.delete(url).pipe(finalize(() => this.clearCache()));
+    return this.http.delete(url)
+      .pipe(
+        finalize(() => {
+          this.loadingSubject.next(false);
+          this.clearCache();
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -310,5 +359,22 @@ export abstract class ServiceGeneric<T> {
   private _setHeadersJson(): HttpHeaders {
     const headers = new HttpHeaders();
     return headers.append('content-type', 'application/json');
+  }
+  private _catchError(error: HttpErrorResponse) {
+    console.log(error);
+    let message = error?.message || 'une erreur est survenue';
+    switch (error.status) {
+      case 401:
+        message = 'Accès non autorisé, veuillez vous connecter';
+        break;
+      case 403:
+        message = 'Accès interdit, vous n\'avez pas les droits suffisants';
+        break;
+    }
+    this.snackBar.open(`${message}`,
+      'ERREUR',
+      {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+    this.loadingSubject.next(false);
+    return null;
   }
 }

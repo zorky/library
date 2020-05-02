@@ -34,12 +34,12 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
+    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
     this._initPaginator();
     this._fetchBooks();
   }
 
   _fetchBooks() {
-    this.loading = true;
     this.books = [];
     const params = {
       limit: this.paginator.pageSize,
@@ -47,7 +47,6 @@ export class BooksListComponent implements OnInit, OnDestroy {
     } as ListParameters;
     this.subSink.sink = this.bookSvc
       .fetchAll(params)
-      .pipe(finalize(() => this.loading = false))
       .subscribe((books: Pagination<Book>) => {
         this.total = books.total;
         this.books = books.list;
@@ -69,11 +68,13 @@ export class BooksListComponent implements OnInit, OnDestroy {
     dialogRef.updatePosition({top: '50px'});
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.bookSvc.delete(book).subscribe(() => {
-          this.snackBar.open(`"${book.name}" bien supprimé`,
-            'Livre',
-            {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
-          this._fetchBooks();
+       this.subSink.sink = this.bookSvc.delete(book).subscribe(() => {
+         if (book) {
+           this.snackBar.open(`"${book.name}" bien supprimé`,
+             'Livre',
+             {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+           this._fetchBooks();
+         }
         });
       }
     });

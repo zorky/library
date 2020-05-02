@@ -38,22 +38,24 @@ export class BookEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
     this._initAuthors();
     this._initBookIfUpdate();
   }
 
   save() {
-    this.disabled = this.loading = true;
+    this.disabled = false;
     this.bookSvc
       .updateOrcreate(this.bookForm.value)
-      .pipe(finalize(() => this.disabled = this.loading = false))
+      .pipe(finalize(() => this.disabled = false))
       .subscribe((book: Book) => {
-        this.snackBar.
-          open(`"${book.name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
-          'Livre',
-          {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
-        this._initForm(book);
-        this.formDirty = false;
+        if (book) {
+          this.snackBar.open(`"${book.name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
+            'Livre',
+            {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+          this._initForm(book);
+          this.formDirty = false;
+        }
     });
   }
   addAuthor() {
@@ -83,7 +85,6 @@ export class BookEditComponent implements OnInit {
       this.loading = true;
       this.subSink.sink = this.bookSvc
         .fetch(id)
-        .pipe(finalize(() => this.loading = false))
         .subscribe((book: Book) => {
           this._initForm(book);
         });

@@ -33,7 +33,7 @@ import {ListParameters} from "../../../services/base/list-parameters.model";
   styleUrls: ['./authors-list.component.css'],
   providers: [{ provide: MatPaginatorIntl, useValue: getAuthorFrenchPaginatorIntl() }]
 })
-export class AuthorsListComponent implements OnDestroy, AfterViewInit {
+export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   /* Datasource */
   authors: Author[] = [];
   /**
@@ -75,7 +75,10 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
               private route: ActivatedRoute,
               private dialog: MatDialog, public snackBar: MatSnackBar,
               private authorSvc: AuthorService) { }
+  ngOnInit(): void {
+  }
   ngAfterViewInit(): void {
+    this.subSink.sink = this.authorSvc.loading$.subscribe((value) => this._toggleLoading(value));
     this._initDataTable();
   }
 
@@ -114,9 +117,9 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     data.message = `Souhaitez-vous supprimer cet auteur "${author.first_name} ${author.last_name}" ?`;
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data });
     dialogRef.updatePosition({top: '50px'});
-    dialogRef.afterClosed().subscribe(result => {
+    this.subSink.sink = dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.authorSvc.delete(author).subscribe(() => {
+        this.subSink.sink = this.authorSvc.delete(author).subscribe(() => {
           this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
             'Auteur',
             {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
@@ -136,7 +139,7 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     const dialogRef = this.dialog.open(AuthorContainerComponent, {data});
     dialogRef.updatePosition({top: '50px'});
     dialogRef.updateSize('600px');
-    dialogRef.afterClosed().subscribe((result: Author) => {
+    this.subSink.sink = dialogRef.afterClosed().subscribe((result: Author) => {
       if (result) {
         this._initDataTable();
       }
@@ -147,7 +150,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   _switchMap(): Observable<Pagination<Author>> {
-    this._toggleLoading(true);
     const parameters: ListParameters = {
       limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
       sort: this.sort.active, order: this.sort.direction,

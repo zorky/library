@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {ErrorHandler, Injector, LOCALE_ID, NgModule} from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -30,12 +30,20 @@ import {getFrenchPaginatorIntl} from "./common/paginator.french";
 import {JwtModule} from "@auth0/angular-jwt";
 import {LoginComponent} from "./components/login/login.component";
 import { BookSearchComponent } from './components/book/book-search/book-search.component';
+import {registerLocaleData} from "@angular/common";
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
+
+import localeFr from '@angular/common/locales/fr';
+import localeFrExtra from '@angular/common/locales/extra/fr';
+import HandlerError from './common/errors/error-handler';
+import {AppInjector} from "./common/injector";
+registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
 export function tokenGetter(): string {
   return localStorage.getItem('token');
 }
 
+// @ts-ignore
 @NgModule({
   declarations: [
     AppComponent,
@@ -82,8 +90,14 @@ export function tokenGetter(): string {
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
   ],
   providers: [
-    { provide: MatPaginatorIntl, useValue: getFrenchPaginatorIntl() }
+    { provide: MatPaginatorIntl, useValue: getFrenchPaginatorIntl() },
+    { provide: LOCALE_ID, useValue: 'fr-FR'},
+    { provide: ErrorHandler, useValue: HandlerError}
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private injector: Injector){
+    AppInjector.setInjector(injector);
+  }
+}

@@ -9,6 +9,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, Djan
     DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 
 import logging
+
+from .permissions import IsGestionnaireOrReadOnly
+
 logger = logging.getLogger('django')
 
 from .filters import BookFilter, AuthorFilter
@@ -32,7 +35,8 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
 class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsGestionnaireOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     # permission_classes = [IsAuthenticated]
     # permission_classes = [AllowAny]
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
