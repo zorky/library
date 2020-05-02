@@ -30,7 +30,7 @@ export abstract class ServiceGeneric<T> {
    * Obtient la liste des entités T
    * @param listParameters
    */
-  public fetchAll(listParameters?: ListParameters) {
+  public fetchAll(listParameters?: ListParameters): Observable<Pagination<T>> {
     return this._fetchAll(listParameters?.limit, listParameters?.offset,
       listParameters?.sort, listParameters?.order,
       listParameters?.keyword, listParameters?.extraParams,

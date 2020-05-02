@@ -29,6 +29,7 @@ import {MatPaginatorIntl} from "@angular/material/paginator";
 import {getFrenchPaginatorIntl} from "./common/paginator.french";
 import {JwtModule} from "@auth0/angular-jwt";
 import {LoginComponent} from "./components/login/login.component";
+import { BookSearchComponent } from './components/book/book-search/book-search.component';
 // import {FormlyMatToggleModule} from "@ngx-formly/material/toggle";
 
 export function tokenGetter(): string {
@@ -53,7 +54,8 @@ export function tokenGetter(): string {
 
     ConfirmationDialogComponent,
     SafeHtmlPipe,
-    AuthorContainerComponent
+    AuthorContainerComponent,
+    BookSearchComponent
   ],
   imports: [
     HttpClientModule,

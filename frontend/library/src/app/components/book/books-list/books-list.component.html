@@ -4,15 +4,16 @@
     <mat-card-actions align="end" style="padding-right: 10px;">
       <button mat-raised-button (click)="addBook()">Ajouter un livre</button>
       <button mat-raised-button
-              matBadge="{{books ? books.length : 0}}" matBadgePosition="after"
+              matBadge="{{total}}" matBadgePosition="after"
               matBadgeColor="accent" matBadgeOverlap="true" matBadgeSize="medium"
-              (click)="fetchBooks()">
+              (click)="_fetchBooks()">
         Charger les livres
       </button>
     </mat-card-actions>
     <mat-progress-bar *ngIf="loading"
                       [mode]="'indeterminate'" color="warn"></mat-progress-bar>
     <mat-divider></mat-divider>
+    <app-book-search (onBookSelected)="editBook($event)"></app-book-search>
     <mat-list>
       <mat-list-item *ngFor="let book of books">
         <div mat-line>
@@ -21,7 +22,7 @@
                       matTooltip="Modifier ce livre"><mat-icon>create</mat-icon></button>
             </span>
             <span mat-list-icon>
-              <button mat-icon-button (click)="deleteBook(book)"
+              <button mat-icon-button (click)="deleteBook(book)" color="warn"
                       matTooltip="Supprimer ce livre"><mat-icon>delete</mat-icon></button>
             </span>
             <span>{{book.name}}</span>
@@ -30,5 +31,8 @@
         <p mat-line><mat-divider class="mat-divider-dashed"></mat-divider></p>
       </mat-list-item>
     </mat-list>
+    <mat-paginator [length]="total" [pageSize]="PAGE_SIZE"
+                   [pageSizeOptions]="[2, 5, 10, 20, 50]"
+                   [showFirstLastButtons]="true"></mat-paginator>
   </mat-card-content>
 </mat-card>

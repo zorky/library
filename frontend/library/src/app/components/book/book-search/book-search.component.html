@@ -1,0 +1,14 @@
+<mat-progress-bar *ngIf="loading" [mode]="'indeterminate'" color="warn"></mat-progress-bar>
+<mat-form-field fxFlex="30">
+  <input matInput type="text"
+         placeholder="Rechercher un livre"
+         matTooltip="Rechercher un livre"
+         [formControl]="search"
+         [matAutocomplete]="auto">
+</mat-form-field>
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let book of booksSearch$ | async"
+              (onSelectionChange)="onSelect(book)">
+    <span matTooltip="{{book.name}} ({{book.author_obj?.first_name}} {{book.author_obj?.last_name}})">{{book.name}}</span>
+  </mat-option>
+</mat-autocomplete>

@@ -5,20 +5,16 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatPaginator, MatPaginatorIntl} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {concat, Observable, race} from 'rxjs';
+import {Observable} from 'rxjs';
 
 import {
   debounceTime,
   distinctUntilChanged,
-  finalize,
-  map,
   startWith,
-  switchMap,
-  filter,
-  tap, concatMap
-} from "rxjs/operators";
+  switchMap
+} from 'rxjs/operators';
 import {merge} from 'rxjs';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormControl} from "@angular/forms";
 
 import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
 import {Pagination} from "../../../services/base/pagination.model";
