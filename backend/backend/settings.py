@@ -86,8 +86,8 @@ CORS_ALLOW_HEADERS = (
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE  # debug toolbar
-    LOGIN_URL = 'rest_framework:login'
-    LOGOUT_URL = 'rest_framework:logout'
+    # LOGIN_URL = 'rest_framework:login'
+    # LOGOUT_URL = 'rest_framework:logout'
 
     def show_toolbar(request):
         """

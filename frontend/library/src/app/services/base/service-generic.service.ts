@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {AsyncSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {Sort, SortDirection} from '@angular/material/sort';
+import {finalize, map, publishReplay, refCount} from 'rxjs/operators';
+import {SortDirection} from '@angular/material/sort';
 import {Pagination} from './pagination.model';
 import {TemplatePaginationDjango} from './pagination-django.model';
 import {ListParameters} from './list-parameters.model';
@@ -15,6 +15,8 @@ export abstract class ServiceGeneric<T> {
    * @type {Pagination<T>}
    */
   protected cacheItems: AsyncSubject<Pagination<T>>;
+  protected data: Observable<Pagination<T>>;
+
   protected constructor(private http: HttpClient) {
   }
 
@@ -23,15 +25,21 @@ export abstract class ServiceGeneric<T> {
    * Exemple : `${environment.baseUrl}/plateform/books/`;
    */
   abstract getRootUrl(urlApp?: string): string;
+
   /**
    * Obtient la liste des entités T
    * @param listParameters
    */
-  public fetchAll(listParameters: ListParameters = {} as ListParameters) {
-    return this._fetchAll(listParameters.limit, listParameters.offset,
-                          listParameters.sort, listParameters.order,
-                          listParameters.keyword, listParameters.extraParams,
-                          listParameters.withCache);
+  public fetchAll(listParameters?: ListParameters) {
+    return this._fetchAll(listParameters?.limit, listParameters?.offset,
+      listParameters?.sort, listParameters?.order,
+      listParameters?.keyword, listParameters?.extraParams,
+      listParameters?.withCache);
+  }
+
+  clearCache() {
+    this.data = null;
+    this.cacheItems = null;
   }
 
   /**
@@ -49,7 +57,9 @@ export abstract class ServiceGeneric<T> {
    */
   public create(object: T) {
     const url = this._getUrl();
-    return this.http.post(url, JSON.stringify(object), {headers: this._setHeadersJson()});
+    return this.http
+      .post(url, JSON.stringify(object),{headers: this._setHeadersJson()})
+      .pipe(finalize(() => this.clearCache()));
   }
 
   /**
@@ -59,7 +69,7 @@ export abstract class ServiceGeneric<T> {
    */
   public update(object: T, key: string = 'id') {
     const url = this._getUrl(object[key]);
-    return this.http.put(url, object);
+    return this.http.put(url, object).pipe(finalize(() => this.clearCache()));
   }
 
   /**
@@ -97,7 +107,6 @@ export abstract class ServiceGeneric<T> {
   public deleteById(id) {
     return this._delete(id);
   }
-
   /***
    * PROTECTED
    ****/
@@ -122,25 +131,17 @@ export abstract class ServiceGeneric<T> {
       params = this._getSorting(sort, order, params);
     }
     const url = this._getUrl();
-    if (! withCache) {
+    if (!withCache) {
+      this.data = null;
+      this.cacheItems = null;
       return this.http
         .get(url, {params})
         .pipe(map(response => this._getPagination(response, limit)));
     } else {
-      if (! this.cacheItems) {
-        this.cacheItems = new AsyncSubject();
-        return this.http
-          .get<T[]>(url, {params})
-          .pipe(map(response => {
-            this.cacheItems.next(this._getPagination(response, limit));
-            this.cacheItems.complete();
-            return this._getPagination(response, limit);
-          }));
-      } else {
-        return this.cacheItems;
-      }
+      return this._getCacheItemsMethod1(url, limit, params);
     }
   }
+
   /**
    * Détermine l'URL de l'API à utiliser, avec ou sans id
    * @param id
@@ -200,7 +201,7 @@ export abstract class ServiceGeneric<T> {
    * @return {HttpParams}
    * @protected
    */
-  protected _getSorting(sort: string, order: SortDirection, params: HttpParams) {
+  protected _getSorting(sort: string, order: SortDirection, params: HttpParams): HttpParams {
     let orderDirection = '';
     let orderField = '';
     if (order) {
@@ -249,13 +250,56 @@ export abstract class ServiceGeneric<T> {
    ****/
 
   /**
+   * Gestion du cache pour les éléments de la pagination
+   * via publishReplay / refCount
+   * @param url
+   * @param limit
+   * @param params
+   * @private
+   */
+  private _getCacheItemsMethod1(url: string, limit: number, params: HttpParams) {
+    if (!this.data) {
+      this.cacheItems = new AsyncSubject();
+      this.data = this.http
+        .get<T[]>(url, {params})
+        .pipe(map(response => {
+            return this._getPagination(response, limit);
+          }),
+          publishReplay(1),
+          refCount());
+    }
+    return this.data;
+  }
+  /**
+   * Gestion du cache pour les éléments de la pagination
+   * via AsyncSubject
+   * @param url
+   * @param limit
+   * @param params
+   * @private
+   */
+  private _getCacheItemsMethod2(url: string, limit: number, params: HttpParams) {
+    if (! this.cacheItems) {
+      this.cacheItems = new AsyncSubject();
+      return this.http
+        .get<T[]>(url, {params})
+        .pipe(map(response => {
+            const page = this._getPagination(response, limit);
+            this.cacheItems.next(page);
+            this.cacheItems.complete();
+            return page;
+          }));
+    }
+    return this.cacheItems;
+  }
+  /**
    * Factorisation delete / deleteById
    * @param id
    * @private
    */
   private _delete(id) {
     const url = this._getUrl(id);
-    return this.http.delete(url);
+    return this.http.delete(url).pipe(finalize(() => this.clearCache()));
   }
 
   /**

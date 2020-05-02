@@ -1,12 +1,18 @@
 <mat-toolbar class="mat-elevation-z6" color="primary" fxLayoutAlign="{{layout}}">
-  <span><a [routerLink]="['/']">Mes livres</a></span><mat-icon>account_balance</mat-icon>
+  <span><a [routerLink]="['/']">Mes livres</a></span>
+  <mat-icon>account_balance</mat-icon>
+  <mat-divider [vertical]="true" style="border-right-color: #ffffff;"> </mat-divider>
   <button mat-icon-button [matMenuTriggerFor]="libraryMenu">
-    <mat-icon>more_vert</mat-icon>
+    <mat-icon>{{authentSvc.isAuthenticated() ? 'person_pin' : 'more_vert' }}</mat-icon>
   </button>
 
   <!-- menu principal -->
   <mat-menu #libraryMenu="matMenu" xPosition="before">
-    <button mat-menu-item [matMenuTriggerFor]="authent">Authentification</button>
+    <button mat-menu-item (click)="go('/logout')">
+      <mat-icon *ngIf="authentSvc.isAuthenticated()">power_settings_new</mat-icon>
+      {{authentSvc.isAuthenticated() ? 'Déconnexion' : 'Connexion'}}
+    </button>
+    <!-- <button mat-menu-item [matMenuTriggerFor]="authent">Authentification</button> -->
     <button mat-menu-item [matMenuTriggerFor]="booksMenu">Livres</button>
     <button mat-menu-item [matMenuTriggerFor]="authorMenu">Auteurs</button>
   </mat-menu>

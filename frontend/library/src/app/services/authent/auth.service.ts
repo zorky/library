@@ -18,6 +18,11 @@ export class AuthService {
   constructor(private http: HttpClient,
               private jwtService: JwtHelperService) {
   }
+  /**
+   * Authentification /api-token-auth/
+   * @param {UserAuthent} user : l'utilisateur a connecté
+   * @return any dont token
+   */
   logon(user: UserAuthent): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -62,6 +67,11 @@ export class AuthService {
     this.userSource.next(this.user);
   }
 
+  /**
+   * Stockage du token et de quelques informations user
+   * @param data
+   * @private
+   */
   private _authenticated(data: any): User {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));

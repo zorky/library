@@ -10,6 +10,7 @@ import {SubSink} from '../../../services/subsink';
 import {Author, AuthorService, Book, BookService} from '../../../services';
 import {AuthorContainerComponent} from '../../author/author-container/author-container.component';
 import {Pagination} from "../../../services/base/pagination.model";
+import {ListParameters} from "../../../services/base/list-parameters.model";
 
 @Component({
   selector: 'app-book-edit',
@@ -61,8 +62,7 @@ export class BookEditComponent implements OnInit {
     dialogRef.updateSize('600px');
     dialogRef.afterClosed().subscribe((result: Author) => {
       if (result) {
-        console.log(result);
-        this._initAuthors();
+        this._initAuthors(false);
         this.bookForm.patchValue({author: result.id});
       }
     });
@@ -78,7 +78,7 @@ export class BookEditComponent implements OnInit {
   }
 
   private _initBookIfUpdate() {
-    const id = this.route.snapshot.params['id'];
+    const id = this.route.snapshot.params.id;
     if (id && id !== '0') {
       this.loading = true;
       this.subSink.sink = this.bookSvc
@@ -92,8 +92,11 @@ export class BookEditComponent implements OnInit {
     }
   }
 
-  private _initAuthors() {
-    this.authors$ = this.authorSvc.fetchAll();
+  private _initAuthors(cache: boolean = true) {
+    const params: ListParameters = {
+      withCache: cache
+    } as ListParameters;
+    this.authors$ = this.authorSvc.fetchAll(params);
   }
 
   private _initForm(book: Book = null) {
