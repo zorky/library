@@ -21,7 +21,8 @@ from .serializers import AuthorSerializer, BookSerializer, BookAuthorSimpleSeria
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.prefetch_related('books').all()
     serializer_class = AuthorSerializer
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
+    permission_classes = [IsGestionnaireOrReadOnly]
     filter_backends =  (DjangoFilterBackend, SearchFilter, OrderingFilter, )
     filterset_class = AuthorFilter
 

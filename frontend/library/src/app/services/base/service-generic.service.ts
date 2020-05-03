@@ -174,13 +174,13 @@ export abstract class ServiceGeneric<T> {
         .get(url, {params})
         .pipe(
           finalize(() => this.loadingSubject.next(false)),
-          map(response => this._getPagination(response, limit),
-          catchError((error) => of(this._catchError(error)))));
+          catchError((error) => of(this._catchError(error))),
+          map(response => this._getPagination(response, limit)));
     } else {
       return this._getCacheItemsMethod1(url, limit, params)
         .pipe(
-          finalize(() => this.loadingSubject.next(false)),
-          catchError((error) => of(this._catchError(error))));
+          catchError((error) => of(this._catchError(error))),
+          finalize(() => this.loadingSubject.next(false)));
     }
   }
 
@@ -363,17 +363,19 @@ export abstract class ServiceGeneric<T> {
   private _catchError(error: HttpErrorResponse) {
     console.log(error);
     let message = error?.message || 'une erreur est survenue';
+    const errorMsg = error?.error.detail || error?.message || 'une erreur est survenue';
     switch (error.status) {
       case 401:
-        message = 'Accès non autorisé, veuillez vous connecter';
+        message = `Accès non autorisé, veuillez vous connecter (${errorMsg})`;
         break;
       case 403:
-        message = 'Accès interdit, vous n\'avez pas les droits suffisants';
+        message = `Accès interdit, vous n'avez pas les droits suffisants (${errorMsg})`;
         break;
     }
+    this.clearCache();
     this.snackBar.open(`${message}`,
       'ERREUR',
-      {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+      {duration: 3000, verticalPosition: 'top', horizontalPosition: 'end'});
     this.loadingSubject.next(false);
     return null;
   }

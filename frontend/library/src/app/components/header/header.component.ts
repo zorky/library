@@ -16,6 +16,9 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getUser() {
+    return `${this.authentSvc?.getUser()?.first_name} ${this.authentSvc?.getUser()?.last_name}`;
+  }
   go(url) {
     this.router.navigate([url]);
   }

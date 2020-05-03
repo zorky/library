@@ -36,7 +36,8 @@ import {registerLocaleData} from "@angular/common";
 import localeFr from '@angular/common/locales/fr';
 import localeFrExtra from '@angular/common/locales/extra/fr';
 import HandlerError from './common/errors/error-handler';
-import {AppInjector} from "./common/injector";
+import {AppInjector} from './common/injector';
+
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
 export function tokenGetter(): string {
@@ -71,7 +72,9 @@ export function tokenGetter(): string {
       config: {
         tokenGetter,
         whitelistedDomains: ['localhost:4200', environment.host],
-        blacklistedRoutes: []
+        blacklistedRoutes: [],
+        skipWhenExpired: true,
+        // throwNoTokenError: true
       }
     }),
     BrowserModule,
