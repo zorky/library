@@ -23,6 +23,9 @@ import {SubSink} from '../../../services/subsink';
 import {AuthorContainerComponent} from "../author-container/author-container.component";
 import {getAuthorFrenchPaginatorIntl} from "./paginator-authors.french";
 import {ListParameters} from "../../../services/base/list-parameters.model";
+import {UserGroups} from "../../../common/roles/usergroups.model";
+import {UserGroupsService} from "../../../common/roles/user-groups.service";
+import {roles} from "../../../common/roles/roles.enum";
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -47,7 +50,8 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   /**
    * L'ensemble des colonnes à afficher : champs + actions
    */
-  displayedColumns = [...this.columns, ...this.actions];
+  // displayedColumns = [...this.columns, ...this.actions];
+  displayedColumns = [...this.columns];
   /**
    * Paramétres du paginator
    */
@@ -67,6 +71,11 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   search = new FormControl('');
   /**
+   * Connecté et ses groupes
+   */
+  connecte: UserGroups;
+  rolesUser = roles;
+  /**
    * Utilitaire subscribe / unsubscribe
    */
   subSink = new SubSink();
@@ -74,8 +83,15 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private dialog: MatDialog, public snackBar: MatSnackBar,
+              private userGrpsSvc: UserGroupsService,
               private authorSvc: AuthorService) { }
   ngOnInit(): void {
+    this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => {
+      if (this.userGrpsSvc.hasRole(connecte, roles.gestionnaire)) {
+        this.displayedColumns = [...this.columns, ...this.actions];
+      }
+      this.connecte = connecte;
+    });
   }
   ngAfterViewInit(): void {
     this.subSink.sink = this.authorSvc.loading$.subscribe((value) => this._toggleLoading(value));

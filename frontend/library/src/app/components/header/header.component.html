@@ -9,7 +9,6 @@
   <!--  -->
   <!-- menu principal -->
   <mat-menu #libraryMenu="matMenu" xPosition="before">
-
     <mat-divider *ngIf="authentSvc.isAuthenticated()"></mat-divider>
     <button mat-menu-item (click)="go('/logout')">
       <mat-icon *ngIf="authentSvc.isAuthenticated()">power_settings_new</mat-icon>
@@ -30,7 +29,7 @@
     <button mat-menu-item (click)="go('/books')">
       Liste
     </button>
-    <button mat-menu-item (click)="go('/book/edit')">
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/book/edit')">
       Ajouter un livre
     </button>
   </mat-menu>
@@ -39,7 +38,7 @@
     <button mat-menu-item (click)="go('/authors')">
       Liste
     </button>
-    <button mat-menu-item (click)="go('/author/edit')">
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/author/edit')">
       Ajouter un auteur
     </button>
   </mat-menu>

@@ -1,5 +1,5 @@
 # api_library/serializers.py
-
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .models import Author, Book
@@ -36,3 +36,17 @@ class BookAuthorSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = '__all__'
+
+
+class UserGroupsSerializer(serializers.ModelSerializer):
+    groups = serializers.SerializerMethodField()
+
+    def get_groups(self, obj):
+        return [group.name for group in obj.groups.all()]
+
+    class Meta:
+        model = User
+        fields = ['username', 'groups',
+                  'user_permissions',
+                  'first_name', 'last_name',
+                  'is_active', 'date_joined']

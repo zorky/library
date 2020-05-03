@@ -12,6 +12,9 @@ import {DialogData} from '../../confirmation-dialog/dialog-data.model';
 import {Pagination} from '../../../services/base/pagination.model';
 import {ListParameters} from '../../../services/base/list-parameters.model';
 import {getBookFrenchPaginatorIntl} from './paginator-books.french';
+import {UserGroupsService} from '../../../common/roles/user-groups.service';
+import {UserGroups} from "../../../common/roles/usergroups.model";
+import {roles} from "../../../common/roles/roles.enum";
 
 @Component({
   selector: 'app-books-list',
@@ -25,15 +28,19 @@ export class BooksListComponent implements OnInit, OnDestroy {
   loading = false;
   PAGE_SIZE = 5;
   total = 0;
+  connecte: UserGroups;
+  rolesUser = roles;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
               public snackBar: MatSnackBar,
               public dialog: MatDialog,
+              private userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
+    this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
     this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
     this._initPaginator();
     this._fetchBooks();
