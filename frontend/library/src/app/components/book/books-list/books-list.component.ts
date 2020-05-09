@@ -13,8 +13,8 @@ import {Pagination} from '../../../services/base/pagination.model';
 import {ListParameters} from '../../../services/base/list-parameters.model';
 import {getBookFrenchPaginatorIntl} from './paginator-books.french';
 import {UserGroupsService} from '../../../common/roles/user-groups.service';
-import {UserGroups} from "../../../common/roles/usergroups.model";
-import {roles} from "../../../common/roles/roles.enum";
+import {UserGroups} from '../../../common/roles/usergroups.model';
+import {roles} from '../../../common/roles/roles.enum';
 
 @Component({
   selector: 'app-books-list',
@@ -36,7 +36,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               public snackBar: MatSnackBar,
               public dialog: MatDialog,
-              private userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
+              public userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
