@@ -13,11 +13,13 @@ export class GestionnaireGuard implements CanLoad, CanActivate {
   canLoad(route: Route): Observable<boolean> {
     return this.isGestionnaire();
   }
-
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean>  {
     return this.isGestionnaire();
   }
 
+  /**
+   * Est-il un gestionnaire ?
+   */
   private isGestionnaire(): Observable<boolean> {
     return new Observable<boolean>(observer => {
       this.userGrpService.connecte$.subscribe(connecte => {
@@ -28,6 +30,11 @@ export class GestionnaireGuard implements CanLoad, CanActivate {
     });
   }
 
+  /**
+   * Un gestionnaire est soit un gestionnaire, soit un admin
+   * @param connecte
+   * @private
+   */
   private _gestionnaire(connecte: UserGroups) {
     return this.userGrpService.hasRole(connecte, roles.gestionnaire) ||
            this.userGrpService.hasRole(connecte, roles.admin);
