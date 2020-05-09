@@ -72,8 +72,8 @@ export function tokenGetter(): string {
       config: {
         tokenGetter,
         whitelistedDomains: [
-          'localhost:4200',
-          // environment.host
+          'localhost:4200', 'plateform',
+          environment.host
         ],
         blacklistedRoutes: [],
         skipWhenExpired: true,
