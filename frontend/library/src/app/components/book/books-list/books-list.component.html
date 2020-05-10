@@ -2,12 +2,12 @@
   <mat-card-title>Livres</mat-card-title>
   <mat-card-content>
     <mat-card-actions align="end" style="padding-right: 10px;">
-      <button *ngIf="connecte && userGrpsSvc.hasRole(connecte, rolesUser.gestionnaire)"
+      <button *ngIf="isGest()"
         mat-raised-button (click)="addBook()">Ajouter un livre</button>
       <button mat-raised-button
               matBadge="{{total}}" matBadgePosition="after"
               matBadgeColor="accent" matBadgeOverlap="true" matBadgeSize="medium"
-              (click)="_fetchBooks()">
+              (click)="fetchBooks()">
         Charger les livres
       </button>
     </mat-card-actions>
@@ -18,7 +18,7 @@
     <mat-list>
       <mat-list-item *ngFor="let book of books">
         <div mat-line>
-            <ng-container *ngIf="connecte && userGrpsSvc.hasRole(connecte, rolesUser.gestionnaire)">
+            <ng-container *ngIf="isGest()">
               <span mat-list-icon>
                 <button mat-icon-button (click)="editBook(book)"
                         matTooltip="Modifier ce livre"><mat-icon>create</mat-icon></button>

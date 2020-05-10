@@ -26,7 +26,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   getUser() {
     return `${this.authentSvc?.getUser()?.first_name} ${this.authentSvc?.getUser()?.last_name}`;
   }
-  go(url) {
+  go(url, logout = true) {
+    if (logout) {
+      this.authentSvc.logout();
+    }
     this.router.navigate([url]);
   }
   canAcces() {

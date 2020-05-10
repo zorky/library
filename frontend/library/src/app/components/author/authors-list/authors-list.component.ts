@@ -14,13 +14,14 @@ import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmatio
 import {Pagination} from '../../../services/base/pagination.model';
 import {Author, AuthorService} from '../../../services';
 import {SubSink} from '../../../services/subsink';
-import {AuthorContainerComponent} from '../author-container/author-container.component';
+import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
 import {getAuthorFrenchPaginatorIntl} from './paginator-authors.french';
 import {ListParameters} from '../../../services/base/list-parameters.model';
 import {UserGroups} from '../../../common/roles/usergroups.model';
 import {UserGroupsService} from '../../../common/roles/user-groups.service';
 import {roles} from '../../../common/roles/roles.enum';
 import {DialogData} from '../../confirmation-dialog/dialog-data.model';
+import {AuthService} from '../../../services/authent/auth.service';
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -78,6 +79,7 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private dialog: MatDialog, public snackBar: MatSnackBar,
+              private authSvc: AuthService,
               public userGrpsSvc: UserGroupsService,
               private authorSvc: AuthorService) { }
   ngOnInit(): void {
@@ -139,6 +141,9 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     });
+  }
+  isGest() {
+    return this.authSvc.isAuthenticated() && this.connecte && this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
   }
   /**
    * Ouverture modale d'édition d'un auteur

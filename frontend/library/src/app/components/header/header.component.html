@@ -10,7 +10,7 @@
   <!-- menu principal -->
   <mat-menu #libraryMenu="matMenu" xPosition="before">
     <mat-divider *ngIf="authentSvc.isAuthenticated()"></mat-divider>
-    <button mat-menu-item (click)="go('/logout')">
+    <button mat-menu-item (click)="go('/login')">
       <mat-icon *ngIf="authentSvc.isAuthenticated()">power_settings_new</mat-icon>
       {{authentSvc.isAuthenticated() ? 'Déconnexion' : 'Connexion'}}
     </button>
@@ -20,7 +20,7 @@
   </mat-menu>
   <!-- menu authentification -->
   <mat-menu #authent="matMenu">
-    <button mat-menu-item (click)="go('/logout')">
+    <button mat-menu-item (click)="go('/login', authentSvc.isAuthenticated())">
       {{authentSvc.isAuthenticated() ? 'Déconnexion' : 'Connexion'}}
     </button>
   </mat-menu>
@@ -29,7 +29,7 @@
     <button mat-menu-item (click)="go('/books')">
       Liste
     </button>
-    <button *ngIf="canAcces()" mat-menu-item (click)="go('/book/edit')">
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/book/edit')">
       Ajouter un livre
     </button>
   </mat-menu>
@@ -38,7 +38,7 @@
     <button mat-menu-item (click)="go('/authors')">
       Liste
     </button>
-    <button *ngIf="canAcces()" mat-menu-item (click)="go('/author/edit')">
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/author/edit')">
       Ajouter un auteur
     </button>
   </mat-menu>

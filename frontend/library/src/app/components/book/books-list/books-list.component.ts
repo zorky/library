@@ -15,6 +15,7 @@ import {getBookFrenchPaginatorIntl} from './paginator-books.french';
 import {UserGroupsService} from '../../../common/roles/user-groups.service';
 import {UserGroups} from '../../../common/roles/usergroups.model';
 import {roles} from '../../../common/roles/roles.enum';
+import {AuthService} from '../../../services/authent/auth.service';
 
 @Component({
   selector: 'app-books-list',
@@ -36,6 +37,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               public snackBar: MatSnackBar,
               public dialog: MatDialog,
+              private authSvc: AuthService,
               public userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
               private bookSvc: BookService) { }
 
@@ -43,28 +45,13 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
     this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
     this._initPaginator();
-    this._fetchBooks();
+    this.fetchBooks();
   }
-
-  _fetchBooks() {
-    this.books = [];
-    const params = {
-      limit: this.paginator.pageSize,
-      offset: this.paginator.pageIndex * this.paginator.pageSize
-    } as ListParameters;
-    this.subSink.sink = this.bookSvc
-      .fetchAll(params)
-      .subscribe((books: Pagination<Book>) => {
-        this.total = books.total;
-        this.books = books.list;
-      });
-  }
-
   editBook(book: Book) {
-    this.router.navigate(['/book/edit', {id: book.id}], {relativeTo: this.route.parent});
+    this.router.navigate(['/gestion/book/edit', {id: book.id}], {relativeTo: this.route.parent});
   }
   addBook() {
-    this.router.navigate(['/book/edit', {id: 0}], {relativeTo: this.route.parent});
+    this.router.navigate(['/gestion/book/edit', {id: 0}], {relativeTo: this.route.parent});
   }
   deleteBook(book: Book) {
     const data = new DialogData();
@@ -80,15 +67,31 @@ export class BooksListComponent implements OnInit, OnDestroy {
            this.snackBar.open(`"${book.name}" bien supprimé`,
              'Livre',
              {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
-           this._fetchBooks();
+           this.fetchBooks();
          }
         });
       }
     });
   }
+  fetchBooks() {
+    this.books = [];
+    const params = {
+      limit: this.paginator.pageSize,
+      offset: this.paginator.pageIndex * this.paginator.pageSize
+    } as ListParameters;
+    this.subSink.sink = this.bookSvc
+      .fetchAll(params)
+      .subscribe((books: Pagination<Book>) => {
+        this.total = books.total;
+        this.books = books.list;
+      });
+  }
+  isGest() {
+    return this.authSvc.isAuthenticated() && this.connecte && this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
+  }
   private _initPaginator() {
     this.subSink.sink = this.paginator.page
-      .subscribe((page) => this._fetchBooks());
+      .subscribe((page) => this.fetchBooks());
   }
   ngOnDestroy(): void {
     this.subSink.unsubscribe();

@@ -17,6 +17,7 @@ export class AuthService {
 
   constructor(private http: HttpClient,
               private jwtService: JwtHelperService) {
+    this.sendUser();
   }
   /**
    * Authentification /api-token-auth/
@@ -36,22 +37,16 @@ export class AuthService {
   isAuthenticated() {
     return !this.jwtService.isTokenExpired();
   }
-
-  loggedIn() {
-    return !this.jwtService.isTokenExpired();
-  }
-
   isTokenExpired() {
     return this.jwtService.isTokenExpired();
   }
-
   getTokenExpiredDate() {
     return this.jwtService.getTokenExpirationDate();
   }
-
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // this.sendUser();
   }
 
   getToken() {
@@ -63,7 +58,7 @@ export class AuthService {
   }
 
   sendUser() {
-    this.user = (JSON.parse(localStorage.getItem('user')) as User);
+    this.user = this.getUser();
     this.userSource.next(this.user);
   }
 
@@ -73,6 +68,7 @@ export class AuthService {
    * @private
    */
   private _authenticated(data: any): User {
+    console.log(data);
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     this.userSource.next(data.user as User);

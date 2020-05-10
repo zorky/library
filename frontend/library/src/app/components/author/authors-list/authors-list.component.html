@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-actions align="end" style="padding-right: 10px;">
-    <button *ngIf="connecte && userGrpsSvc.hasRole(connecte, rolesUser.gestionnaire)"
+    <button *ngIf="isGest()"
       mat-raised-button (click)="addAuthor()">Ajouter un auteur</button>
   </mat-card-actions>
   <mat-card-content>

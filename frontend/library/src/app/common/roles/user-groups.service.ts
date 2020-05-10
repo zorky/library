@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {AuthService} from '../../services/authent/auth.service';
-import {catchError, filter, mergeMap} from "rxjs/operators";
+import {catchError, filter, isEmpty, mergeMap, tap} from "rxjs/operators";
 import {Observable, of, ReplaySubject} from "rxjs";
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
@@ -17,9 +17,9 @@ export class UserGroupsService implements OnDestroy {
 
   constructor(private http: HttpClient,
               private authService: AuthService) {
-    this.subSink.sink = this.authService.userActivate$.pipe(
-      filter(user => !!user),
-      mergeMap(user => this.get(user.username)))
+    this.subSink.sink = this.authService.userActivate$
+      .pipe(filter(user => !!user),
+            mergeMap(user => this.get(user.username)))
       .subscribe(connecte => this.connecteSource.next(connecte as UserGroups));
   }
 
@@ -33,7 +33,6 @@ export class UserGroupsService implements OnDestroy {
   }
 
   private get(uid: string): Observable<UserGroups> {
-    const tokenExpirated = this.authService.loggedIn();
     return this.http
       .get<UserGroups>(`${this.url}?uid=${uid}`)
       .pipe(catchError( (err: HttpErrorResponse ) => {

@@ -1,5 +1,4 @@
-<form (ngSubmit)="login()" #loginForm1="ngForm"
-      fxLayoutAlign="center" fxLayout="column">
+<form fxLayoutAlign="center" fxLayout="column">
   <mat-card class="alert-warning" *ngIf="message" >
     <mat-card-content fxLayout="row">
       {{message.message}}
@@ -32,7 +31,8 @@
     </mat-card-content>
     <mat-card-actions fxLayout="column">
       <mat-progress-bar *ngIf="loading" [mode]="'indeterminate'"></mat-progress-bar>
-      <button mat-raised-button style="margin-top: 5px;"
+      <button mat-raised-button (click)="login()"
+              style="margin-top: 5px;"
               [disabled]="! canValidate()"
               type="submit"
               [color]="'primary'">Connexion</button>

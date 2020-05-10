@@ -5,11 +5,10 @@ import {UserGroupsService} from '../roles/user-groups.service';
 import {UserGroups} from '../roles/usergroups.model';
 import {roles} from '../roles/roles.enum';
 
-@Injectable({  providedIn: 'root' })
+@Injectable({ providedIn: 'root' })
 export class GestionnaireGuard implements CanLoad, CanActivate {
   constructor(private userGrpService: UserGroupsService) {
   }
-
   canLoad(route: Route): Observable<boolean> {
     return this.isGestionnaire();
   }

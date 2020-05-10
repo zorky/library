@@ -9,8 +9,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {SubSink} from '../../../services/subsink';
 import {Author, AuthorService, Book, BookService} from '../../../services';
 import {AuthorContainerComponent} from '../../author/author-container/author-container.component';
-import {Pagination} from "../../../services/base/pagination.model";
-import {ListParameters} from "../../../services/base/list-parameters.model";
+import {Pagination} from '../../../services/base/pagination.model';
+import {ListParameters} from '../../../services/base/list-parameters.model';
 
 @Component({
   selector: 'app-book-edit',

@@ -8,6 +8,9 @@ import {AppInjector} from './app/common/injector';
 if (environment.production) {
   enableProdMode();
 }
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .then((moduleRef) => AppInjector.setInjector(moduleRef.injector))
-  .catch(err => console.error(err));
+platformBrowserDynamic().bootstrapModule(AppModule);
+  // .then((moduleRef) => AppInjector.setInjector(moduleRef.injector))
+  // .catch(err => {
+  //  debugger;
+  //  console.error(err);
+  // });

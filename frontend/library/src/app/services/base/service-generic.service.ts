@@ -5,7 +5,7 @@ import {SortDirection} from '@angular/material/sort';
 import {Pagination} from './pagination.model';
 import {TemplatePaginationDjango} from './pagination-django.model';
 import {ListParameters} from './list-parameters.model';
-import {MatSnackBar} from '@angular/material/snack-bar';
+// import {MatSnackBar} from '@angular/material/snack-bar';
 import {Injectable, Injector} from '@angular/core';
 import {AppInjector} from '../../common/injector';
 
@@ -20,12 +20,12 @@ export abstract class ServiceGeneric<T> {
    */
   protected cacheItems: AsyncSubject<Pagination<T>>;
   protected data: Observable<Pagination<T>>;
-  private snackBar: MatSnackBar;
+  // private snackBar: MatSnackBar;
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
   protected constructor(private http: HttpClient) {
-    this.snackBar = AppInjector.getInjector().get(MatSnackBar);
+    // this.snackBar = AppInjector.getInjector().get(MatSnackBar);
   }
 
   /**
@@ -373,9 +373,9 @@ export abstract class ServiceGeneric<T> {
         break;
     }
     this.clearCache();
-    this.snackBar.open(`${message}`,
-      'ERREUR',
-      {duration: 3000, verticalPosition: 'top', horizontalPosition: 'end'});
+    // this.snackBar.open(`${message}`,
+    //  'ERREUR',
+    //  {duration: 3000, verticalPosition: 'top', horizontalPosition: 'end'});
     this.loadingSubject.next(false);
     return null;
   }

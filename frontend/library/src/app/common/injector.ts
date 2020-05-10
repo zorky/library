@@ -7,6 +7,7 @@ export class AppInjector {
     AppInjector.injector = injector;
   }
   static getInjector(): Injector {
+    console.log(AppInjector.injector);
     return AppInjector.injector;
   }
 }
