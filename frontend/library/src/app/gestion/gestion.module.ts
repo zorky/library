@@ -5,8 +5,8 @@ import {AuthorContainerComponent} from './author/author-container/author-contain
 import {BookEditComponent} from './book/book-edit/book-edit.component';
 import {CommonLibraryModule} from '../common/common-library.module';
 import {MaterialModule} from "../modules/material.module";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
 
 @NgModule({

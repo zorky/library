@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   getUser() {
     return `${this.authentSvc?.getUser()?.first_name} ${this.authentSvc?.getUser()?.last_name}`;
   }
-  go(url, logout = true) {
+  go(url, logout = false) {
     if (logout) {
       this.authentSvc.logout();
     }
