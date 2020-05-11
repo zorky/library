@@ -142,3 +142,10 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+/docker/.idea/.gitignore
+/docker/.idea/docker.iml
+/docker/.idea/inspectionProfiles/profiles_settings.xml
+/docker/.idea/misc.xml
+/docker/.idea/modules.xml
+/docker/.idea/vcs.xml
+/frontend/library/__ngcc_entry_points__.json
