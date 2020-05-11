@@ -19,9 +19,13 @@ class Author(TimeStampedModel):
 
 class Book(TimeStampedModel):
     name = models.CharField(max_length=100, null=False, blank=False, db_index=True)
+    summary = models.TextField(null=True, blank=True)
     nb_pages = models.IntegerField()
 
-    author = models.ForeignKey(Author, related_name='books', null=False, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author,
+                               related_name='books',
+                               null=True,
+                               on_delete=models.SET_NULL)
 
     enabled = models.BooleanField(default=True, help_text='disponible ou non')
 

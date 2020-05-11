@@ -1,32 +1,27 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {DialogData} from "../../confirmation-dialog/dialog-data.model";
-import {MatDialog} from "@angular/material/dialog";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatPaginator, MatPaginatorIntl} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {concat, Observable, race} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {Observable} from 'rxjs';
 
-import {
-  debounceTime,
-  distinctUntilChanged,
-  finalize,
-  map,
-  startWith,
-  switchMap,
-  filter,
-  tap, concatMap
-} from "rxjs/operators";
+import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/operators';
 import {merge} from 'rxjs';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormControl} from '@angular/forms';
 
-import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
-import {Pagination} from "../../../services/base/pagination.model";
+import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
+import {Pagination} from '../../../services/base/pagination.model';
 import {Author, AuthorService} from '../../../services';
 import {SubSink} from '../../../services/subsink';
-import {AuthorContainerComponent} from "../author-container/author-container.component";
-import {getAuthorFrenchPaginatorIntl} from "./paginator-authors.french";
-import {ListParameters} from "../../../services/base/list-parameters.model";
+import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
+import {getAuthorFrenchPaginatorIntl} from './paginator-authors.french';
+import {ListParameters} from '../../../services/base/list-parameters.model';
+import {UserGroups} from '../../../common/roles/usergroups.model';
+import {UserGroupsService} from '../../../common/roles/user-groups.service';
+import {roles} from '../../../common/roles/roles.enum';
+import {DialogData} from '../../confirmation-dialog/dialog-data.model';
+import {AuthService} from '../../../services/authent/auth.service';
 
 /**
  * Liste des auteurs avec pagination, tris
@@ -37,7 +32,7 @@ import {ListParameters} from "../../../services/base/list-parameters.model";
   styleUrls: ['./authors-list.component.css'],
   providers: [{ provide: MatPaginatorIntl, useValue: getAuthorFrenchPaginatorIntl() }]
 })
-export class AuthorsListComponent implements OnDestroy, AfterViewInit {
+export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
   /* Datasource */
   authors: Author[] = [];
   /**
@@ -51,7 +46,8 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   /**
    * L'ensemble des colonnes à afficher : champs + actions
    */
-  displayedColumns = [...this.columns, ...this.actions];
+  // displayedColumns = [...this.columns, ...this.actions];
+  displayedColumns = [...this.columns];
   /**
    * Paramétres du paginator
    */
@@ -71,6 +67,11 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    */
   search = new FormControl('');
   /**
+   * Connecté et ses groupes
+   */
+  connecte: UserGroups;
+  rolesUser = roles;
+  /**
    * Utilitaire subscribe / unsubscribe
    */
   subSink = new SubSink();
@@ -78,8 +79,19 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
   constructor(private router: Router,
               private route: ActivatedRoute,
               private dialog: MatDialog, public snackBar: MatSnackBar,
+              private authSvc: AuthService,
+              public userGrpsSvc: UserGroupsService,
               private authorSvc: AuthorService) { }
+  ngOnInit(): void {
+    this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => {
+      if (this.userGrpsSvc.hasRole(connecte, roles.gestionnaire)) {
+        this.displayedColumns = [...this.columns, ...this.actions];
+      }
+      this.connecte = connecte;
+    });
+  }
   ngAfterViewInit(): void {
+    this.subSink.sink = this.authorSvc.loading$.subscribe((value) => this._toggleLoading(value));
     this._initDataTable();
   }
 
@@ -118,9 +130,9 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     data.message = `Souhaitez-vous supprimer cet auteur "${author.first_name} ${author.last_name}" ?`;
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data });
     dialogRef.updatePosition({top: '50px'});
-    dialogRef.afterClosed().subscribe(result => {
+    this.subSink.sink = dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.authorSvc.delete(author).subscribe(() => {
+        this.subSink.sink = this.authorSvc.delete(author).subscribe(() => {
           this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
             'Auteur',
             {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
@@ -129,6 +141,9 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
         });
       }
     });
+  }
+  isGest() {
+    return this.authSvc.isAuthenticated() && this.connecte && this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
   }
   /**
    * Ouverture modale d'édition d'un auteur
@@ -140,7 +155,7 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
     const dialogRef = this.dialog.open(AuthorContainerComponent, {data});
     dialogRef.updatePosition({top: '50px'});
     dialogRef.updateSize('600px');
-    dialogRef.afterClosed().subscribe((result: Author) => {
+    this.subSink.sink = dialogRef.afterClosed().subscribe((result: Author) => {
       if (result) {
         this._initDataTable();
       }
@@ -151,7 +166,6 @@ export class AuthorsListComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   _switchMap(): Observable<Pagination<Author>> {
-    this._toggleLoading(true);
     const parameters: ListParameters = {
       limit: this.paginator.pageSize, offset: this.paginator.pageIndex * this.paginator.pageSize,
       sort: this.sort.active, order: this.sort.direction,

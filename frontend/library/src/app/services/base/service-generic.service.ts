@@ -1,21 +1,31 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {AsyncSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {Sort, SortDirection} from '@angular/material/sort';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
+import {AsyncSubject, BehaviorSubject, Observable, of} from 'rxjs';
+import {catchError, finalize, map, publishReplay, refCount} from 'rxjs/operators';
+import {SortDirection} from '@angular/material/sort';
 import {Pagination} from './pagination.model';
 import {TemplatePaginationDjango} from './pagination-django.model';
 import {ListParameters} from './list-parameters.model';
+// import {MatSnackBar} from '@angular/material/snack-bar';
+import {Injectable, Injector} from '@angular/core';
+import {AppInjector} from '../../common/injector';
 
 /**
  * ServiceGeneric : fourniture du CRUD sur un type T
  */
+@Injectable({ providedIn: 'root' })
 export abstract class ServiceGeneric<T> {
   /**
    * Cache d'éléments pour le fetchAll()
    * @type {Pagination<T>}
    */
   protected cacheItems: AsyncSubject<Pagination<T>>;
+  protected data: Observable<Pagination<T>>;
+  // private snackBar: MatSnackBar;
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  public loading$ = this.loadingSubject.asObservable();
+
   protected constructor(private http: HttpClient) {
+    // this.snackBar = AppInjector.getInjector().get(MatSnackBar);
   }
 
   /**
@@ -23,15 +33,24 @@ export abstract class ServiceGeneric<T> {
    * Exemple : `${environment.baseUrl}/plateform/books/`;
    */
   abstract getRootUrl(urlApp?: string): string;
+
   /**
    * Obtient la liste des entités T
    * @param listParameters
    */
-  public fetchAll(listParameters: ListParameters = {} as ListParameters) {
-    return this._fetchAll(listParameters.limit, listParameters.offset,
-                          listParameters.sort, listParameters.order,
-                          listParameters.keyword, listParameters.extraParams,
-                          listParameters.withCache);
+  public fetchAll(listParameters?: ListParameters): Observable<Pagination<T>> {
+    return this._fetchAll(listParameters?.limit, listParameters?.offset,
+      listParameters?.sort, listParameters?.order,
+      listParameters?.keyword, listParameters?.extraParams,
+      listParameters?.withCache);
+  }
+
+  /**
+   * suppression cache explicite
+   */
+  clearCache() {
+    this.data = null;
+    this.cacheItems = null;
   }
 
   /**
@@ -39,8 +58,13 @@ export abstract class ServiceGeneric<T> {
    * @param id : l'id recherché
    */
   public fetch(id) {
+    this.loadingSubject.next(true);
     const urlId = this._getUrl(id);
-    return this.http.get<T>(urlId);
+    return this.http
+      .get<T>(urlId)
+      .pipe(
+        finalize(() => this.loadingSubject.next(false)),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -48,8 +72,15 @@ export abstract class ServiceGeneric<T> {
    * @param object : l'objet à créer
    */
   public create(object: T) {
+    this.loadingSubject.next(true);
     const url = this._getUrl();
-    return this.http.post(url, JSON.stringify(object), {headers: this._setHeadersJson()});
+    return this.http
+      .post(url, JSON.stringify(object),{headers: this._setHeadersJson()})
+      .pipe(finalize(() => {
+          this.clearCache();
+          this.loadingSubject.next(false);
+          }),
+            catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -58,8 +89,15 @@ export abstract class ServiceGeneric<T> {
    * @param key permet (optionnel) de préciser la prioprité clé de l'objet à modifier, par défaut 'id'
    */
   public update(object: T, key: string = 'id') {
+    this.loadingSubject.next(true);
     const url = this._getUrl(object[key]);
-    return this.http.put(url, object);
+    return this.http
+      .put(url, object)
+      .pipe(finalize(() => {
+          this.clearCache();
+          this.loadingSubject.next(false);
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -76,9 +114,17 @@ export abstract class ServiceGeneric<T> {
    * @param object l'objet à "patcher"
    * @param key permet (optionnel) de préciser la prioprité clé de l'objet à modifier, par défaut 'id'
    */
-  public patch(object: T, key: string = 'id'): Observable<T> {
+  public patch(object: T, key: string = 'id') {
+    this.loadingSubject.next(true);
     const url = this._getUrl(object[key]);
-    return this.http.patch<T>(url, object);
+    return this.http
+      .patch<T>(url, object)
+      .pipe(
+        finalize(() => {
+          this.loadingSubject.next(false);
+          this.clearCache();
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -97,7 +143,6 @@ export abstract class ServiceGeneric<T> {
   public deleteById(id) {
     return this._delete(id);
   }
-
   /***
    * PROTECTED
    ****/
@@ -117,30 +162,28 @@ export abstract class ServiceGeneric<T> {
                       keyword?: string,
                       extraParams?: Map<string, string>,
                       withCache?: boolean): Observable<Pagination<T>> {
+    this.loadingSubject.next(true);
     let params = this._getPaginationAndSearchAndExtraParams(limit, offset, keyword, extraParams);
     if (sort && sort !== '') {
       params = this._getSorting(sort, order, params);
     }
     const url = this._getUrl();
-    if (! withCache) {
+    if (!withCache) {
+      this.data = this.cacheItems = null;
       return this.http
         .get(url, {params})
-        .pipe(map(response => this._getPagination(response, limit)));
+        .pipe(
+          finalize(() => this.loadingSubject.next(false)),
+          catchError((error) => of(this._catchError(error))),
+          map(response => this._getPagination(response, limit)));
     } else {
-      if (! this.cacheItems) {
-        this.cacheItems = new AsyncSubject();
-        return this.http
-          .get<T[]>(url, {params})
-          .pipe(map(response => {
-            this.cacheItems.next(this._getPagination(response, limit));
-            this.cacheItems.complete();
-            return this._getPagination(response, limit);
-          }));
-      } else {
-        return this.cacheItems;
-      }
+      return this._getCacheItemsMethod1(url, limit, params)
+        .pipe(
+          catchError((error) => of(this._catchError(error))),
+          finalize(() => this.loadingSubject.next(false)));
     }
   }
+
   /**
    * Détermine l'URL de l'API à utiliser, avec ou sans id
    * @param id
@@ -200,7 +243,7 @@ export abstract class ServiceGeneric<T> {
    * @return {HttpParams}
    * @protected
    */
-  protected _getSorting(sort: string, order: SortDirection, params: HttpParams) {
+  protected _getSorting(sort: string, order: SortDirection, params: HttpParams): HttpParams {
     let orderDirection = '';
     let orderField = '';
     if (order) {
@@ -249,13 +292,63 @@ export abstract class ServiceGeneric<T> {
    ****/
 
   /**
+   * Gestion du cache pour les éléments de la pagination
+   * via publishReplay / refCount
+   * @param url
+   * @param limit
+   * @param params
+   * @private
+   */
+  private _getCacheItemsMethod1(url: string, limit: number, params: HttpParams) {
+    if (!this.data) {
+      this.cacheItems = new AsyncSubject();
+      this.data = this.http
+        .get<T[]>(url, {params})
+        .pipe(map(response => {
+            return this._getPagination(response, limit);
+          }),
+          publishReplay(1),
+          refCount());
+    }
+    return this.data;
+  }
+  /**
+   * Gestion du cache pour les éléments de la pagination
+   * via AsyncSubject
+   * @param url
+   * @param limit
+   * @param params
+   * @private
+   */
+  private _getCacheItemsMethod2(url: string, limit: number, params: HttpParams) {
+    if (! this.cacheItems) {
+      this.cacheItems = new AsyncSubject();
+      return this.http
+        .get<T[]>(url, {params})
+        .pipe(map(response => {
+            const page = this._getPagination(response, limit);
+            this.cacheItems.next(page);
+            this.cacheItems.complete();
+            return page;
+          }));
+    }
+    return this.cacheItems;
+  }
+  /**
    * Factorisation delete / deleteById
    * @param id
    * @private
    */
   private _delete(id) {
+    this.loadingSubject.next(true);
     const url = this._getUrl(id);
-    return this.http.delete(url);
+    return this.http.delete(url)
+      .pipe(
+        finalize(() => {
+          this.loadingSubject.next(false);
+          this.clearCache();
+        }),
+        catchError((error) => this._catchError(error)));
   }
 
   /**
@@ -266,5 +359,24 @@ export abstract class ServiceGeneric<T> {
   private _setHeadersJson(): HttpHeaders {
     const headers = new HttpHeaders();
     return headers.append('content-type', 'application/json');
+  }
+  private _catchError(error: HttpErrorResponse) {
+    console.log(error);
+    let message = error?.message || 'une erreur est survenue';
+    const errorMsg = error?.error.detail || error?.message || 'une erreur est survenue';
+    switch (error.status) {
+      case 401:
+        message = `Accès non autorisé, veuillez vous connecter (${errorMsg})`;
+        break;
+      case 403:
+        message = `Accès interdit, vous n'avez pas les droits suffisants (${errorMsg})`;
+        break;
+    }
+    this.clearCache();
+    // this.snackBar.open(`${message}`,
+    //  'ERREUR',
+    //  {duration: 3000, verticalPosition: 'top', horizontalPosition: 'end'});
+    this.loadingSubject.next(false);
+    return null;
   }
 }

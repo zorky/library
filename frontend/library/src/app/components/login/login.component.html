@@ -1,0 +1,42 @@
+<form fxLayoutAlign="center" fxLayout="column">
+  <mat-card class="alert-warning" *ngIf="message" >
+    <mat-card-content fxLayout="row">
+      {{message.message}}
+      <button mat-icon-button class="button-warning" fxFlex fxLayoutAlign="end" (click)="closeAlert()"><mat-icon>close</mat-icon></button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat-elevation-z2 logon-card">
+    <mat-card-title fxLayoutAlign="center start" fxLayoutGap="20">Connexion</mat-card-title>
+    <mat-card-subtitle><mat-divider></mat-divider></mat-card-subtitle>
+    <mat-card-content>
+      <mat-form-field fxLayout="row">
+        <mat-icon matPrefix>person</mat-icon>
+        <label>
+          <input matInput placeholder="Identifiant"
+                 name="username"
+                 required
+                 type="text"
+                 [(ngModel)]="model.username">
+        </label>
+      </mat-form-field>
+
+      <mat-form-field fxLayout="row">
+        <mat-icon matPrefix>lock</mat-icon>
+        <label>
+          <input matInput placeholder="Mot de passe" name="password" type="password" required [(ngModel)]="model.password">
+        </label>
+
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions fxLayout="column">
+      <mat-progress-bar *ngIf="loading" [mode]="'indeterminate'"></mat-progress-bar>
+      <button mat-raised-button (click)="login()"
+              style="margin-top: 5px;"
+              [disabled]="! canValidate()"
+              type="submit"
+              [color]="'primary'">Connexion</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
+
