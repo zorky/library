@@ -29,6 +29,7 @@ import {JwtModule} from "@auth0/angular-jwt";
 import {MaterialModule} from "./modules/material.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
+import { BookActionsComponent } from './components/book/book-actions/book-actions.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -53,7 +54,8 @@ export function tokenGetter(): string {
 
     ConfirmationDialogComponent,
     SafeHtmlPipe,
-    BookSearchComponent
+    BookSearchComponent,
+    BookActionsComponent
   ],
   imports: [
     HttpClientModule,

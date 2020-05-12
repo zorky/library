@@ -16,9 +16,19 @@
       "dom"
     ],
     "paths": {
-      "@Services/*": ["app/services/*"],
-      "@Modules/*": ["app/modules/*"],
-      "@Env/*": ["environments/*"]
+      "@Services/*": [
+        "app/services/*"
+      ],
+      "@Modules/*": [
+        "app/modules/*"
+      ],
+      "@Env/*": [
+        "environments/*"
+      ],
+      "data-table": [
+        "dist/data-table/data-table",
+        "dist/data-table"
+      ]
     }
   },
   "angularCompilerOptions": {

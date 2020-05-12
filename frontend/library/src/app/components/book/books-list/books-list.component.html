@@ -15,25 +15,26 @@
                       [mode]="'indeterminate'" color="warn"></mat-progress-bar>
     <mat-divider></mat-divider>
     <app-book-search (onBookSelected)="editBook($event)"></app-book-search>
-    <mat-list>
-      <mat-list-item *ngFor="let book of books">
-        <div mat-line>
-            <ng-container *ngIf="isGest()">
-              <span mat-list-icon>
-                <button mat-icon-button (click)="editBook(book)"
-                        matTooltip="Modifier ce livre"><mat-icon>create</mat-icon></button>
-              </span>
-              <span mat-list-icon>
-                <button mat-icon-button (click)="deleteBook(book)" color="warn"
-                        matTooltip="Supprimer ce livre"><mat-icon>delete</mat-icon></button>
-              </span>
-            </ng-container>
-            <span>{{book.name}}</span>
-            <app-author-display [author]="book?.author_obj"></app-author-display>
+    <div *ngFor="let book of books">
+      <mat-card fxLayout="row wrap"
+                fxLayoutAlign="space-between center"
+                class="mat-elevation-z1"
+                style="margin-bottom: 10px;">
+        <div fxLayout="row wrap" fxLayoutAlign="start center">
+          <p class="font-weight-medium m-0 text-capitalize">
+            {{ book.name }}
+          </p>
         </div>
-        <p mat-line><mat-divider class="mat-divider-dashed"></mat-divider></p>
-      </mat-list-item>
-    </mat-list>
+        <div fxHide.lt-sm fxLayout="row wrap" fxLayoutAlign="start center">
+          <p class="m-0 text-muted">
+            <app-author-display [author]="book?.author_obj"></app-author-display>
+          </p>
+        </div>
+        <app-book-actions [book]="book"
+          (editClick)="editBook($event)"
+          (deleteClick)="deleteBook($event)"></app-book-actions>
+      </mat-card>
+    </div>
     <mat-paginator [length]="total" [pageSize]="PAGE_SIZE"
                    [pageSizeOptions]="[2, 5, 10, 20, 50]"
                    [showFirstLastButtons]="true"></mat-paginator>

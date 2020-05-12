@@ -16,6 +16,7 @@ import {UserGroupsService} from '../../../common/roles/user-groups.service';
 import {UserGroups} from '../../../common/roles/usergroups.model';
 import {roles} from '../../../common/roles/roles.enum';
 import {AuthService} from '../../../services/authent/auth.service';
+import {PubSubService} from '../../../services/pubsub/pub-sub.service';
 
 @Component({
   selector: 'app-books-list',
@@ -27,7 +28,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
   subSink = new SubSink();
   books: Book[];
   loading = false;
-  PAGE_SIZE = 5;
+  PAGE_SIZE = 2;
   total = 0;
   connecte: UserGroups;
   rolesUser = roles;
@@ -37,13 +38,17 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               public snackBar: MatSnackBar,
               public dialog: MatDialog,
+              private pubSubSvc: PubSubService,
               private authSvc: AuthService,
               public userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
     this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
-    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
+    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => {
+      this.pubSubSvc.publish('loading', value);
+      this.loading = value;
+    });
     this._initPaginator();
     this.fetchBooks();
   }
@@ -76,7 +81,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
   fetchBooks() {
     this.books = [];
     const params = {
-      limit: this.paginator.pageSize,
+      limit: this.paginator.pageSize || this.PAGE_SIZE,
       offset: this.paginator.pageIndex * this.paginator.pageSize
     } as ListParameters;
     this.subSink.sink = this.bookSvc

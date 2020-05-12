@@ -26,7 +26,8 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/styles/app.scss"
             ],
             "scripts": []
           },
@@ -122,6 +123,46 @@
             "production": {
               "devServerTarget": "library:serve:production"
             }
+          }
+        }
+      }
+    },
+    "data-table": {
+      "projectType": "library",
+      "root": "projects/data-table",
+      "sourceRoot": "projects/data-table/src",
+      "prefix": "od",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/data-table/tsconfig.lib.json",
+            "project": "projects/data-table/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/data-table/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/data-table/src/test.ts",
+            "tsConfig": "projects/data-table/tsconfig.spec.json",
+            "karmaConfig": "projects/data-table/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/data-table/tsconfig.lib.json",
+              "projects/data-table/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
