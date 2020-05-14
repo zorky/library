@@ -26,8 +26,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css",
-              "src/assets/styles/app.scss"
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -131,7 +130,7 @@
       "projectType": "library",
       "root": "projects/data-table",
       "sourceRoot": "projects/data-table/src",
-      "prefix": "od",
+      "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",

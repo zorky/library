@@ -30,6 +30,7 @@ import {MaterialModule} from "./modules/material.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { BookActionsComponent } from './components/book/book-actions/book-actions.component';
+import {DataTableModule} from "../../projects/data-table/src/lib/data-table.module";
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -79,6 +80,8 @@ export function tokenGetter(): string {
     }),
     CommonLibraryModule,
     MaterialModule,
+
+    DataTableModule,
 
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
