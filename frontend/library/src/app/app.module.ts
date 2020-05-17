@@ -31,6 +31,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { BookActionsComponent } from './components/book/book-actions/book-actions.component';
 import {DataTableModule} from "../../projects/data-table/src/lib/data-table.module";
+import { AuthorDtListComponent } from './components/author/author-dt-list/author-dt-list.component';
+import { AuthorFilterDtComponent } from './components/author/author-dt-list/filters/author-filter-dt/author-filter-dt.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -56,7 +58,8 @@ export function tokenGetter(): string {
     ConfirmationDialogComponent,
     SafeHtmlPipe,
     BookSearchComponent,
-    BookActionsComponent
+    BookActionsComponent,
+    AuthorDtListComponent
   ],
   imports: [
     HttpClientModule,

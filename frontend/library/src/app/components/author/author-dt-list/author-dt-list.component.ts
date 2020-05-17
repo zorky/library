@@ -1,0 +1,192 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+
+import {AuthorDtService} from '../../../services/authors/author-dt.service';
+import {ColumnDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-column';
+import {ActionDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-action';
+import {MatDataSourceGeneric, Pagination} from '../../../../../projects/data-table/src/lib/services/daoService';
+import {Author} from '../../../services';
+import {DataTableComponent} from '../../../../../projects/data-table/src/lib/components/data-table.component';
+import {roles} from '../../../common/roles/roles.enum';
+import {AuthService} from '../../../services/authent/auth.service';
+import {UserGroupsService} from '../../../common/roles/user-groups.service';
+import {UserGroups} from '../../../common/roles/usergroups.model';
+import {SubSink} from '../../../services/subsink';
+import {DialogData} from '../../confirmation-dialog/dialog-data.model';
+import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
+import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
+import {DataTableHeaderComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-component.service';
+import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-dt.component';
+
+@Component({
+  selector: 'app-author-dt-list',
+  templateUrl: './author-dt-list.component.html',
+  styleUrls: ['./author-dt-list.component.css']
+})
+export class AuthorDtListComponent implements OnInit {
+  columns: ColumnDataTable[] = [{
+    column: 'author', header: 'Auteur',
+    display: (element: Author) => {
+      return `${element.first_name} ${element.last_name}`;
+    },
+    tooltip: (row: Author) => {
+      return `${row.first_name} ${row.last_name}`;
+    },
+    headerFilterToolTip: (row) => 'Filtrer sur l\'auteur',
+    flex: 20,
+    sort: true
+  },
+    {
+      column: 'books', header: 'Livres',
+      display: (element: Author) => {
+        return this.getBooks(element);
+      },
+      tooltip: (row: Author) => {
+        return this.getBooks(row);
+      },
+      sort: false
+    }];
+  actions: ActionDataTable[] = [];
+  dsAuthors: MatDataSourceGeneric<Author> = new MatDataSourceGeneric<Author>();
+  extraParams: Map<string, string> = new Map<string, string>();
+  filterColumns: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
+  @ViewChild(DataTableComponent, {static: false}) matDataTable: DataTableComponent;
+  /**
+   * Connecté et ses groupes
+   */
+  connecte: UserGroups;
+  rolesUser = roles;
+  subSink = new SubSink();
+  constructor(private authSvc: AuthService,
+              private dialog: MatDialog,
+              public snackBar: MatSnackBar,
+              public userGrpsSvc: UserGroupsService,
+              private dataTableHeaderSvc: DataTableHeaderComponentService,
+              private authorSvc: AuthorDtService) {
+    this.dsAuthors.daoService = authorSvc;
+  }
+
+  ngOnInit(): void {
+    this._setActions();
+    this._setFilterAuthor();
+  }
+  getBooks(author: Author) {
+    return author?.books_obj?.reduce<string>((acc, currentValue, i) => {
+      return i === 0 ? currentValue.name : `${acc}, ${currentValue.name}`;
+    }, '');
+  }
+  addAuthor() {
+    this._openAuthorModale();
+  }
+  editAuthor(author: Author) {
+    this._openAuthorModale(author);
+  }
+  deleteAuthor(author: Author) {
+    const data = new DialogData();
+    data.title = 'Auteur';
+    data.message = `Souhaitez-vous supprimer cet auteur "${author.first_name} ${author.last_name}" ?`;
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data });
+    dialogRef.updatePosition({top: '50px'});
+    this.subSink.sink = dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.subSink.sink = this.authorSvc.delete(author).subscribe(() => {
+          this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
+            'Auteur',{duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+          this.matDataTable.reload();
+        });
+      }
+    });
+  }
+  isGest() {
+    return this.authSvc.isAuthenticated() &&
+      this.connecte &&
+      this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
+  }
+  _setFilterAuthor() {
+    this.subSink.sink = this.authorSvc
+      .listAllItems()
+      .subscribe((authors: Pagination) => {
+        const listAuthors = new Map<string, string>();
+        (authors.list as Author[])
+          .forEach((author) => listAuthors.set(author.id.toString(), `${author.first_name} ${author.last_name}`));
+        this.filterColumns.set('author', listAuthors);
+        this._setAuthorFilter(
+          'author', 'sur un auteur', 'id',
+          'Filtrer par un auteur', 'Auteur', () => this.matDataTable.reload());
+      });
+  }
+  _setActions() {
+    this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => {
+      if (this.userGrpsSvc.hasRole(connecte, roles.gestionnaire)) {
+        this.actions = [{
+          label: 'delete', tooltip: 'Supprimer l\'auteur',  icon: 'delete',
+          click: (row: Author) => this.deleteAuthor(row),
+          iconcolor: 'warn',
+        },
+          {
+            label: 'edit', tooltip: 'Modifier l\'auteur',  icon: 'edit',
+            click: (row: Author) => this.editAuthor(row),
+            iconcolor: 'accent',
+          }];
+      }
+      this.connecte = connecte;
+    });
+  }
+  /**
+   * Ouverture modale d'édition d'un auteur
+   * @param {Author} author
+   * @private
+   */
+  private _openAuthorModale(author: Author = null) {
+    const data = author;
+    const dialogRef = this.dialog.open(AuthorContainerComponent, {data});
+    dialogRef.updatePosition({top: '50px'});
+    dialogRef.updateSize('600px');
+    this.subSink.sink = dialogRef.afterClosed().subscribe((result: Author) => {
+      if (result) {
+        this.matDataTable.reload();
+      }
+    });
+  }
+  private _setAuthorFilter(listName, listLabel, keyFilter, placeHolder, condName,
+                           callBack: () => void = null) {
+    const data = {
+      placeHolder, keyFilter,
+      filterColumns: this._columnSetValues(listName),
+      filterName: condName
+    };
+    const filterComponent = this.dataTableHeaderSvc.createComponent(
+      this.columns, listName, `author_filter_list_${listName}`, `${listLabel}`,
+      AuthorFilterDtComponent, data, true);
+
+    if (filterComponent) {
+      this.subSink.sink = filterComponent.subject$.subscribe((d) => {
+        if (d && d.key) {
+          filterComponent.dataDefault = {id: d.value};
+
+          if (this.extraParams.get(d.key)) {
+            this.extraParams.delete(d.key);
+          }
+
+          if (d.value === 0 || d.value === '0') {
+            this.extraParams.delete(d.key);
+          } else {
+            this.extraParams.set(d.key, d.value);
+          }
+
+          if (callBack) {
+            callBack.call(null, null);
+          }
+        }
+      });
+    }
+  }
+  private _columnSetValues(key): Map<string, string> {
+    if (this.filterColumns.has(key)) {
+      return this.filterColumns.get(key);
+    }
+
+    return new Map<string, string>();
+  }
+}

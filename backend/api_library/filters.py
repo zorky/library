@@ -26,7 +26,7 @@ class AuthorFilter(FilterSet):
 
     class Meta:
         model = Author
-        fields = ['last_name', 'first_name',]
+        fields = ['id', 'last_name', 'first_name',]
 
 class BookFilter(FilterSet):
     pages =  filters.RangeFilter(field_name='nb_pages')

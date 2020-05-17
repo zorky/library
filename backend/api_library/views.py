@@ -45,7 +45,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
     filterset_class = AuthorFilter
 
-    search_fields = ['first_name', 'last_name']
+    search_fields = ['first_name', 'last_name', 'books__name']
     ordering_fields = ('id', 'last_name', 'books__name',)
 
     ordering = ['first_name', '-last_name']
