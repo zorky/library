@@ -33,6 +33,7 @@ import { BookActionsComponent } from './components/book/book-actions/book-action
 import {DataTableModule} from "../../projects/data-table/src/lib/data-table.module";
 import { AuthorDtListComponent } from './components/author/author-dt-list/author-dt-list.component';
 import { AuthorFilterDtComponent } from './components/author/author-dt-list/filters/author-filter-dt/author-filter-dt.component';
+import { BooksFilterDtComponent } from './components/author/author-dt-list/filters/books-filter-dt/books-filter-dt.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -59,7 +60,8 @@ export function tokenGetter(): string {
     SafeHtmlPipe,
     BookSearchComponent,
     BookActionsComponent,
-    AuthorDtListComponent
+    AuthorDtListComponent,
+    BooksFilterDtComponent
   ],
   imports: [
     HttpClientModule,

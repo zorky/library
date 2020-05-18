@@ -27,7 +27,8 @@ export class AuthorFilterDtComponent implements HeaderComponent, OnInit, OnDestr
   subAllReinit = new SubSink();
   subReinit = new SubSink();
 
-  constructor(public dtCommunicationSvc: DataTableHeaderCommunicationService) { }
+  constructor(public dtCommunicationSvc: DataTableHeaderCommunicationService) {
+  }
 
   ngOnInit(): void {
     this._initData();

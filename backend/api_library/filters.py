@@ -1,3 +1,4 @@
+import django_filters
 from django.db.models import Q
 from django_filters import FilterSet, filters, BaseInFilter, NumberFilter, BooleanFilter
 
@@ -10,6 +11,13 @@ class AuthorFilter(FilterSet):
     last_name = filters.CharFilter(lookup_expr='iexact')
     first_name = filters.CharFilter(lookup_expr='iexact')
     by_search = filters.CharFilter(method="get_by_search")
+    book = django_filters.CharFilter(method='get_by_book')
+
+    def get_by_book(self, queryset, name, value):
+        """
+        Recherche de l'auteur d'un livre
+        """
+        return queryset.filter(books__pk=value)
 
     def get_by_search(self, queryset, name, value):
         """
@@ -26,7 +34,7 @@ class AuthorFilter(FilterSet):
 
     class Meta:
         model = Author
-        fields = ['id', 'last_name', 'first_name',]
+        fields = ['id', 'last_name', 'first_name', 'book',]
 
 class BookFilter(FilterSet):
     pages =  filters.RangeFilter(field_name='nb_pages')

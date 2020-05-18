@@ -1,4 +1,4 @@
-import {Author} from "../authors/author.model";
+import {Author} from '..';
 
 export interface Book {
   id: number;

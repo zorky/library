@@ -3,10 +3,13 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
-import {ColumnDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-column';
+import {
+  ColumnDataTable,
+  HeaderFilterOptions
+} from '../../../../../projects/data-table/src/lib/interfaces/data-table-column';
 import {ActionDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-action';
 import {MatDataSourceGeneric, Pagination} from '../../../../../projects/data-table/src/lib/services/daoService';
-import {Author} from '../../../services';
+import {Author, Book, BookService} from '../../../services';
 import {DataTableComponent} from '../../../../../projects/data-table/src/lib/components/data-table.component';
 import {roles} from '../../../common/roles/roles.enum';
 import {AuthService} from '../../../services/authent/auth.service';
@@ -18,6 +21,8 @@ import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmatio
 import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
 import {DataTableHeaderComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-component.service';
 import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-dt.component';
+import {BookDtService} from '../../../services/books/book-dt.service';
+import {BooksFilterDtComponent} from "./filters/books-filter-dt/books-filter-dt.component";
 
 @Component({
   selector: 'app-author-dt-list',
@@ -26,7 +31,7 @@ import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-
 })
 export class AuthorDtListComponent implements OnInit {
   columns: ColumnDataTable[] = [{
-    column: 'author', header: 'Auteur',
+    column: 'author', header: 'Auteur', sortField: 'last_name',
     display: (element: Author) => {
       return `${element.first_name} ${element.last_name}`;
     },
@@ -34,6 +39,7 @@ export class AuthorDtListComponent implements OnInit {
       return `${row.first_name} ${row.last_name}`;
     },
     headerFilterToolTip: (row) => 'Filtrer sur l\'auteur',
+    headerFilterOptions: {colorIcon: 'warn', hasBackDrop: true, position: 'right'} as HeaderFilterOptions,
     flex: 20,
     sort: true
   },
@@ -45,6 +51,7 @@ export class AuthorDtListComponent implements OnInit {
       tooltip: (row: Author) => {
         return this.getBooks(row);
       },
+      headerFilterToolTip: (row) => 'Filtrer sur un livre',
       sort: false
     }];
   actions: ActionDataTable[] = [];
@@ -63,6 +70,7 @@ export class AuthorDtListComponent implements OnInit {
               public snackBar: MatSnackBar,
               public userGrpsSvc: UserGroupsService,
               private dataTableHeaderSvc: DataTableHeaderComponentService,
+              private bookSvc: BookDtService,
               private authorSvc: AuthorDtService) {
     this.dsAuthors.daoService = authorSvc;
   }
@@ -70,6 +78,7 @@ export class AuthorDtListComponent implements OnInit {
   ngOnInit(): void {
     this._setActions();
     this._setFilterAuthor();
+    this._setFilterBook();
   }
   getBooks(author: Author) {
     return author?.books_obj?.reduce<string>((acc, currentValue, i) => {
@@ -103,6 +112,18 @@ export class AuthorDtListComponent implements OnInit {
       this.connecte &&
       this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
   }
+  _setFilterBook() {
+    this.subSink.sink = this.bookSvc
+      .listAllItems()
+      .subscribe((books: Pagination) => {
+        const listBooks = new Map<string, string>();
+        (books.list as Book[])
+          .forEach((book) => listBooks.set(book.id.toString(), `${book.name}`));
+        this.filterColumns.set('books', listBooks);
+        this._setBookFilter('books', 'sur un livre', 'book',
+          'Filtrer par un livre', 'Livre', () => this.matDataTable.reload());
+      });
+  }
   _setFilterAuthor() {
     this.subSink.sink = this.authorSvc
       .listAllItems()
@@ -111,8 +132,7 @@ export class AuthorDtListComponent implements OnInit {
         (authors.list as Author[])
           .forEach((author) => listAuthors.set(author.id.toString(), `${author.first_name} ${author.last_name}`));
         this.filterColumns.set('author', listAuthors);
-        this._setAuthorFilter(
-          'author', 'sur un auteur', 'id',
+        this._setAuthorFilter('author', 'sur un auteur', 'id',
           'Filtrer par un auteur', 'Auteur', () => this.matDataTable.reload());
       });
   }
@@ -168,13 +188,41 @@ export class AuthorDtListComponent implements OnInit {
           if (this.extraParams.get(d.key)) {
             this.extraParams.delete(d.key);
           }
-
           if (d.value === 0 || d.value === '0') {
             this.extraParams.delete(d.key);
           } else {
             this.extraParams.set(d.key, d.value);
           }
+          if (callBack) {
+            callBack.call(null, null);
+          }
+        }
+      });
+    }
+  }
+  private _setBookFilter(listName, listLabel, keyFilter, placeHolder, condName,
+                         callBack: () => void = null) {
+    const data = {
+      placeHolder, keyFilter,
+      filterColumns: this._columnSetValues(listName),
+      filterName: condName
+    };
+    const filterComponent = this.dataTableHeaderSvc.createComponent(
+      this.columns, listName, `book_filter_list_${listName}`, `${listLabel}`,
+      BooksFilterDtComponent, data, true);
 
+    if (filterComponent) {
+      this.subSink.sink = filterComponent.subject$.subscribe((d) => {
+        if (d && d.key) {
+          filterComponent.dataDefault = {id: d.value};
+          if (this.extraParams.get(d.key)) {
+            this.extraParams.delete(d.key);
+          }
+          if (d.value === 0 || d.value === '0') {
+            this.extraParams.delete(d.key);
+          } else {
+            this.extraParams.set(d.key, d.value);
+          }
           if (callBack) {
             callBack.call(null, null);
           }
