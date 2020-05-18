@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, noop} from 'rxjs';
+import {BehaviorSubject, noop, Subscription} from 'rxjs';
 
 import {HeaderComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-header-interface.component';
 import {DataTableHeaderCommunicationService} from '../../../../../../../projects/data-table/src/lib/services/data-table-communication.service';
+import {SubSink} from '../../../../../services/subsink';
 
 @Component({
   selector: 'app-author-filter-dt',
@@ -22,26 +23,40 @@ export class AuthorFilterDtComponent implements HeaderComponent, OnInit, OnDestr
   selectedValue = '';
   values: any[] = [];
 
+  subSink = new SubSink();
+  subAllReinit = new SubSink();
+  subReinit = new SubSink();
+
   constructor(public dtCommunicationSvc: DataTableHeaderCommunicationService) { }
 
   ngOnInit(): void {
+    this._initData();
+    this._initReinit();
+  }
+  private _initData() {
     this.data.filterColumns.forEach((value, key) => {
       this.values.push({id: key, label: value});
     });
 
     if (this.dataDefault) {
-      const selectObj = this.values.find((v) => v.id == this.dataDefault.id);
+      const selectObj = this.values.find((v) => v.id === this.dataDefault.id);
       if (selectObj) {
         this.selectedValue = selectObj;
       }
     }
+  }
 
+  /**
+   * Effet de bord : multi fois, filtre sur auteur : puis supprimer le filtre, pas mal d'appels (annulés)
+   * accumulation des subs, pas de possibilité de unscribe sinon l'emit ne peut plus être capturé ci-après
+   * @private
+   */
+  private _initReinit() {
     /* attention ne pas faire de unsubscribe dans le destory sinon le sub ne marchera plus */
-    this.dtCommunicationSvc.sendAllFiltersReinit$.subscribe((yes) => {
+    this.subAllReinit.sink = this.dtCommunicationSvc.sendAllFiltersReinit$.subscribe((yes) => {
       yes ? this.sendRenit() : noop();
     });
-
-    this.dtCommunicationSvc.sendFilterReinit$.subscribe((name) => {
+    this.subReinit.sink = this.dtCommunicationSvc.sendFilterReinit$.subscribe((name) => {
       this.name === name ? this.sendRenit() : noop();
     });
   }
@@ -59,8 +74,15 @@ export class AuthorFilterDtComponent implements HeaderComponent, OnInit, OnDestr
     const dataEmit = {value: 0, key: this.data.keyFilter};
     this.subject.next(dataEmit);
     this.dtCommunicationSvc.filterUsed(this.name, dataEmit, false);
+    this.subReinit.unsubscribe();
+    this.subAllReinit.unsubscribe();
   }
   ngOnDestroy(): void {
+    this.subSink.unsubscribe();
+    /* this.subAllReinit.unsubscribe();
+    this.subReinit.unsubscribe(); */
   }
+
+  // filterUsed(name: string, value: any, user: boolean): void {}
 
 }
