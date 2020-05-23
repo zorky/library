@@ -19,10 +19,12 @@ import {SubSink} from '../../../services/subsink';
 import {DialogData} from '../../confirmation-dialog/dialog-data.model';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
 import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
-import {DataTableHeaderComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-component.service';
+import {DataTableHeaderColumnComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-column-component.service';
 import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-dt.component';
 import {BookDtService} from '../../../services/books/book-dt.service';
-import {BooksFilterDtComponent} from "./filters/books-filter-dt/books-filter-dt.component";
+import {BooksFilterDtComponent} from './filters/books-filter-dt/books-filter-dt.component';
+import {ComponentItem} from '../../../../../projects/data-table/src/lib/components/dynamic-core-components/component-item';
+import {BooksListColumnComponent} from './columns-components/books-list/books-list.component';
 
 @Component({
   selector: 'app-author-dt-list',
@@ -40,6 +42,7 @@ export class AuthorDtListComponent implements OnInit {
     },
     headerFilterToolTip: (row) => 'Filtrer sur l\'auteur',
     headerFilterOptions: {colorIcon: 'warn', hasBackDrop: true, position: 'right'} as HeaderFilterOptions,
+    // columnComponent: () => new ComponentItem(BooksListColumnComponent, null, 'columnAuthor'),
     flex: 20,
     sort: true
   },
@@ -69,7 +72,7 @@ export class AuthorDtListComponent implements OnInit {
               private dialog: MatDialog,
               public snackBar: MatSnackBar,
               public userGrpsSvc: UserGroupsService,
-              private dataTableHeaderSvc: DataTableHeaderComponentService,
+              private dataTableHeaderSvc: DataTableHeaderColumnComponentService,
               private bookSvc: BookDtService,
               private authorSvc: AuthorDtService) {
     this.dsAuthors.daoService = authorSvc;
@@ -122,6 +125,7 @@ export class AuthorDtListComponent implements OnInit {
         this.filterColumns.set('books', listBooks);
         this._setBookFilter('books', 'sur un livre', 'book',
           'Filtrer par un livre', 'Livre', () => this.matDataTable.reload());
+        this._setAuthorDynamicComponent('books', 'auteur', 'book');
       });
   }
   _setFilterAuthor() {
@@ -169,6 +173,26 @@ export class AuthorDtListComponent implements OnInit {
       }
     });
   }
+  private _setAuthorDynamicComponent(listName, listLabel, keyFilter,
+                                     callBack: () => void = null) {
+    const data = {
+      filterColumns: this._columnSetValues(listName),
+    };
+    const filterComponent = this.dataTableHeaderSvc
+      .createColumnComponent(
+        this.columns, listName, `books_list_${listName}`, `${listLabel}`,
+        BooksListColumnComponent, data);
+  }
+  /**
+   * Création du component colonne filtre Author
+   * @param listName
+   * @param listLabel
+   * @param keyFilter
+   * @param placeHolder
+   * @param condName
+   * @param callBack
+   * @private
+   */
   private _setAuthorFilter(listName, listLabel, keyFilter, placeHolder, condName,
                            callBack: () => void = null) {
     const data = {
@@ -176,7 +200,7 @@ export class AuthorDtListComponent implements OnInit {
       filterColumns: this._columnSetValues(listName),
       filterName: condName
     };
-    const filterComponent = this.dataTableHeaderSvc.createComponent(
+    const filterComponent = this.dataTableHeaderSvc.createHeaderComponent(
       this.columns, listName, `author_filter_list_${listName}`, `${listLabel}`,
       AuthorFilterDtComponent, data, true);
 
@@ -207,7 +231,7 @@ export class AuthorDtListComponent implements OnInit {
       filterColumns: this._columnSetValues(listName),
       filterName: condName
     };
-    const filterComponent = this.dataTableHeaderSvc.createComponent(
+    const filterComponent = this.dataTableHeaderSvc.createHeaderComponent(
       this.columns, listName, `book_filter_list_${listName}`, `${listLabel}`,
       BooksFilterDtComponent, data, true);
 

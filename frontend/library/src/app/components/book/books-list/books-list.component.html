@@ -30,7 +30,8 @@
             <app-author-display [author]="book?.author_obj"></app-author-display>
           </p>
         </div>
-        <app-book-actions [book]="book"
+        <app-book-actions *ngIf="isGest()"
+          [book]="book"
           (editClick)="editBook($event)"
           (deleteClick)="deleteBook($event)"></app-book-actions>
       </mat-card>

@@ -1,5 +1,4 @@
 
-
 /** fond noir **/
 
 .app-loader {
@@ -17,10 +16,12 @@
   position: fixed;
   top: 0;
   left: 0;
+  /* left: calc(50%); */
   height: 100%;
   width: 100%;
   background-color: rgba(0,0,0,0.2);
 }
+
 
 .sk-cube-grid {
   width: 40px;

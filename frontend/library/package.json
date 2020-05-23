@@ -23,13 +23,14 @@
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
     "@angular/service-worker": "~9.1.0",
-    "rxjs": "~6.5.4",
-    "tslib": "^1.10.0",
-    "zone.js": "~0.10.3",
+    "spinkit": "^2.0.1",
     "@auth0/angular-jwt": "^4.0.0",
     "@ngx-formly/core": "^5.5.15",
     "@ngx-formly/material": "^5.5.15",
-    "@ngx-formly/schematics": "^5.5.15"
+    "@ngx-formly/schematics": "^5.5.15",
+    "rxjs": "~6.5.4",
+    "tslib": "^1.10.0",
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.0",

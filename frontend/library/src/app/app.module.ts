@@ -34,6 +34,7 @@ import {DataTableModule} from "../../projects/data-table/src/lib/data-table.modu
 import { AuthorDtListComponent } from './components/author/author-dt-list/author-dt-list.component';
 import { AuthorFilterDtComponent } from './components/author/author-dt-list/filters/author-filter-dt/author-filter-dt.component';
 import { BooksFilterDtComponent } from './components/author/author-dt-list/filters/books-filter-dt/books-filter-dt.component';
+import {BooksListColumnComponent} from "./components/author/author-dt-list/columns-components/books-list/books-list.component";
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -61,7 +62,8 @@ export function tokenGetter(): string {
     BookSearchComponent,
     BookActionsComponent,
     AuthorDtListComponent,
-    BooksFilterDtComponent
+    BooksFilterDtComponent,
+    BooksListColumnComponent
   ],
   imports: [
     HttpClientModule,
@@ -79,7 +81,7 @@ export function tokenGetter(): string {
           // environment.host
         ],
         blacklistedRoutes: [],
-        // skipWhenExpired: false,
+        skipWhenExpired: true,
         // throwNoTokenError: true
       }
     }),
