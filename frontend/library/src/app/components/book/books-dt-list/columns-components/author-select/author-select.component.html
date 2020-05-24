@@ -1,0 +1,14 @@
+<div *ngIf="values">
+  <ng-container [formGroup]="form">
+    <mat-form-field *ngIf="data && data.filterColumns">
+      <mat-select  placeholder="Auteur"
+                   formControlName="author"
+                   [(ngModel)]="model"
+                   [compareWith]="compareFn">
+        <mat-option *ngFor="let v of values" [value]="v">{{v.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+   <!-- <pre>{{model|json}}</pre> -->
+  </ng-container>
+  <!-- [compareWith]="compareFn" -->
+</div>

@@ -23,7 +23,6 @@ import {DataTableHeaderColumnComponentService} from '../../../../../projects/dat
 import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-dt.component';
 import {BookDtService} from '../../../services/books/book-dt.service';
 import {BooksFilterDtComponent} from './filters/books-filter-dt/books-filter-dt.component';
-import {ComponentItem} from '../../../../../projects/data-table/src/lib/components/dynamic-core-components/component-item';
 import {BooksListColumnComponent} from './columns-components/books-list/books-list.component';
 
 @Component({
@@ -258,7 +257,6 @@ export class AuthorDtListComponent implements OnInit {
     if (this.filterColumns.has(key)) {
       return this.filterColumns.get(key);
     }
-
     return new Map<string, string>();
   }
 }
