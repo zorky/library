@@ -42,16 +42,18 @@ export class AuthorSelectComponent implements ColumnComponent, OnInit, OnDestroy
   }
   private _initData() {
     this.form = this.fb.group({ author: [] });
+    const values = [{id: null, label: '--'}];
     this.data.filterColumns.forEach((value, key) => {
       // this.authors.push({id: key, first_name: value, last_name: value});
-      this.values.push({id: Number(key), label: value});
+      values.push({id: Number(key), label: value});
     });
+    this.values = values;
     // console.log(this.values);
     this.form.patchValue({author: this.input?.id});
     // this.author.patchValue(this.input, {emitEvent: true, onlySelf: true});
   }
   compareFn(a1, a2) {
-    return a1.id === a2.id;
+    return a1?.id === a2?.id;
   }
   onSelected(event: MatSelectChange) {
     const book = this.input;

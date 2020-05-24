@@ -1,0 +1,35 @@
+$font-size: 12px;
+
+.mat-icon .mat-icon-inline {
+  font-size: $font-size;
+  height: $font-size;
+  width: $font-size;
+  line-height: $font-size;
+}
+
+.mat-icon-button .mat-icon-inline {
+  width: $font-size;
+  height: $font-size;
+  line-height: $font-size;
+}
+
+/*
+@mixin md-icon-size($size: 12px) {
+  font-size: $size;
+  height: $size;
+  width: $size;
+  line-height: $size;
+}
+
+mat-icon {
+  @include md-icon-size(24px);
+}
+
+:host {
+  .myIcon {
+    &mat-icon {
+      @include md-icon-size(24px);
+    }
+  }
+}
+*/

@@ -1,0 +1,161 @@
+<div class="p8-cm_data-table__container">
+  <div *ngIf="showLoader && loaderMask && loading" class="app-loader">
+    <div class="sk-wave">
+      <div class="sk-wave-rect"></div>
+      <div class="sk-wave-rect"></div>
+      <div class="sk-wave-rect"></div>
+      <div class="sk-wave-rect"></div>
+      <div class="sk-wave-rect"></div>
+    </div>
+  </div>
+
+  <div class="p8-cm_data-table__progress-bar-container">
+    <mat-progress-bar class="p8-cm_data-table__progress-bar"
+                      *ngIf="showLoader && loaderProgress && loading"
+                      mode="indeterminate">
+    </mat-progress-bar>
+  </div>
+
+  <div fxLayout="column" fxLayoutGap="1px" style="padding-bottom: 5px;">
+    <div fxLayoutAlign="start" fxFlex="80">
+      <mat-form-field *ngIf="filterDisplay"
+                      floatLabel="never" class="p8-cm_data-table__search">
+        <input matInput #filter placeholder="{{placeHolderFilter}}" matTooltip="{{toolTipFilter}}">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div fxLayoutAlign="end">
+      <button *ngIf="refreshButton"
+              matTooltip="rafraichir la liste"
+              mat-stroked-button (click)="refreshList($event)">Rafraichir la liste</button>
+      <button *ngIf="refreshIcone"
+              matTooltip="rafraichir la liste"
+              mat-icon-button (click)="refreshList($event)"><mat-icon>refresh</mat-icon></button>
+    </div>
+  </div>
+
+  <!-- boutons suppressions des filtres -->
+
+  <div *ngIf="filtersActivated && filtersActivated.length > 0"
+       fxLayoutAlign="end"
+       class="p8-cm_data-table__filters-container">
+    <button *ngFor="let filter of filtersActivated"
+            (click)="reinitFilter(filter)"
+            class="p8-cm_data-table__filters-buttons"
+            mat-stroked-button
+            color="accent"
+            matTooltip="{{getToolTipButtonFilter(filter)}}"
+            style="margin-right: 5px;">
+      <mat-icon>cancel</mat-icon> {{filter.title}}
+    </button>
+
+    <button *ngIf="filtersActivated.length > 1" mat-stroked-button
+            matTooltip="enlever tous les filtres"
+            class="p8-cm_data-table__filters-buttons"
+            (click)="reinitFilters()"
+            color="accent">
+      <mat-icon>cancel</mat-icon> annuler tous les filtres
+    </button>
+  </div>
+
+  <div *ngIf="filtersLegend && hasFilters()"
+       style="margin: 0 0 10px 0">
+    <mat-label>utiliser les icônes <mat-icon>filter_list</mat-icon> sur les colonnes pour filtrer et affiner les résultats</mat-label>
+  </div>
+
+  <mat-table #table
+             [dataSource]="dataSource.datasource"
+             matSort
+             matSortDisableClear
+             class="p8-cm_data-table__table p8-cm_data-table__selectable">
+
+    <!-- colonnes champs -->
+
+    <ng-container *ngFor="let column of columns; let first = first; let idx = index"
+                  [cdkColumnDef]="column.sortField ? column.sortField : column.column">
+      <!-- entête : libellé de la colonne + le filtre le cas échéant -->
+      <ng-container *cdkHeaderCellDef="let row">
+        <mat-header-cell [style.color]="getColor(column, row, 'header')"
+                         [style.background-color]="getColorBackground(column, row, 'header')"
+                         [fxFlex]="flexWidth('column', column, row)"
+                         [ngClass]="{'p8-cm_data-table__cell': !first}">
+          <ng-container *ngIf="column.headerComponent && !getHiddenHeader(column)">
+              <button [disabled]="isSelected(idx)" mat-icon-button matTooltip="{{getToolTipFilter(column, row)}}"
+                      (click)="filterShow($event, column.headerComponent(), idx, column)">
+                <mat-icon color="{{isFilterUsed(column.headerComponent(), column)}}">filter_list</mat-icon>
+              </button>
+          </ng-container>
+          <span mat-sort-header [disabled]="!column.sort" *ngIf="!getHiddenHeader(column)">
+            {{ column.header }}
+          </span>
+          <!--
+          <span mat-sort-header [disabled]="!column.sort" [innerHTML]="column.headerFct ? column.headerFct(row) : column.header">
+           {{ getHeaderLabel(column, row) }}
+           {{ column.header }}
+          </span> -->
+
+        </mat-header-cell>
+
+      </ng-container>
+
+      <!-- cellule -->
+
+      <ng-container *cdkCellDef="let row">
+        <mat-cell [style.color]="getColor(column, row)"
+                  [style.fontSize]="getFontSize(column, row)"
+                  [fxFlex]="flexWidth('column', column, row)"
+                  [ngClass]="{'p8-cm_data-table__cell': !first, 'p8-cm_data-table__cell-center': column?.center}">
+          <span *ngIf="! column.columnComponent && ! getHidden(column, row)"
+            [ngClass]="{'p8-cm_data-table__cell-truncate': column?.truncate}" >
+            <!-- I add matTooltip conditionally, because when matTooltip is added we can no longer select the text below -->
+            <span *ngIf="getTooltip(column, row)" matTooltip="{{getTooltip(column, row)}}" [innerHTML]="column.display(row)"></span>
+            <span *ngIf="!getTooltip(column, row)" [innerHTML]="column.display(row)"></span>
+          </span>
+          <ng-container *ngIf="column.columnComponent && ! getHidden(column, row)">
+            <mat-data-table-cell-component
+              [component]="column.columnComponent()"
+              [column]="column"
+              [row]="row">
+            </mat-data-table-cell-component>
+            <!-- <ng-template host></ng-template> -->
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+    </ng-container>
+
+    <!-- actions -->
+
+    <ng-container *ngFor="let action of actions" [cdkColumnDef]="action.label">
+      <mat-header-cell *cdkHeaderCellDef="let row;"
+                       [style.color]="getColor(action, row, 'header')"
+                       [style.background-color]="getColorBackground(action, row, 'header')"
+                       class="p8-cm_data-table__action"></mat-header-cell>
+      <mat-cell *cdkCellDef="let row;" class="p8-cm_data-table__action">
+        <button *ngIf="! getHiddenAction(action, row)"
+                mat-icon-button matTooltip="{{action.tooltipFun ? action.tooltipFun(row) : action.tooltip }}"
+                (click)="action.click(row)"
+                [color]="action.iconcolorFun ? action.iconcolorFun(row) : action.iconcolor || 'auto'">
+          <mat-icon>{{action.iconFun ? action.iconFun(row) : action.icon}}</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <!-- entêtes / colonnes à afficher -->
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <div [hidden]="isTableHasData" style="text-align: center;">
+    {{textIfListEmpty}}
+  </div>
+  <mat-paginator #paginator
+                 [length]="total"
+                 [pageIndex]="0"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="pageSizesList"
+                 [showFirstLastButtons]="showFirstLastButtons"
+                 class="app-cm_data-table__paginator"></mat-paginator>
+
+  <!--<div *ngIf="dataSource.datasource.data.length === 0">PAS TROUVE</div>-->
+
+</div>
