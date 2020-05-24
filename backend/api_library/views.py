@@ -66,7 +66,7 @@ class BookViewSet(viewsets.ModelViewSet):
     filterset_class = BookFilter
 
     search_fields = ['name', 'author__first_name', 'author__last_name']
-    ordering_fields = ('id', 'name',)
+    ordering_fields = ('id', 'name', 'enabled', 'author__last_name',)
 
     pagination_class = LimitOffsetPagination
     page_size = 10

@@ -12,6 +12,7 @@ import {BookDtService} from '../../../services/books/book-dt.service';
 import {AuthorSelectComponent} from './columns-components/author-select/author-select.component';
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
 import {BookEnabledComponent} from './columns-components/book-enabled/book-enabled.component';
+import {BookNameComponent} from "./columns-components/book-name/book-name.component";
 
 @Component({
   selector: 'app-books-dt-list',
@@ -20,27 +21,26 @@ import {BookEnabledComponent} from './columns-components/book-enabled/book-enabl
 })
 export class BooksDtListComponent implements OnInit {
   columns: ColumnDataTable[] = [{
-    column: 'book', header: 'Livre', sortField: 'name',
+    column: 'name', header: 'Livre', sortField: 'name',
     display: (element: Book) => {
       return `${element.name}`;
     },
-    // columnComponent: () => new ComponentItem(BooksListColumnComponent, null, 'columnAuthor'),
-    flex: 20,
+    flex: 25,
     sort: true
   },
     {
-    column: 'author', header: 'Auteur',
+    column: 'author', header: 'Auteur', sortField: 'author__last_name',
     display: (element: Book) => {
       return `${element.author_obj.first_name} ${element.author_obj.last_name}`;
     },
-    sort: false
+    sort: true
   },
     {
       column: 'enabled', header: 'Disponible ?',
       display: (element: Book) => {
         return element.enabled;
       },
-      sort: false
+      sort: true
     }];
   actions: ActionDataTable[] = [];
   dsBooks: MatDataSourceGeneric<Book> = new MatDataSourceGeneric<Book>();
@@ -57,8 +57,15 @@ export class BooksDtListComponent implements OnInit {
 
   ngOnInit(): void {
     this.subSink.sink = this.bookSvc.loading$.subscribe((enabled) => this.loading = enabled);
+    this._setCellName();
     this._setCellAuthor();
     this._setCellEnabled();
+  }
+  _setCellName() {
+    const filterComponent = this.dataTableHeaderSvc
+      .createColumnComponent(
+        this.columns, 'name', `book_name`, `titre du livre`,
+        BookNameComponent, null);
   }
   _setCellEnabled() {
     const filterComponent = this.dataTableHeaderSvc

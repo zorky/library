@@ -2,6 +2,16 @@
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
 
+## DataTable
+
+Selector : mat-data-table
+
+Tri, pagination, recherche
+
+Filtres dynamiques
+
+Composants dans les cellules
+
 ## Code scaffolding
 
 Run `ng generate component component-name --project data-table` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project data-table`.
