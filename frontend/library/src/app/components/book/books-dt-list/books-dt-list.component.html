@@ -1,4 +1,8 @@
 <mat-card>
+  <mat-card-title>
+    <mat-progress-bar [mode]="'indeterminate'" [color]="'warn'"
+                      *ngIf="loading"></mat-progress-bar>
+  </mat-card-title>
   <mat-card-content>
     <mat-data-table
       [dataSource]="dsBooks"

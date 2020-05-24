@@ -37,6 +37,7 @@ import { BooksFilterDtComponent } from './components/author/author-dt-list/filte
 import {BooksListColumnComponent} from "./components/author/author-dt-list/columns-components/books-list/books-list.component";
 import { BooksDtListComponent } from './components/book/books-dt-list/books-dt-list.component';
 import { AuthorSelectComponent } from './components/book/books-dt-list/columns-components/author-select/author-select.component';
+import { BookEnabledComponent } from './components/book/books-dt-list/columns-components/book-enabled/book-enabled.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -67,7 +68,8 @@ export function tokenGetter(): string {
     BooksFilterDtComponent,
     BooksListColumnComponent,
     BooksDtListComponent,
-    AuthorSelectComponent
+    AuthorSelectComponent,
+    BookEnabledComponent
   ],
   imports: [
     HttpClientModule,

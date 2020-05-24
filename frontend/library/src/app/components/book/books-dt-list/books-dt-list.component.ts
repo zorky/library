@@ -9,9 +9,9 @@ import {MatDataSourceGeneric, Pagination} from '../../../../../projects/data-tab
 import {DataTableComponent} from '../../../../../projects/data-table/src/lib/components/data-table.component';
 import {DataTableHeaderColumnComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-column-component.service';
 import {BookDtService} from '../../../services/books/book-dt.service';
-import {BooksListColumnComponent} from "../../author/author-dt-list/columns-components/books-list/books-list.component";
-import {AuthorSelectComponent} from "./columns-components/author-select/author-select.component";
-import {AuthorDtService} from "../../../services/authors/author-dt.service";
+import {AuthorSelectComponent} from './columns-components/author-select/author-select.component';
+import {AuthorDtService} from '../../../services/authors/author-dt.service';
+import {BookEnabledComponent} from './columns-components/book-enabled/book-enabled.component';
 
 @Component({
   selector: 'app-books-dt-list',
@@ -34,12 +34,20 @@ export class BooksDtListComponent implements OnInit {
       return `${element.author_obj.first_name} ${element.author_obj.last_name}`;
     },
     sort: false
-  }];
+  },
+    {
+      column: 'enabled', header: 'Disponible ?',
+      display: (element: Book) => {
+        return element.enabled;
+      },
+      sort: false
+    }];
   actions: ActionDataTable[] = [];
   dsBooks: MatDataSourceGeneric<Book> = new MatDataSourceGeneric<Book>();
   extraParams: Map<string, string> = new Map<string, string>();
   filterColumns: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
   @ViewChild(DataTableComponent, {static: false}) matDataTable: DataTableComponent;
+  loading = false;
   subSink = new SubSink();
   constructor(private dataTableHeaderSvc: DataTableHeaderColumnComponentService,
               private authorSvc: AuthorDtService,
@@ -48,9 +56,17 @@ export class BooksDtListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._setFilterAuthor();
+    this.subSink.sink = this.bookSvc.loading$.subscribe((enabled) => this.loading = enabled);
+    this._setCellAuthor();
+    this._setCellEnabled();
   }
-  _setFilterAuthor() {
+  _setCellEnabled() {
+    const filterComponent = this.dataTableHeaderSvc
+      .createColumnComponent(
+        this.columns, 'enabled', `book_enabled`, `livre disponible`,
+        BookEnabledComponent, null);
+  }
+  _setCellAuthor() {
     this.subSink.sink = this.authorSvc
       .listAllItems()
       .subscribe((authors: Pagination) => {

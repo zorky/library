@@ -5,6 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {finalize} from 'rxjs/operators';
 import {Author, AuthorService, Book} from '../../../services';
 import {SubSink} from '../../../services/subsink';
+import {ToastyService} from "../../../services/toasty/toasty.service";
 
 @Component({
   selector: 'app-author-edit',
@@ -26,6 +27,7 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(private router: Router, private route: ActivatedRoute,
               private fb: FormBuilder, public snackBar: MatSnackBar,
+              private toastySvc: ToastyService,
               private authorSvc: AuthorService) {
   }
 
@@ -54,9 +56,9 @@ export class AuthorEditComponent implements OnInit, OnDestroy, OnChanges {
       .updateOrcreate(this.authorForm.value)
       .pipe(finalize(() => this.disabled = this.loading = false))
       .subscribe((author: Author) => {
-        this.snackBar.
-        open(`"${author.first_name} ${author.last_name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
-          'Auteur', {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+        this.toastySvc.toasty(
+          `"${author.first_name} ${author.last_name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
+          'Auteur');
         this._initForm(author);
         this.authorUpdated.emit(author);
       });
