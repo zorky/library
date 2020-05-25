@@ -16,14 +16,11 @@ export class ComponentItem implements HeaderComponent{
 }
 
 export class ColumnComponentItem implements ColumnComponent {
-  public title = '';
-  public condition = '';
-  public subject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  public subject$ = this.subject.asObservable();
   public name: string;
   public input: any;
-  column: string;
-  constructor(public component: Type<any>, public data: any) {}
-
-
+  public column: string;
+  // public title = '';
+  /* public subject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public subject$ = this.subject.asObservable(); */
+  constructor(public component: Type<ColumnComponent>, public data: any) {}
 }

@@ -16,14 +16,14 @@ export class DataTableHeaderColumnComponentService {
   /**
    * Création component helper de filtre colonne
    */
-  createHeaderComponent(columns: ColumnDataTable[],
-                        column: string,
-                        nameComponent: string = column,
-                        titleComponent: string = column,
-                        componentType: Type<HeaderComponent>,
-                        data: any,
-                        autoClose: boolean = false,
-                        dataDefault: any = null) {
+  createHeaderComponent<T>(columns: ColumnDataTable[],
+                           column: string,
+                           nameComponent: string = column,
+                           titleComponent: string = column,
+                           componentType: Type<HeaderComponent>,
+                           data: any,
+                           autoClose: boolean = false,
+                           dataDefault: any = null) {
     const colDesc = columns.find((col: ColumnDataTable) => col.column ===  column);
     if (colDesc) {
       const filterComponent = new ComponentItem(componentType, data, nameComponent);
@@ -50,7 +50,7 @@ export class DataTableHeaderColumnComponentService {
     if (colDesc) {
       const columnComponent = new ColumnComponentItem(componentType, data);
       columnComponent.name = nameComponent;
-      columnComponent.title = titleComponent;
+      // columnComponent.title = titleComponent;
       columnComponent.data = data;
       colDesc.columnComponent = () => columnComponent;
       return columnComponent;

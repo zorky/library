@@ -1,12 +1,7 @@
-// non utilisé car pb d'initialisation lors de la conf ColumnDataTable, se retrouve undefined
-// export enum filterPosition {
-//   top, bottom, left, right
-// }
-
 import {ColumnComponentItem, ComponentItem} from '../components/dynamic-core-components/component-item';
 
 /**
- * Options ouverture popin filtre
+ * Options ouverture popin filtre colonne
  */
 export interface HeaderFilterOptions {
   colorIcon: 'accent' | 'primary' | 'warn';

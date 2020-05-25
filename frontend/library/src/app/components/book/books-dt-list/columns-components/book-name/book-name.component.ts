@@ -2,9 +2,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {Book} from '../../../../../services';
-import {BookDtService} from "../../../../../services/books/book-dt.service";
-import {SubSink} from "../../../../../services/subsink";
-import {ToastyService} from "../../../../../services/toasty/toasty.service";
+import {BookDtService} from '../../../../../services/books/book-dt.service';
+import {SubSink} from '../../../../../services/subsink';
+import {ToastyService} from '../../../../../services/toasty/toasty.service';
 
 @Component({
   selector: 'app-book-name',
@@ -16,8 +16,8 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   data: any;
   input: Book;
   name: string;
-  subject: BehaviorSubject<any>;
-  subject$: any;
+  /* subject: BehaviorSubject<any>;
+  subject$: any; */
   onEdit = false;
   model: string;
   subSink = new SubSink();

@@ -2,6 +2,7 @@
  * interface pour les actions de data-table
  */
 export interface ActionDataTable {
+  /* identifiant action */
   label: string;
 
   /* tooltip bouton */
@@ -14,7 +15,6 @@ export interface ActionDataTable {
   colorBackground?: (row) => string;
 
   /* fonctions couleurs colonne entéte texte et fond */
-
   colorHeader?: (row) => string;
   colorHeaderBackground?: (row) => string;
 
