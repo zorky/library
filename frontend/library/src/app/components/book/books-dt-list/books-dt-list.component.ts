@@ -12,7 +12,7 @@ import {BookDtService} from '../../../services/books/book-dt.service';
 import {AuthorSelectComponent} from './columns-components/author-select/author-select.component';
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
 import {BookEnabledComponent} from './columns-components/book-enabled/book-enabled.component';
-import {BookNameComponent} from "./columns-components/book-name/book-name.component";
+import {BookNameComponent} from './columns-components/book-name/book-name.component';
 
 @Component({
   selector: 'app-books-dt-list',
@@ -42,7 +42,16 @@ export class BooksDtListComponent implements OnInit {
       },
       sort: true
     }];
-  actions: ActionDataTable[] = [];
+  actions: ActionDataTable[] = [{
+    label: 'delete', tooltip: 'Supprimer le livre',  icon: 'delete',
+    click: (row: Book) => this.deleteBook(row),
+    iconcolor: 'warn',
+  },
+    {
+      label: 'edit', tooltip: 'Modifier le livre',  icon: 'edit',
+      click: (row: Book) => this.editBook(row),
+      iconcolor: 'accent',
+    }];
   dsBooks: MatDataSourceGeneric<Book> = new MatDataSourceGeneric<Book>();
   extraParams: Map<string, string> = new Map<string, string>();
   filterColumns: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
@@ -83,6 +92,12 @@ export class BooksDtListComponent implements OnInit {
         this.filterColumns.set('author', listAuthors);
         this._setAuthorDynamicComponent('author', 'sur un auteur', 'author');
       });
+  }
+  private editBook(row: Book) {
+
+  }
+  private deleteBook(row: Book) {
+
   }
   private _columnSetValues(key): Map<string, string> {
     if (this.filterColumns.has(key)) {

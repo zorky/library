@@ -29,6 +29,9 @@
     <button mat-menu-item (click)="go('/books')">
       Liste
     </button>
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/booksdt')">
+      Liste DT
+    </button>
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/book/edit')">
       Ajouter un livre
     </button>
@@ -37,6 +40,9 @@
   <mat-menu #authorMenu="matMenu">
     <button mat-menu-item (click)="go('/authors')">
       Liste
+    </button>
+    <button *ngIf="canAcces()" mat-menu-item (click)="go('/authorsdt')">
+      Liste DT
     </button>
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/author/edit')">
       Ajouter un auteur

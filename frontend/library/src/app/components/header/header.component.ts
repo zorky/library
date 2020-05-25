@@ -33,7 +33,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate([url]);
   }
   canAcces() {
-    return this.connecte && this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
+    return this.authentSvc.isAuthenticated() &&
+      this.connecte &&
+      this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
   }
   ngOnDestroy(): void {
     this.subSink.unsubscribe();
