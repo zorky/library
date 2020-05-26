@@ -14,7 +14,6 @@ import {ColumnComponent} from '../../interfaces/component-column-interface.compo
   styleUrls: ['./data-table-cell-component.component.css']
 })
 export class DataTableCellComponentComponent implements OnInit, OnDestroy {
-  @Input() type: any;
   @Input() component: ColumnComponentItem;
   @Input() column: ColumnDataTable;
   @Input() row: any;

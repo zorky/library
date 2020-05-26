@@ -1,5 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {fromEvent, Subject} from 'rxjs';
+import {filter, finalize, switchMapTo, take} from 'rxjs/operators';
+
 import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {Book} from '../../../../../services';
 import {BookDtService} from '../../../../../services/books/book-dt.service';
@@ -20,12 +22,19 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   subject$: any; */
   onEdit = false;
   model: string;
+  editMode = new Subject();
+  editMode$ = this.editMode.asObservable();
+  loading = false;
   subSink = new SubSink();
-  constructor(private toastySvc: ToastyService,
+  constructor(private host: ElementRef,
+              private toastySvc: ToastyService,
               private bookSvc: BookDtService) { }
 
   ngOnInit(): void {
     this.model = this.input?.name;
+    /** edit dblClick https://netbasal.com/keeping-it-simple-implementing-edit-in-place-in-angular-4fd92c4dfc70 */
+    this.viewModeHandler();
+    this.editModeHandler();
   }
   goEdit(event) {
     this.model = this.input.name;
@@ -37,15 +46,39 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   save(event) {
     const book = this.input;
     book.name = this.model;
+    this.loading = true;
     this.subSink.sink = this.bookSvc
       .patch(book)
+      .pipe((finalize(() => this.loading = false)))
       .subscribe((b) => {
         this.toastySvc.toasty(
         `Titre bien modifié en "${this.model}"`, `Livre "${this.input.name}"`);
         this.onEdit = false;
       });
   }
+  private get element() {
+    return this.host.nativeElement;
+  }
+  private viewModeHandler() {
+    this.subSink.sink = fromEvent(this.element, 'dblclick')
+      .subscribe(() => {
+        this.loading = true;
+        this.onEdit = true;
+        this.editMode.next(true);
+        setTimeout(() => this.loading = false, 500);
+    });
+  }
+  private editModeHandler() {
+    const clickOutside$ = fromEvent(document, 'click').pipe(
+      filter(({ target }) => this.element.contains(target) === false),
+      take(1)
+    );
+    this.subSink.sink = this.editMode$.pipe(
+      switchMapTo(clickOutside$),
+    ).subscribe(event => this.onEdit = false);
+  }
   ngOnDestroy(): void {
+    this.subSink.unsubscribe();
   }
 
 }
