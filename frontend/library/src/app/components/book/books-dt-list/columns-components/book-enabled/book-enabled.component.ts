@@ -42,5 +42,4 @@ export class BookEnabledComponent implements ColumnComponent, OnInit, OnDestroy 
   ngOnDestroy(): void {
     this.subSink.unsubscribe();
   }
-
 }

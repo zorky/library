@@ -15,7 +15,7 @@
     <mat-form-field fxFlex="50">
       <input matInput [(ngModel)]="model" placeholder="titre du livre">
     </mat-form-field>
-    <button (click)="save($event)"
+    <button (click)="save()"
             [disabled]="!model"
             mat-icon-button
             matTooltip="enregistrer"

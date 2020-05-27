@@ -1,4 +1,4 @@
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 /**
  * Interface des components navbar ou ColumnDataTable.headerComponent de la data-table
@@ -12,9 +12,9 @@ export interface ColumnComponent {
   data: any;
   /* row courante envoyée par la data-table ("input") TODO : voir si on pt utiliser un type générique T */
   input: any;
-  /* hook déclenché par le component (envoi de données, etc) */
-  /* subject: BehaviorSubject<any>;
-  subject$: any; */
+  /* hook */
+  // subject: BehaviorSubject<any>;
+  // subject$: Observable<any>;
   /* Titre du composant */
   /* title?: string; */
 }

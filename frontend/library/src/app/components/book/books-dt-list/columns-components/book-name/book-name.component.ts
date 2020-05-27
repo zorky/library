@@ -1,5 +1,5 @@
-import {Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {fromEvent, Subject} from 'rxjs';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {filter, finalize, switchMapTo, take} from 'rxjs/operators';
 
 import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
@@ -18,10 +18,9 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   data: any;
   input: Book;
   name: string;
-  /* subject: BehaviorSubject<any>;
-  subject$: any; */
   onEdit = false;
   model: string;
+
   editMode = new Subject();
   editMode$ = this.editMode.asObservable();
   loading = false;
@@ -30,6 +29,12 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
               private toastySvc: ToastyService,
               private bookSvc: BookDtService) { }
 
+  @HostListener('keyup.enter')
+  onEnter() {
+    if (this.model) {
+      this.save();
+    }
+  }
   ngOnInit(): void {
     this.model = this.input?.name;
     /** edit dblClick https://netbasal.com/keeping-it-simple-implementing-edit-in-place-in-angular-4fd92c4dfc70 */
@@ -43,7 +48,7 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   cancel(event) {
     this.onEdit = false;
   }
-  save(event) {
+  save() {
     const book = this.input;
     book.name = this.model;
     this.loading = true;
@@ -80,5 +85,4 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subSink.unsubscribe();
   }
-
 }

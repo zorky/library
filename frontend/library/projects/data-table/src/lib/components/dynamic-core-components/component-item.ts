@@ -20,7 +20,7 @@ export class ColumnComponentItem implements ColumnComponent {
   public input: any;
   public column: string;
   // public title = '';
-  /* public subject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  public subject$ = this.subject.asObservable(); */
+  // public subject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  // public subject$ = this.subject.asObservable();
   constructor(public component: Type<ColumnComponent>, public data: any) {}
 }
