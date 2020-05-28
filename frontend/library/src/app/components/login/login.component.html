@@ -23,10 +23,17 @@
 
       <mat-form-field fxLayout="row">
         <mat-icon matPrefix>lock</mat-icon>
-        <label>
-          <input matInput placeholder="Mot de passe" name="password" type="password" required [(ngModel)]="model.password">
-        </label>
-
+        <mat-label>Mot de passe</mat-label>
+        <input #password matInput placeholder="Mot de passe"
+               type="password" required [(ngModel)]="model.password">
+        <button *ngIf="!togglePwd"
+                matTooltip="montrer le mot de passe"
+                matSuffix (click)="showPassword()"
+                mat-icon-button><mat-icon>visibility</mat-icon></button>
+        <button *ngIf="togglePwd"
+                matTooltip="cacher le mot de passe"
+                matSuffix (click)="hidePassword()"
+                mat-icon-button><mat-icon>visibility_off</mat-icon></button>
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions fxLayout="column">

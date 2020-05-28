@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {UserAuthent} from '../../services/authent/user-authent.model';
@@ -10,12 +10,15 @@ import {finalize} from "rxjs/operators";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   model = {} as UserAuthent;
   message = { message: '', label: '', color: '', icon: '' };
+  @ViewChild('password') el: ElementRef;
+  togglePwd = false;
   loading = false;
 
-  constructor(private authService: AuthService,
+  constructor(private rd: Renderer2,
+              private authService: AuthService,
               private router: Router) {
     if (authService.isAuthenticated()) {
       authService.logout();
@@ -33,7 +36,6 @@ export class LoginComponent implements OnInit {
     if (this.loading) {
       return false;
     }
-
     return !(!this.model.username || !this.model.password);
   }
 
@@ -62,8 +64,18 @@ export class LoginComponent implements OnInit {
       }
     );
   }
-
   closeAlert() {
     this.message = null;
+  }
+  showPassword() {
+    this.el.nativeElement.type = 'text';
+    this.togglePwd = ! this.togglePwd;
+  }
+  hidePassword() {
+    this.el.nativeElement.type = 'password';
+    this.togglePwd = ! this.togglePwd;
+  }
+  ngAfterViewInit(): void {
+    console.log(this.el.nativeElement);
   }
 }
