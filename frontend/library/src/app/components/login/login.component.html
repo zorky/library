@@ -17,7 +17,8 @@
                  name="username"
                  required
                  type="text"
-                 [(ngModel)]="model.username">
+                 [(ngModel)]="model.username"
+                 [ngModelOptions]="{standalone: true}">
         </label>
       </mat-form-field>
 
@@ -25,7 +26,9 @@
         <mat-icon matPrefix>lock</mat-icon>
         <mat-label>Mot de passe</mat-label>
         <input #password matInput placeholder="Mot de passe"
-               type="password" required [(ngModel)]="model.password">
+               type="password" required
+               [(ngModel)]="model.password"
+               [ngModelOptions]="{standalone: true}">
         <button *ngIf="!togglePwd"
                 matTooltip="montrer le mot de passe"
                 matSuffix (click)="showPassword()"
