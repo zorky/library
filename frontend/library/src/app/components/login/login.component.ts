@@ -13,7 +13,7 @@ import {finalize} from "rxjs/operators";
 export class LoginComponent implements OnInit, AfterViewInit {
   model = {} as UserAuthent;
   message = { message: '', label: '', color: '', icon: '' };
-  @ViewChild('password') el: ElementRef;
+  @ViewChild('password') pwd: ElementRef;
   togglePwd = false;
   loading = false;
 
@@ -68,14 +68,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.message = null;
   }
   showPassword() {
-    this.el.nativeElement.type = 'text';
+    this.pwd.nativeElement.type = 'text';
     this.togglePwd = ! this.togglePwd;
   }
   hidePassword() {
-    this.el.nativeElement.type = 'password';
+    this.pwd.nativeElement.type = 'password';
     this.togglePwd = ! this.togglePwd;
   }
   ngAfterViewInit(): void {
-    console.log(this.el.nativeElement);
+    console.log(this.pwd.nativeElement);
   }
 }
