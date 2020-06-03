@@ -20,8 +20,7 @@ const appRoutes: Routes = [
       {path: 'authors', component: AuthorsListComponent},
       {path: 'authorsdt', component: AuthorDtListComponent},
       {path: 'gestion', loadChildren: () => import('./gestion/gestion.module').then(m => {
-        console.log('loading gestion');
-        return m.GestionModule; })}
+        return m.GestionModule; }), canLoad: [GestionnaireGuard], canActivate: [GestionnaireGuard]}
     ]
   },
   {path: '**', component: NotFoundComponent},
