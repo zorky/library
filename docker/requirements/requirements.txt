@@ -1,4 +1,4 @@
-django==3.0.6
+django==3.0.7
 djangorestframework==3.11.0
 drf-jwt==1.16.0
 django-filter==2.2.0
