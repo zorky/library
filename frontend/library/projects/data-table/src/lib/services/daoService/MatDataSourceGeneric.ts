@@ -1,13 +1,16 @@
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
-import { BehaviorSubject, merge, of } from 'rxjs';
+import {BehaviorSubject, merge, of, Subject} from 'rxjs';
 import { Injectable } from '@angular/core';
-import {startWith, catchError, switchMap, map, finalize, concatMap} from 'rxjs/operators';
+import {startWith, catchError, switchMap, map, finalize} from 'rxjs/operators';
 import { Pagination } from './pagination';
 import { ListParameters } from './list-parameters';
 import { DaoGeneric } from './generic.dao';
 
+/**
+ * DataSource générique data-table, appelle DaoGeneric<T>.listItems
+ */
 @Injectable({ providedIn: 'root' })
 export class MatDataSourceGeneric<T> {
   private _datasource: MatTableDataSource<T> = new MatTableDataSource<T>();
@@ -17,23 +20,26 @@ export class MatDataSourceGeneric<T> {
   private _daoService: DaoGeneric<T>;
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
+  /**
+   * Savoir si la datasource est en train de charger la liste ou non
+   */
   public loading$ = this.loadingSubject.asObservable();
 
-  private listCountSubject = new BehaviorSubject<number>(0);
+  private listCountSubject = new Subject<number>();
   /**
    * Total de la pagination ramené (liste ramenée)
    * @type {Observable<number>}
    */
   public listCount$ = this.listCountSubject.asObservable();
 
-  private listCountTotalSubject = new BehaviorSubject<number>(0);
+  private listCountTotalSubject = new Subject<number>();
   /**
    * Total des éléments trouvès après filtre
    * @type {Observable<number>}
    */
   public listCountTotal$ = this.listCountTotalSubject.asObservable();
 
-  private listDataSubject = new BehaviorSubject<any[]>([]);
+  private listDataSubject = new Subject<any[]>();
   /**
    * les éléménts paginés ramenés (list[])
    * @type {Observable<any[]>}
@@ -125,7 +131,6 @@ export class MatDataSourceGeneric<T> {
 
             urlBaseOverride
           };
-          console.log('listItems');
           return this._daoService.listItems(parameters);
         }),
         map((data: Pagination) => {

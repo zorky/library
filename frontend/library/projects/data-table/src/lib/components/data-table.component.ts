@@ -62,6 +62,7 @@ export class DataTableComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   pageSizesList: number[] = [5, 10, 25];
 
+  /** Afficher les boutons 1ère et dernière page ? */
   @Input()
   showFirstLastButtons = false;
 
@@ -132,6 +133,9 @@ export class DataTableComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
   urlBaseOverrideInjectId: string = null;
 
+  /**
+   * Boutons de rechargement de la liste ?
+   */
   @Input() refreshButton = false;
   @Input() refreshIcone = true;
 
@@ -155,9 +159,8 @@ export class DataTableComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild('filter', {static: false}) filter: ElementRef;
   @ViewChild(ComponentHostDirective, {static: true}) host: ComponentHostDirective;
-
+  @ViewChild('filter', {static: false}) filter: ElementRef;
   private filterChange = new BehaviorSubject('');
 
   total = 0;
