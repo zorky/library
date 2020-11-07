@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
     "@angular/service-worker": "~9.1.0",
+    "@angular/elements": "~9.1.0",
     "spinkit": "^2.0.1",
     "@auth0/angular-jwt": "^4.0.0",
     "@ngx-formly/core": "^5.5.15",
