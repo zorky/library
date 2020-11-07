@@ -3,9 +3,7 @@
  * https://github.com/wardbell/subsink
  * @param fn
  */
-
 const isFunction = (fn: any) => typeof fn === 'function';
-
 export interface SubscriptionLike {
   unsubscribe(): void;
 }
@@ -64,9 +62,5 @@ export class SubSink {
   unsubscribe() {
     this._subs.forEach(sub => sub && isFunction(sub.unsubscribe) && sub.unsubscribe());
     this._subs = [];
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe();
   }
 }

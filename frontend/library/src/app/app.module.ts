@@ -84,11 +84,10 @@ export function tokenGetter(): string {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        whitelistedDomains: [
+        allowedDomains: [
           'localhost:4200', 'plateform',
           // environment.host
         ],
-        blacklistedRoutes: [],
         skipWhenExpired: true,
         // throwNoTokenError: true
       }
