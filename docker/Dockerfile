@@ -1,4 +1,5 @@
-FROM python:3.7-slim-stretch
+FROM python:3.8.6-slim-buster
+# FROM python:3.7-slim-stretch
 RUN apt-get clean
 RUN apt-get update
 # RUN apt-get install -y libsasl2-dev python-dev libldap2-dev libssl-dev \

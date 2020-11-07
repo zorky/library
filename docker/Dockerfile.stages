@@ -1,4 +1,5 @@
-ARG PYTHON_VERSION=3.7-slim-stretch
+ARG PYTHON_VERSION=3.8.6-slim-buster
+# ARG PYTHON_VERSION=3.7-slim-stretch
 
 FROM python:${PYTHON_VERSION} AS builder
 ENV PYTHONUNBUFFERED 1
