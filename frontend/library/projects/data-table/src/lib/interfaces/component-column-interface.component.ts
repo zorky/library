@@ -12,11 +12,9 @@ export interface ColumnComponent {
   data: any;
   /* row courante envoyée par la data-table ("input") TODO : voir si on pt utiliser un type générique T */
   input: any;
-  /* hook */
-  // subject: BehaviorSubject<any>;
-  // subject$: Observable<any>;
-  /* Titre du composant */
-  /* title?: string; */
+  /** hook possiblement déclenché par le component (envoi de données, etc) */
+  subject: BehaviorSubject<any>;
+  subject$: any;
 }
 
 // export interface ColumnComponent<T> {

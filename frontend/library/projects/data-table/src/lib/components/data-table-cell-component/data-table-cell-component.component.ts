@@ -42,14 +42,11 @@ export class DataTableCellComponentComponent implements OnInit, OnDestroy {
         const componentRef = viewContainerRef.createComponent(componentFactory);
         const cellComponent = componentRef.instance as ColumnComponent;
         cellComponent.name = item.name;
-        // cellComponent.title = item.title;
-
         cellComponent.column = this.column.column;
         cellComponent.data = item.data;
         cellComponent.input = this.row;
-
-        // cellComponent.subject = item.subject;
-        // cellComponent.subject$ = item.subject$;
+        cellComponent.subject = item.subject;
+        cellComponent.subject$ = item.subject$;
         this.componentInitialized = true;
         componentRef.onDestroy(() =>  {
           if (this.subscription) {

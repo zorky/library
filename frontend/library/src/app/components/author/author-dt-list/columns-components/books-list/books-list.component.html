@@ -2,10 +2,17 @@
   <mat-form-field *ngIf="data && data.filterColumns">
     <mat-select  placeholder="livres"
                  multiple
-                 [formControl]="books"
+                 [(value)]="selectedBooks"
+                 (selectionChange)="onSelectedBooks()"
                  [compareWith]="compareFn">
-      <mat-option *ngFor="let v of values" [value]="v">{{v.label}}</mat-option>
+      <mat-option *ngFor="let v of groupedBooks" [value]="v">{{v.name}}</mat-option>
     </mat-select>
   </mat-form-field>
   <!-- [compareWith]="compareFn" -->
+  <button color="accent"
+          class="mat-button mat-small"
+          mat-raised-button (click)="onSave()"
+          matTooltip="Filtrer" [disabled]="! (selectedBooks && selectedBooks.length > 0)">
+    Mettre à jour
+  </button>
 </div>

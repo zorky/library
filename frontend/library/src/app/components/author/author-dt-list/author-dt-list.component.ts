@@ -181,6 +181,12 @@ export class AuthorDtListComponent implements OnInit {
       .createColumnComponent(
         this.columns, listName, `books_list_${listName}`, `${listLabel}`,
         BooksListColumnComponent, data);
+    if (filterComponent) {
+      filterComponent.subject$.subscribe((_data) => {
+        console.log(_data);
+        this.matDataTable.reload();
+      });
+    }
   }
   /**
    * Création du component colonne filtre Author
