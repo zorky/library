@@ -37,20 +37,16 @@ export class AuthorSelectComponent implements ColumnComponent, OnInit, OnDestroy
     this.model = {
       id: this.input?.author_obj?.id,
       label: `${this.input?.author_obj?.first_name} ${this.input?.author_obj?.last_name}`};
-    // console.log(this.model);
     this._initData();
   }
   private _initData() {
     this.form = this.fb.group({ author: [] });
     const values = [{id: null, label: '--'}];
     this.data.filterColumns.forEach((value, key) => {
-      // this.authors.push({id: key, first_name: value, last_name: value});
       values.push({id: Number(key), label: value});
     });
     this.values = values;
-    // console.log(this.values);
     this.form.patchValue({author: this.input?.id});
-    // this.author.patchValue(this.input, {emitEvent: true, onlySelf: true});
   }
   compareFn(a1, a2) {
     return a1?.id === a2?.id;
@@ -59,7 +55,6 @@ export class AuthorSelectComponent implements ColumnComponent, OnInit, OnDestroy
     const book = this.input;
     book.author = event.value.id;
     this.subSink.sink = this.bookSvc.patch(book).subscribe((data) => {
-      console.log(data);
       this.toastySvc.toasty(
         `L'auteur "${event.value.label}" a bien été mis à jour`,
         `Livre "${this.input.name}"`);

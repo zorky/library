@@ -20,7 +20,8 @@ export class BookNameComponent implements ColumnComponent, OnInit, OnDestroy {
   name: string;
   onEdit = false;
   model: string;
-
+  subject: BehaviorSubject<any>;
+  subject$: any;
   editMode = new Subject();
   editMode$ = this.editMode.asObservable();
   loading = false;

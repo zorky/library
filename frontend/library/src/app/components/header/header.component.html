@@ -26,11 +26,11 @@
   </mat-menu>
   <!-- menu livres -->
   <mat-menu #booksMenu="matMenu">
-    <button mat-menu-item (click)="go('/books')">
+    <!-- <button mat-menu-item (click)="go('/books')">
       Liste
-    </button>
+    </button> -->
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/booksdt')">
-      Liste DT
+      Liste
     </button>
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/book/edit')">
       Ajouter un livre
@@ -38,11 +38,11 @@
   </mat-menu>
   <!-- menu auteurs -->
   <mat-menu #authorMenu="matMenu">
-    <button mat-menu-item (click)="go('/authors')">
+    <!-- <button mat-menu-item (click)="go('/authors')">
       Liste
-    </button>
+    </button> -->
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/authorsdt')">
-      Liste DT
+      Liste
     </button>
     <button *ngIf="canAcces()" mat-menu-item (click)="go('/gestion/author/edit')">
       Ajouter un auteur

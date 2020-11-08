@@ -7,7 +7,7 @@
 <span *ngIf="!onEdit">{{input?.name}}</span>
 <div *ngIf="onEdit" fxLayoutGap="2px">
   <div>
-  <mat-progress-bar *ngIf="loading"
+    <mat-progress-bar *ngIf="loading"
                     [mode]="'indeterminate'"
                     color="warn"></mat-progress-bar>
   </div>
