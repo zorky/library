@@ -15,7 +15,6 @@ const appRoutes: Routes = [
       {path: 'books', component: BooksListComponent},
       {path: 'authors', component: AuthorsListComponent},
       {path: 'gestion', loadChildren: () => import('./gestion/gestion.module').then(m => {
-        console.log('loading gestion');
         return m.GestionModule; })}
     ]
   },
