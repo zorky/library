@@ -1,0 +1,69 @@
+.p8-header__container {
+  div {
+    i {
+      position: relative;
+      top: 10px;
+      font-size: 40px;
+      color: #513939;
+      margin-right: 10px;
+    }
+
+    span.first {
+      font-weight: 800;
+      color: #513939;
+    }
+
+    span.last {
+      font-weight: 500;
+      color: #b54f4f;
+    }
+
+    span.chevron {
+      font-weight: 600;
+      color: #513939;
+    }
+
+    line-height: 1em;
+  }
+
+  mat-card.header-noicon {
+    padding-top: 15px;
+  }
+
+  mat-card.header-icon {
+    padding-top: 1px;
+  }
+
+  mat-card.header {
+    //padding-top: 5px;
+
+    mat-card-title {
+      i {
+        position: relative;
+        top: 10px;
+        font-size: 40px;
+        color: #513939;
+        margin-right: 10px;
+      }
+
+      span.first {
+        font-weight: 800;
+        color: #513939;
+      }
+
+      span.last {
+        font-weight: 500;
+        color: #b54f4f;
+      }
+
+      span.chevron {
+        font-weight: 600;
+        color: #513939;
+      }
+
+      line-height: 1em;
+      //margin-bottom: 34px;
+    }
+  }
+
+}

@@ -13,6 +13,15 @@ import {AuthorSelectComponent} from './columns-components/author-select/author-s
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
 import {BookEnabledComponent} from './columns-components/book-enabled/book-enabled.component';
 import {BookNameComponent} from './columns-components/book-name/book-name.component';
+import {DialogData} from "../../confirmation-dialog/dialog-data.model";
+import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialog} from "@angular/material/dialog";
+import {ActivatedRoute, Router} from "@angular/router";
+import {roles} from "../../../common/roles/roles.enum";
+import {AuthService} from "../../../services/authent/auth.service";
+import {UserGroupsService} from "../../../common/roles/user-groups.service";
+import {UserGroups} from "../../../common/roles/usergroups.model";
 
 @Component({
   selector: 'app-books-dt-list',
@@ -56,15 +65,23 @@ export class BooksDtListComponent implements OnInit {
   extraParams: Map<string, string> = new Map<string, string>();
   filterColumns: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
   @ViewChild(DataTableComponent, {static: false}) matDataTable: DataTableComponent;
+  connecte: UserGroups;
   loading = false;
   subSink = new SubSink();
-  constructor(private dataTableHeaderSvc: DataTableHeaderColumnComponentService,
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private snackBar: MatSnackBar,
+              private dialog: MatDialog,
+              private dataTableHeaderSvc: DataTableHeaderColumnComponentService,
+              private authSvc: AuthService,
+              public userGrpsSvc: UserGroupsService,
               private authorSvc: AuthorDtService,
               private bookSvc: BookDtService) {
     this.dsBooks.daoService = bookSvc;
   }
 
   ngOnInit(): void {
+    this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
     this.subSink.sink = this.bookSvc.loading$.subscribe((enabled) => this.loading = enabled);
     this._setCellName();
     this._setCellAuthor();
@@ -93,11 +110,32 @@ export class BooksDtListComponent implements OnInit {
         this._setAuthorDynamicComponent('author', 'sur un auteur', 'author');
       });
   }
-  private editBook(row: Book) {
-
+  addBook() {
+    this.router.navigate(['/gestion/book/edit', {id: 0}], {relativeTo: this.route.parent});
   }
-  private deleteBook(row: Book) {
-
+  editBook(book: Book) {
+    this.router.navigate(['/gestion/book/edit', {id: book.id}], {relativeTo: this.route.parent});
+  }
+  isGest() {
+    return this.authSvc.isAuthenticated() && this.connecte && this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
+  }
+  private deleteBook(book: Book) {
+    const data = new DialogData();
+    data.title = 'Livre';
+    data.message = `Souhaitez-vous supprimer ce livre "${book.name}" ?`;
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data });
+    dialogRef.updatePosition({top: '50px'});
+    this.subSink.sink = dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.subSink.sink = this.bookSvc.delete(book).subscribe(() => {
+          if (book) {
+            this.snackBar.open(`"${book.name}" bien supprimé`, 'Livre',
+              {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+            this.matDataTable.reload();
+          }
+        });
+      }
+    });
   }
   private _columnSetValues(key): Map<string, string> {
     if (this.filterColumns.has(key)) {

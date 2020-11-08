@@ -1,4 +1,7 @@
 <mat-card>
+  <mat-card-title>
+    <layout-header [titlePath]="['Auteurs']" [iconRacine]="'person'"></layout-header>
+  </mat-card-title>
   <mat-card-actions align="end" style="padding-right: 10px;">
     <button *ngIf="isGest()"
             mat-raised-button (click)="addAuthor()">Ajouter un auteur</button>

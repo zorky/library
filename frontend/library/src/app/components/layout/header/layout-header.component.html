@@ -1,0 +1,25 @@
+<div class="p8-header__container">
+    <mat-card *ngIf="card && titlePath && titlePath.length > 0" class="header" [ngClass]="{'header-icon': iconRacine}">
+      <mat-card-title>
+        <ng-content select="[card]"></ng-content>
+        <i *ngIf="iconRacine" class="material-icons">{{iconRacine}}</i>
+        <ng-container *ngFor="let title of titlePath; last as isLast; first as isFirst; idx as index">
+          <span *ngIf="!isLast" class="first">{{ title }}</span>
+          <span *ngIf="!isLast" class="chevron"> {{separator}} </span>
+          <span *ngIf="isLast" class="last">{{ title }}</span>
+        </ng-container>
+        <ng-content select="[after-card]"></ng-content>
+      </mat-card-title>
+    </mat-card>
+
+  <div *ngIf="! card">
+    <ng-content select="[no-card]"></ng-content>
+    <i *ngIf="iconRacine" class="material-icons">{{iconRacine}}</i>
+    <ng-container *ngFor="let title of titlePath; last as isLast; first as isFirst; idx as index">
+      <span *ngIf="!isLast" class="first">{{ title }}</span>
+      <span *ngIf="!isLast" class="chevron"> {{separator}} </span>
+      <span *ngIf="isLast" class="last">{{ title }}</span>
+    </ng-container>
+    <ng-content select="[after-no-card]"></ng-content>
+  </div>
+</div>
