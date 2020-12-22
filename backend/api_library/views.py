@@ -45,7 +45,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
     filterset_class = AuthorFilter
 
-    search_fields = ['first_name', 'last_name']
+    search_fields = ['first_name', 'last_name', 'books__name']
     ordering_fields = ('id', 'last_name', 'books__name',)
 
     ordering = ['first_name', '-last_name']
@@ -66,7 +66,7 @@ class BookViewSet(viewsets.ModelViewSet):
     filterset_class = BookFilter
 
     search_fields = ['name', 'author__first_name', 'author__last_name']
-    ordering_fields = ('id', 'name',)
+    ordering_fields = ('id', 'name', 'enabled', 'author__last_name',)
 
     pagination_class = LimitOffsetPagination
     page_size = 10

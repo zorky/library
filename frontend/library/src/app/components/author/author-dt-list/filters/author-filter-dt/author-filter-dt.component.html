@@ -1,0 +1,7 @@
+<mat-form-field *ngIf="data && data.filterColumns">
+  <mat-select  placeholder="{{data.placeHolder}}"
+               (selectionChange)="onFilterSelect($event)"
+               [(ngModel)]="selectedValue">
+    <mat-option *ngFor="let v of values" [value]="v">{{v.label}}</mat-option>
+  </mat-select>
+</mat-form-field>

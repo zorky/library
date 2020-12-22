@@ -1,0 +1,22 @@
+<div *ngIf="values">
+  <mat-form-field *ngIf="data && data.filterColumns">
+    <mat-select  placeholder="livres"
+                 multiple
+                 [(value)]="selectedBooks"
+                 (selectionChange)="onSelectedBooks($event)"
+                 [compareWith]="compareFn">
+      <mat-option *ngFor="let v of groupedBooks" [value]="v">{{v.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button color="accent"
+          class="mat-button mat-small"
+          mat-raised-button (click)="onSave()"
+          matTooltip="Filtrer" [disabled]="loading || isSaveDisabled()">
+    Mettre à jour
+  </button>
+  <div>
+    <mat-progress-bar *ngIf="loading"
+                      [mode]="'indeterminate'"
+                      color="warn"></mat-progress-bar>
+  </div>
+</div>

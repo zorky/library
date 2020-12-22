@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {finalize} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
@@ -16,6 +15,7 @@ import {UserGroupsService} from '../../../common/roles/user-groups.service';
 import {UserGroups} from '../../../common/roles/usergroups.model';
 import {roles} from '../../../common/roles/roles.enum';
 import {AuthService} from '../../../services/authent/auth.service';
+import {PubSubService} from '../../../services/pubsub/pub-sub.service';
 
 @Component({
   selector: 'app-books-list',
@@ -37,13 +37,17 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               public snackBar: MatSnackBar,
               public dialog: MatDialog,
+              private pubSubSvc: PubSubService,
               private authSvc: AuthService,
               public userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
               private bookSvc: BookService) { }
 
   ngOnInit(): void {
     this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
-    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => this.loading = value);
+    this.subSink.sink = this.bookSvc.loading$.subscribe((value) => {
+      this.pubSubSvc.publish('loading', value);
+      this.loading = value;
+    });
     this._initPaginator();
     this.fetchBooks();
   }
@@ -76,8 +80,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
   fetchBooks() {
     this.books = [];
     const params = {
-      limit: this.paginator.pageSize,
-      offset: this.paginator.pageIndex * this.paginator.pageSize
+      limit: this.paginator.pageSize || this.PAGE_SIZE,
+      offset: this.paginator.pageIndex * this.paginator.pageSize,
+      extraParams: new Map<string, string>([['enabled', 'True']])
     } as ListParameters;
     this.subSink.sink = this.bookSvc
       .fetchAll(params)

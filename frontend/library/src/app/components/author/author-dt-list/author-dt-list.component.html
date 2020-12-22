@@ -1,0 +1,22 @@
+<mat-card>
+  <mat-card-title>
+    <layout-header [titlePath]="['Auteurs']" [iconRacine]="'person'"></layout-header>
+  </mat-card-title>
+  <mat-card-actions align="end" style="padding-right: 10px;">
+    <button *ngIf="isGest()"
+            mat-raised-button (click)="addAuthor()">Ajouter un auteur</button>
+  </mat-card-actions>
+  <mat-card-content>
+    <mat-data-table
+      [dataSource]="dsAuthors"
+      [columns]="columns"
+      [actions]="actions"
+      [extraParams]="extraParams"
+      [placeHolderFilter]="'Rechercher sur un auteur ou sur un livre'"
+      [showFirstLastButtons]="true"
+      [showLoader]="true"
+      [loaderMask]="true"
+      [loaderProgress]="true">
+    </mat-data-table>
+  </mat-card-content>
+</mat-card>

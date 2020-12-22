@@ -70,7 +70,7 @@ export class BookEditComponent implements OnInit {
     });
   }
   goList() {
-    this.router.navigate(['/books']);
+    this.router.navigate(['/booksdt']);
   }
   getLabelCancelOrReturn() {
     if (this.formDirty) {

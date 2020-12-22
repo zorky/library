@@ -33,7 +33,6 @@ export class AuthService {
       .post(this.url, { username: user.username, password: user.password }, {headers})
       .pipe(map(dataJwt => this._authenticated(dataJwt)));
   }
-
   isAuthenticated() {
     return !this.jwtService.isTokenExpired();
   }
@@ -46,7 +45,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    // this.sendUser();
   }
 
   getToken() {

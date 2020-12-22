@@ -10,25 +10,36 @@ import {AppRoutingModule} from './app.routing';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AuthorsListComponent } from './components/author/authors-list/authors-list.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
-import {SafeHtmlPipe} from "./pipes/safe-html";
-import {MatPaginatorIntl} from "@angular/material/paginator";
-import {getFrenchPaginatorIntl} from "./common/paginator.french";
-import {LoginComponent} from "./components/login/login.component";
+import {SafeHtmlPipe} from './pipes/safe-html';
+import {MatPaginatorIntl} from '@angular/material/paginator';
+import {getFrenchPaginatorIntl} from './common/paginator.french';
+import {LoginComponent} from './components/login/login.component';
 import { BookSearchComponent } from './components/book/book-search/book-search.component';
-import {CommonModule, registerLocaleData} from "@angular/common";
+import {CommonModule, registerLocaleData} from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
 import localeFrExtra from '@angular/common/locales/extra/fr';
 // import HandlerError from './common/errors/error-handler';
 import {AppInjector} from './common/injector';
 import {CommonLibraryModule} from './common/common-library.module';
-import {HttpClientModule} from "@angular/common/http";
-import {BrowserModule} from "@angular/platform-browser";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {JwtModule} from "@auth0/angular-jwt";
-import {MaterialModule} from "./modules/material.module";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {FlexLayoutModule} from "@angular/flex-layout";
+import {HttpClientModule} from '@angular/common/http';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {JwtModule} from '@auth0/angular-jwt';
+import {MaterialModule} from './modules/material.module';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import { BookActionsComponent } from './components/book/book-actions/book-actions.component';
+import { AuthorDtListComponent } from './components/author/author-dt-list/author-dt-list.component';
+import { BooksFilterDtComponent } from './components/author/author-dt-list/filters/books-filter-dt/books-filter-dt.component';
+import {BooksListColumnComponent} from './components/author/author-dt-list/columns-components/books-list/books-list.component';
+import { BooksDtListComponent } from './components/book/books-dt-list/books-dt-list.component';
+import { AuthorSelectComponent } from './components/book/books-dt-list/columns-components/author-select/author-select.component';
+import { BookEnabledComponent } from './components/book/books-dt-list/columns-components/book-enabled/book-enabled.component';
+import { BookNameComponent } from './components/book/books-dt-list/columns-components/book-name/book-name.component';
+import {LayoutHeaderComponent} from './components/layout/header/layout-header.component';
+// import {DataTableModule} from 'data-table';
+import {DataTableModule} from '../../projects/data-table/src/lib/data-table.module';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -53,7 +64,17 @@ export function tokenGetter(): string {
 
     ConfirmationDialogComponent,
     SafeHtmlPipe,
-    BookSearchComponent
+    BookSearchComponent,
+    BookActionsComponent,
+    AuthorDtListComponent,
+    BooksFilterDtComponent,
+    BooksListColumnComponent,
+    BooksDtListComponent,
+    AuthorSelectComponent,
+    BookEnabledComponent,
+    BookNameComponent,
+
+    LayoutHeaderComponent
   ],
   imports: [
     HttpClientModule,
@@ -66,17 +87,18 @@ export function tokenGetter(): string {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        whitelistedDomains: [
+        allowedDomains: [
           'localhost:4200', 'plateform',
           // environment.host
         ],
-        blacklistedRoutes: [],
-        // skipWhenExpired: false,
+        skipWhenExpired: true,
         // throwNoTokenError: true
       }
     }),
     CommonLibraryModule,
     MaterialModule,
+
+    DataTableModule,
 
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),

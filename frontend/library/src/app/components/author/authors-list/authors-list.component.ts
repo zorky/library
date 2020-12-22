@@ -134,8 +134,7 @@ export class AuthorsListComponent implements OnInit, OnDestroy, AfterViewInit {
       if (result) {
         this.subSink.sink = this.authorSvc.delete(author).subscribe(() => {
           this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
-            'Auteur',
-            {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+            'Auteur', {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
           this.paginator.pageIndex = 0;
           this._initDataTable();
         });

@@ -1,0 +1,10 @@
+<div style="border: 1px solid #dddddd; padding: 10px;">
+    <mat-data-table-header-component *ngIf="component && position"
+                                 [component]="component"
+                                 [position]="position"
+                                 (onClick)="onClick($event)"
+                                 removeHostViewContainer>
+    </mat-data-table-header-component>
+
+</div>
+

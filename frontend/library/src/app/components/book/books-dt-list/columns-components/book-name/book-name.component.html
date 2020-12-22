@@ -1,0 +1,30 @@
+<button *ngIf="!onEdit"
+        (click)="goEdit($event)"
+        mat-icon-button
+        class="md-15"
+        matTooltip="éditer le titre"
+        color="warn"><mat-icon>edit</mat-icon></button>
+<span *ngIf="!onEdit">{{input?.name}}</span>
+<div *ngIf="onEdit" fxLayoutGap="2px">
+  <div>
+    <mat-progress-bar *ngIf="loading"
+                    [mode]="'indeterminate'"
+                    color="warn"></mat-progress-bar>
+  </div>
+  <div>
+    <mat-form-field fxFlex="50">
+      <input matInput [(ngModel)]="model" placeholder="titre du livre">
+    </mat-form-field>
+    <button (click)="save()"
+            [disabled]="!model"
+            mat-icon-button
+            matTooltip="enregistrer"
+            color="primary">
+      <mat-icon>save</mat-icon></button>
+    <button (click)="cancel($event)"
+            mat-icon-button
+            matTooltip="abandonner"
+            color="warn">
+      <mat-icon>cancel</mat-icon></button>
+  </div>
+</div>

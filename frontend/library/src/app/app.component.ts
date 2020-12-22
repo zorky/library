@@ -1,4 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {PubSubService} from './services/pubsub/pub-sub.service';
+import {SubSink} from './services/subsink';
 
 @Component({
   selector: 'app-root',
@@ -7,17 +9,18 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 })
 export class AppComponent  implements OnInit, OnDestroy {
   title = 'library';
+  loading = false;
+  subSink = new SubSink();
 
-  constructor() {
+  constructor(private pubSubSvc: PubSubService) {
   }
 
   ngOnInit(): void {
-
+    this.subSink.sink = this.pubSubSvc.on('loading')
+      .subscribe((value) => setTimeout(() => this.loading = value));
   }
 
-
-
   ngOnDestroy(): void {
-
+    this.subSink.unsubscribe();
   }
 }

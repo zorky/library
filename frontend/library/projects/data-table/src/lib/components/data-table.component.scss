@@ -1,0 +1,370 @@
+::ng-deep.p8-cm_data-table__selectable {
+  .mat-row:hover {
+    background: #eeeeee;
+  }
+  .mat-row.selected {
+    background: #f5f5f5;
+  }
+}
+
+:host(.p8-cm_data-table__search-full-width) {
+  .p8-cm_data-table__search {
+    width: 100%;
+  }
+}
+
+.p8-cm_data-table__progress-bar-container {
+  position: relative;
+  .p8-cm_data-table__progress-bar {
+    position: absolute;
+    top: -8px;
+    height: 3px;
+  }
+}
+
+.p8-cm_data-table__filters-container {
+  padding-top: 5px;
+  padding-bottom: 10px;
+  .p8-cm_data-table__filters-buttons {
+    font-size: 0.8em;
+  }
+}
+
+.p8-cm_data-table__filter__none {
+  display: none;
+}
+
+//.p8-cm_data-table__table {
+//  margin: 0 -24px;
+//}
+
+.p8-cm_data-table__search {
+  min-width: 30%;
+  margin-bottom: -12px;
+}
+
+.p8-cm_data-table__paginator {
+  margin-bottom: -24px;
+}
+
+.p8-cm_data-table__cell {
+  padding-left: 6px;
+  //justify-content: center;
+}
+
+.p8-cm_data-table__cell-truncate {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.p8-cm_data-table__cell-center {
+  justify-content: center;
+}
+
+.p8-cm_data-table__action {
+  flex: 0 0 40px;
+}
+
+// Temporary fix for the following bug (Header arrows do not display correctly inside tabs). Remove once bug is fixed
+// https://github.com/angular/material2/issues/9758
+
+::ng-deep .mat-sort-header-arrow.ng-trigger.ng-trigger-arrowPosition {
+  opacity: 0;
+}
+
+::ng-deep .mat-sort-header-pointer-left.ng-trigger.ng-trigger-leftPointer{
+  transform: rotate(-45deg);
+}
+::ng-deep .mat-sort-header-pointer-right.ng-trigger.ng-trigger-rightPointer{
+  transform: rotate(45deg);
+}
+
+/** loading **/
+
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+/** fond noir **/
+
+.app-loader {
+  height: 100vh !important;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+}
+.app-loader:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.2);
+}
+
+/** https://tobiasahlin.com/spinkit/ **/
+
+/** Attente **/
+:root {
+  --sk-size: 40px;
+  /* --sk-color: #333; */
+  --sk-color: #ce2d2d;
+}
+
+.sk-wave {
+  margin: 100px auto;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+}
+
+.sk-wave-rect {
+  background-color: #ce2d2d;
+  height: 100%;
+  width: 15%;
+  animation: sk-wave 1.2s infinite ease-in-out;
+}
+
+.sk-wave-rect:nth-child(1) { animation-delay: -1.2s; }
+.sk-wave-rect:nth-child(2) { animation-delay: -1.1s; }
+.sk-wave-rect:nth-child(3) { animation-delay: -1.0s; }
+.sk-wave-rect:nth-child(4) { animation-delay: -0.9s; }
+.sk-wave-rect:nth-child(5) { animation-delay: -0.8s; }
+
+@keyframes sk-wave {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+  } 20% {
+      transform: scaleY(1);
+    }
+}
+/*
+.spinner {
+  margin: 100px auto;
+  width: 50px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+}
+.spinner > div {
+  background-color: #ce2d2d;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  justify-content: space-between;
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+  -webkit-animation-delay: -0.8s;
+  animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+*/
+/** Rond 1 **/
+/*
+.spinner {
+  margin: 100px auto;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  text-align: center;
+
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+}
+*/
+/*
+.dot1, .dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #ce2d2d;
+  border-radius: 100%;
+
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.dot2 {
+  top: auto;
+  bottom: 0;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+ */
+/*
+@-webkit-keyframes sk-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes sk-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% {
+      transform: scale(1.0);
+      -webkit-transform: scale(1.0);
+    }
+}
+*/

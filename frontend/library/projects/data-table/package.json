@@ -1,0 +1,12 @@
+{
+  "name": "data-table",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^10.2.2",
+    "@angular/core": "^10.2.2",
+    "spinkit": "^2.0.1"
+  }
+}

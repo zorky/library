@@ -1,0 +1,6 @@
+<div>
+  <mat-checkbox
+    [matTooltip]="input?.enabled ? 'cliquer pour le rendre indispobile' : 'cliquer pour le rendre disponible'"
+    [(ngModel)]="model"
+    (change)="onChanged($event)"></mat-checkbox>
+</div>
