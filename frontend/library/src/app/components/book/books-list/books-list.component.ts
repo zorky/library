@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {finalize} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
@@ -28,7 +27,7 @@ export class BooksListComponent implements OnInit, OnDestroy {
   subSink = new SubSink();
   books: Book[];
   loading = false;
-  PAGE_SIZE = 2;
+  PAGE_SIZE = 5;
   total = 0;
   connecte: UserGroups;
   rolesUser = roles;
@@ -82,7 +81,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this.books = [];
     const params = {
       limit: this.paginator.pageSize || this.PAGE_SIZE,
-      offset: this.paginator.pageIndex * this.paginator.pageSize
+      offset: this.paginator.pageIndex * this.paginator.pageSize,
+      extraParams: new Map<string, string>([['enabled', 'True']])
     } as ListParameters;
     this.subSink.sink = this.bookSvc
       .fetchAll(params)

@@ -14,6 +14,7 @@
       <mat-icon *ngIf="authentSvc.isAuthenticated()">power_settings_new</mat-icon>
       {{authentSvc.isAuthenticated() ? 'Déconnexion' : 'Connexion'}}
     </button>
+    <mat-divider [vertical]="true"></mat-divider>
     <!-- <button mat-menu-item [matMenuTriggerFor]="authent">Authentification</button> -->
     <button *ngIf="canAcces()" mat-menu-item [matMenuTriggerFor]="booksMenu">Livres</button>
     <button *ngIf="canAcces()" mat-menu-item [matMenuTriggerFor]="authorMenu">Auteurs</button>

@@ -1,9 +1,9 @@
 <mat-card>
-  <mat-card-title>Livres</mat-card-title>
+  <mat-card-title>
+    <layout-header [titlePath]="['Bibliothèque de livres']" [iconRacine]="'book'"></layout-header>
+  </mat-card-title>
   <mat-card-content>
     <mat-card-actions align="end" style="padding-right: 10px;">
-      <button *ngIf="isGest()"
-        mat-raised-button (click)="addBook()">Ajouter un livre</button>
       <button mat-raised-button
               matBadge="{{total}}" matBadgePosition="after"
               matBadgeColor="accent" matBadgeOverlap="true" matBadgeSize="medium"
@@ -30,10 +30,6 @@
             <app-author-display [author]="book?.author_obj"></app-author-display>
           </p>
         </div>
-        <app-book-actions *ngIf="isGest()"
-          [book]="book"
-          (editClick)="editBook($event)"
-          (deleteClick)="deleteBook($event)"></app-book-actions>
       </mat-card>
     </div>
     <mat-paginator [length]="total" [pageSize]="PAGE_SIZE"

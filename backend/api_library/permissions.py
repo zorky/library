@@ -5,10 +5,7 @@ from rest_framework.permissions import SAFE_METHODS
 
 
 def is_in_group(user, group_name):
-    try:
-        return Group.objects.get(name=group_name).user_set.filter(id=user.id).exists()
-    except Group.DoesNotExist:
-        return None
+    return Group.objects.get(name=group_name).user_set.filter(id=user.id).exists()
 
 
 class IsGestionnaire(permissions.BasePermission):
@@ -17,6 +14,9 @@ class IsGestionnaire(permissions.BasePermission):
                (request.user and request.user.is_staff)
 
 class IsGestionnaireOrReadOnly(permissions.BasePermission):
+    """
+    Les requêtes GET / OPTIONS sont autorisées, les PUT, POST, DELETE sont soumises aux permissions
+    """
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True

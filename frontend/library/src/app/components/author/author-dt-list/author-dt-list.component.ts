@@ -33,12 +33,8 @@ import {BooksListColumnComponent} from './columns-components/books-list/books-li
 export class AuthorDtListComponent implements OnInit {
   columns: ColumnDataTable[] = [{
     column: 'author', header: 'Auteur', sortField: 'last_name',
-    display: (element: Author) => {
-      return `${element.first_name} ${element.last_name}`;
-    },
-    tooltip: (row: Author) => {
-      return `${row.first_name} ${row.last_name}`;
-    },
+    display: (element: Author) => `${element.first_name} ${element.last_name}`,
+    tooltip: (row: Author) => `${row.first_name} ${row.last_name}`,
     headerFilterToolTip: (row) => 'Filtrer sur l\'auteur',
     headerFilterOptions: {colorIcon: 'warn', hasBackDrop: true, position: 'right'} as HeaderFilterOptions,
     // columnComponent: () => new ComponentItem(BooksListColumnComponent, null, 'columnAuthor'),
@@ -47,18 +43,20 @@ export class AuthorDtListComponent implements OnInit {
   },
     {
       column: 'books', header: 'Livres',
-      display: (element: Author) => {
-        return this.getBooks(element);
-      },
-      tooltip: (row: Author) => {
-        return this.getBooks(row);
-      },
+      display: (element: Author) => this.getBooks(element),
+      tooltip: (row: Author) => this.getBooks(row),
       headerFilterToolTip: (row) => 'Filtrer sur un livre',
       sort: false
     }];
   actions: ActionDataTable[] = [];
   dsAuthors: MatDataSourceGeneric<Author> = new MatDataSourceGeneric<Author>();
+  /**
+   * Paramétres de filtrage sur l'API DaoService.listItems(params)
+   */
   extraParams: Map<string, string> = new Map<string, string>();
+  /**
+   * les valeurs possibles pour les listes des filtres colonnes : id / chaîne à afficher
+   */
   filterColumns: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
   @ViewChild(DataTableComponent, {static: false}) matDataTable: DataTableComponent;
   /**
@@ -114,6 +112,10 @@ export class AuthorDtListComponent implements OnInit {
       this.connecte &&
       this.userGrpsSvc.hasRole(this.connecte, roles.gestionnaire);
   }
+
+  /**
+   * Initialisation du filtre colonne sur les livres
+   */
   _setFilterBook() {
     this.subSink.sink = this.bookSvc
       .listAllItems()
@@ -127,6 +129,10 @@ export class AuthorDtListComponent implements OnInit {
         this._setAuthorDynamicComponent('books', 'auteur', 'book');
       });
   }
+
+  /**
+   * Initialisation du filtre colonne sur les auteurs
+   */
   _setFilterAuthor() {
     this.subSink.sink = this.authorSvc
       .listAllItems()
@@ -172,10 +178,19 @@ export class AuthorDtListComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Initialisation du composant sur la cellule livre : livres à choisir pour l'auteur de la ligne
+   * @param listName
+   * @param listLabel
+   * @param keyFilter
+   * @param callBack
+   * @private
+   */
   private _setAuthorDynamicComponent(listName, listLabel, keyFilter,
                                      callBack: () => void = null) {
     const data = {
-      filterColumns: this._columnSetValues(listName),
+      filterColumns: this._getValuesMap(listName),
     };
     const filterComponent = this.dataTableHeaderSvc
       .createColumnComponent(
@@ -183,7 +198,6 @@ export class AuthorDtListComponent implements OnInit {
         BooksListColumnComponent, data);
     if (filterComponent) {
       filterComponent.subject$.subscribe((_data) => {
-        console.log(_data);
         this.matDataTable.reload();
       });
     }
@@ -202,7 +216,7 @@ export class AuthorDtListComponent implements OnInit {
                            callBack: () => void = null) {
     const data = {
       placeHolder, keyFilter,
-      filterColumns: this._columnSetValues(listName),
+      filterColumns: this._getValuesMap(listName),
       filterName: condName
     };
     const filterComponent = this.dataTableHeaderSvc.createHeaderComponent(
@@ -233,7 +247,7 @@ export class AuthorDtListComponent implements OnInit {
                          callBack: () => void = null) {
     const data = {
       placeHolder, keyFilter,
-      filterColumns: this._columnSetValues(listName),
+      filterColumns: this._getValuesMap(listName),
       filterName: condName
     };
     const filterComponent = this.dataTableHeaderSvc.createHeaderComponent(
@@ -259,7 +273,12 @@ export class AuthorDtListComponent implements OnInit {
       });
     }
   }
-  private _columnSetValues(key): Map<string, string> {
+
+  /**
+   * Obtention d'un dico key / value à partir de filterColumns: Map<string, Map<string, string>>
+   * @param {string} key : sur cette clé
+   */
+  private _getValuesMap(key: string): Map<string, string> {
     if (this.filterColumns.has(key)) {
       return this.filterColumns.get(key);
     }

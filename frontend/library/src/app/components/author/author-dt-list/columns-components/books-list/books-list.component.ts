@@ -9,7 +9,6 @@ import {Author, Book} from '../../../../../services';
 import {BookDtService} from '../../../../../services/books/book-dt.service';
 import {ToastyService} from '../../../../../services/toasty/toasty.service';
 import {EnsemblesService} from '../../../../../services/ensembles.service';
-import {not} from "rxjs/internal-compatibility";
 
 @Component({
   selector: 'app-books-list',

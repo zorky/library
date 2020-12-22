@@ -20,7 +20,6 @@ export abstract class DaoGeneric<T> {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
   constructor(private http: HttpClient) {
-
   }
 
   /**

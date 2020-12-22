@@ -15,16 +15,18 @@ export interface HeaderFilterOptions {
 export interface ColumnDataTable {
   /* champs 'table' à afficher (et à trier le cas échéant) */
   column: string;
+  /* composant cellule */
   columnComponent?: () => ColumnComponentItem;
 
   /* libellé de l'entête table */
   header: string;
   headerFun?: (row) => string;
 
-  /* composant filtre dans le header */
-
+  /* composant filtre colonne dans le header */
   headerComponent?: () => ComponentItem;
+  /* tooltip du filtre colonne */
   headerFilterToolTip?: (row) => string;
+  /* option du filtre colonne : positionnement, couleur, fond */
   headerFilterOptions?: HeaderFilterOptions;
 
   /* fonction d'obtention de la valeur du champ pour la ligne courante */
@@ -34,14 +36,11 @@ export interface ColumnDataTable {
   flex?: number;
 
   /* fonction d'obtention de la couleur d'affichage de la valeur du champ, optionnel, par défaut #000000 (noir) */
-
   color?: (row) => string;
   colorBackground?: (row) => string;
 
   /* fonctions couleurs colonne entéte texte et fond */
-
   colorHeader?: (row) => string;
-
   colorHeaderBackground?: (row) => string;
 
   /* tri actif ou non */
@@ -50,7 +49,6 @@ export interface ColumnDataTable {
   sortField?: string;
 
   /*  afficher ligne / colonne ? */
-  // hidden?: boolean | Function;
   hidden?: boolean;
   hiddenFun?: (row) => boolean;
 
@@ -65,5 +63,4 @@ export interface ColumnDataTable {
 
   /* tooltip */
   tooltip?: (row) => any;
-
 }
