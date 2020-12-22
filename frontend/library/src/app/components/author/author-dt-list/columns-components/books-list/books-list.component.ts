@@ -1,14 +1,13 @@
-import {AfterViewInit, Component, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, forkJoin, from, Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {distinct, finalize, isEmpty, takeUntil, toArray} from 'rxjs/operators';
-
-import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {SubSink} from '../../../../../services/subsink';
 import {Author, Book} from '../../../../../services';
 import {BookDtService} from '../../../../../services/books/book-dt.service';
 import {ToastyService} from '../../../../../services/toasty/toasty.service';
 import {EnsemblesService} from '../../../../../services/ensembles.service';
+import {ColumnComponent} from 'data-table';
 
 @Component({
   selector: 'app-books-list',

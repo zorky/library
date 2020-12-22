@@ -38,8 +38,7 @@ import { AuthorSelectComponent } from './components/book/books-dt-list/columns-c
 import { BookEnabledComponent } from './components/book/books-dt-list/columns-components/book-enabled/book-enabled.component';
 import { BookNameComponent } from './components/book/books-dt-list/columns-components/book-name/book-name.component';
 import {LayoutHeaderComponent} from './components/layout/header/layout-header.component';
-// import {DataTableModule} from 'data-table';
-import {DataTableModule} from '../../projects/data-table/src/lib/data-table.module';
+import {DataTableModule} from 'data-table';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 

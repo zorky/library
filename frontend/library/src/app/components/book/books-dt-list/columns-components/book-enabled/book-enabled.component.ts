@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {MatCheckboxChange} from '@angular/material/checkbox';
-
-import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {ToastyService} from '../../../../../services/toasty/toasty.service';
 import {BookDtService} from '../../../../../services/books/book-dt.service';
 import {Book} from '../../../../../services';
 import {SubSink} from '../../../../../services/subsink';
+import {ColumnComponent} from 'data-table';
 
 @Component({
   selector: 'app-book-enabled',

@@ -1,9 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, noop, Subscription} from 'rxjs';
-
-import {HeaderComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-header-interface.component';
-import {DataTableHeaderCommunicationService} from '../../../../../../../projects/data-table/src/lib/services/data-table-communication.service';
 import {SubSink} from '../../../../../services/subsink';
+import {DataTableHeaderCommunicationService, HeaderComponent} from 'data-table';
 
 @Component({
   selector: 'app-author-filter-dt',

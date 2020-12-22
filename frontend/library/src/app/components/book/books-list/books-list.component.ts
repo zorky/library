@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatPaginator, MatPaginatorIntl} from '@angular/material/paginator';
 
 import {SubSink} from '../../../services/subsink';
-import {Author, Book, BookService} from '../../../services';
+import {Book, BookService} from '../../../services';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
 import {DialogData} from '../../confirmation-dialog/dialog-data.model';
 import {Pagination} from '../../../services/base/pagination.model';

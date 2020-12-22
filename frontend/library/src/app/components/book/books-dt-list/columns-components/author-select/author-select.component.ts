@@ -2,13 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {MatSelectChange} from '@angular/material/select';
-
-import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {SubSink} from '../../../../../services/subsink';
 import {Author, Book} from '../../../../../services';
 
 import {BookDtService} from '../../../../../services/books/book-dt.service';
 import {ToastyService} from '../../../../../services/toasty/toasty.service';
+import {ColumnComponent} from 'data-table';
 
 @Component({
   selector: 'app-author-select',

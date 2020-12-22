@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
-import {DaoGeneric} from '../../../../projects/data-table/src/lib/services/daoService';
 import {environment} from '../../../environments/environment';
 import {Author} from './author.model';
+import {DaoGeneric} from 'data-table';
 
 @Injectable({ providedIn: 'root' })
 export class AuthorDtService extends DaoGeneric<Author> {

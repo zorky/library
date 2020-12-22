@@ -3,14 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
-import {
-  ColumnDataTable,
-  HeaderFilterOptions
-} from '../../../../../projects/data-table/src/lib/interfaces/data-table-column';
-import {ActionDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-action';
-import {MatDataSourceGeneric, Pagination} from '../../../../../projects/data-table/src/lib/services/daoService';
-import {Author, Book, BookService} from '../../../services';
-import {DataTableComponent} from '../../../../../projects/data-table/src/lib/components/data-table.component';
+import {Author, Book} from '../../../services';
 import {roles} from '../../../common/roles/roles.enum';
 import {AuthService} from '../../../services/authent/auth.service';
 import {UserGroupsService} from '../../../common/roles/user-groups.service';
@@ -19,11 +12,19 @@ import {SubSink} from '../../../services/subsink';
 import {DialogData} from '../../confirmation-dialog/dialog-data.model';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
 import {AuthorContainerComponent} from '../../../gestion/author/author-container/author-container.component';
-import {DataTableHeaderColumnComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-column-component.service';
 import {AuthorFilterDtComponent} from './filters/author-filter-dt/author-filter-dt.component';
 import {BookDtService} from '../../../services/books/book-dt.service';
 import {BooksFilterDtComponent} from './filters/books-filter-dt/books-filter-dt.component';
 import {BooksListColumnComponent} from './columns-components/books-list/books-list.component';
+import {
+  ActionDataTable,
+  ColumnDataTable,
+  DataTableComponent,
+  DataTableHeaderColumnComponentService,
+  HeaderFilterOptions,
+  MatDataSourceGeneric,
+  Pagination
+} from 'data-table';
 
 @Component({
   selector: 'app-author-dt-list',
@@ -37,7 +38,6 @@ export class AuthorDtListComponent implements OnInit {
     tooltip: (row: Author) => `${row.first_name} ${row.last_name}`,
     headerFilterToolTip: (row) => 'Filtrer sur l\'auteur',
     headerFilterOptions: {colorIcon: 'warn', hasBackDrop: true, position: 'right'} as HeaderFilterOptions,
-    // columnComponent: () => new ComponentItem(BooksListColumnComponent, null, 'columnAuthor'),
     flex: 20,
     sort: true
   },

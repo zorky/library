@@ -1,27 +1,27 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {
-  ColumnDataTable
-} from '../../../../../projects/data-table/src/lib/interfaces/data-table-column';
 import {Author, Book} from '../../../services';
 import {SubSink} from '../../../services/subsink';
-import {ActionDataTable} from '../../../../../projects/data-table/src/lib/interfaces/data-table-action';
-import {MatDataSourceGeneric, Pagination} from '../../../../../projects/data-table/src/lib/services/daoService';
-import {DataTableComponent} from '../../../../../projects/data-table/src/lib/components/data-table.component';
-import {DataTableHeaderColumnComponentService} from '../../../../../projects/data-table/src/lib/services/data-table-header-column-component.service';
 import {BookDtService} from '../../../services/books/book-dt.service';
 import {AuthorSelectComponent} from './columns-components/author-select/author-select.component';
 import {AuthorDtService} from '../../../services/authors/author-dt.service';
 import {BookEnabledComponent} from './columns-components/book-enabled/book-enabled.component';
 import {BookNameComponent} from './columns-components/book-name/book-name.component';
-import {DialogData} from "../../confirmation-dialog/dialog-data.model";
-import {ConfirmationDialogComponent} from "../../confirmation-dialog/confirmation-dialog.component";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {MatDialog} from "@angular/material/dialog";
-import {ActivatedRoute, Router} from "@angular/router";
-import {roles} from "../../../common/roles/roles.enum";
-import {AuthService} from "../../../services/authent/auth.service";
-import {UserGroupsService} from "../../../common/roles/user-groups.service";
-import {UserGroups} from "../../../common/roles/usergroups.model";
+import {DialogData} from '../../confirmation-dialog/dialog-data.model';
+import {ConfirmationDialogComponent} from '../../confirmation-dialog/confirmation-dialog.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, Router} from '@angular/router';
+import {roles} from '../../../common/roles/roles.enum';
+import {AuthService} from '../../../services/authent/auth.service';
+import {UserGroupsService} from '../../../common/roles/user-groups.service';
+import {UserGroups} from '../../../common/roles/usergroups.model';
+import {
+  ActionDataTable,
+  ColumnDataTable,
+  DataTableComponent,
+  DataTableHeaderColumnComponentService,
+  MatDataSourceGeneric, Pagination
+} from 'data-table';
 
 @Component({
   selector: 'app-books-dt-list',

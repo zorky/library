@@ -1,12 +1,11 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
 import {filter, finalize, switchMapTo, take} from 'rxjs/operators';
-
-import {ColumnComponent} from '../../../../../../../projects/data-table/src/lib/interfaces/component-column-interface.component';
 import {Book} from '../../../../../services';
 import {BookDtService} from '../../../../../services/books/book-dt.service';
 import {SubSink} from '../../../../../services/subsink';
 import {ToastyService} from '../../../../../services/toasty/toasty.service';
+import {ColumnComponent} from 'data-table';
 
 @Component({
   selector: 'app-book-name',
