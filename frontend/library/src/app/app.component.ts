@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, VERSION} from '@angular/core';
 import {PubSubService} from './services/pubsub/pub-sub.service';
 import {SubSink} from './services/subsink';
 
@@ -13,6 +13,7 @@ export class AppComponent  implements OnInit, OnDestroy {
   subSink = new SubSink();
 
   constructor(private pubSubSvc: PubSubService) {
+    console.log('version angular : ', VERSION.full);
   }
 
   ngOnInit(): void {
