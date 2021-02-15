@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Author, Book
+from .models import Author, Book, Loan
 
 
 class BookSimpleSerializer(serializers.ModelSerializer):
@@ -50,3 +50,10 @@ class UserGroupsSerializer(serializers.ModelSerializer):
                   'user_permissions',
                   'first_name', 'last_name',
                   'is_active', 'date_joined']
+
+class LoanSerializer(serializers.ModelSerializer):
+    book_obj = BookSerializer(source='book')
+
+    class Meta:
+        model = Loan
+        fields = '__all__'

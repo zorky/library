@@ -17,9 +17,10 @@ from .permissions import IsGestionnaireOrReadOnly
 
 logger = logging.getLogger('django')
 
-from .filters import BookFilter, AuthorFilter
-from .models import Author, Book
-from .serializers import AuthorSerializer, BookSerializer, BookAuthorSimpleSerializer, UserGroupsSerializer
+from .filters import BookFilter, AuthorFilter, LoansFilter
+from .models import Author, Book, Loan
+from .serializers import AuthorSerializer, BookSerializer, BookAuthorSimpleSerializer, UserGroupsSerializer, \
+    LoanSerializer
 
 
 @api_view(['GET'])
@@ -87,3 +88,14 @@ class BookViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         return super().get_serializer_context()
+
+class LoansViewSet(viewsets.ModelViewSet):
+    queryset = Loan.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = LoanSerializer
+
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
+    filterset_class = LoansFilter
+
+    pagination_class = LimitOffsetPagination
+    page_size = 10

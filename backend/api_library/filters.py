@@ -2,7 +2,8 @@ import django_filters
 from django.db.models import Q
 from django_filters import FilterSet, filters, BaseInFilter, NumberFilter, BooleanFilter
 
-from .models import Book, Author
+from .models import Book, Author, Loan
+
 
 class IntegerInFilter(BaseInFilter, NumberFilter):
     pass
@@ -43,4 +44,10 @@ class BookFilter(FilterSet):
 
     class Meta:
         model = Book
-        fields = ['name', 'nb_pages', 'author', 'author__last_name', 'author__first_name', 'enabled' ]
+        fields = ['name', 'nb_pages', 'author', 'author__last_name', 'author__first_name', 'enabled']
+
+
+class LoansFilter(FilterSet):
+    class Meta:
+        model = Loan
+        fields = '__all__'

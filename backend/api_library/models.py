@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 
 class TimeStampedModel(models.Model):
@@ -29,7 +30,23 @@ class Book(TimeStampedModel):
 
     enabled = models.BooleanField(default=True, help_text='disponible ou non')
 
+    loans = models.ManyToManyField(User,
+                                   through='Loan',
+                                   related_name='users_loans',
+                                   help_text='les emprunts du livre')
+
     def __str__(self):
         return '{} : {}'.format(self.name, self.author)
 
+class Loan(TimeStampedModel):
+    """
+    Les emprunts
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    in_progress = models.BooleanField(default=True)
+    date_loan = models.DateTimeField(auto_now_add=True)
+    date_return = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self):
+        return '{} {}'.format(self.user, self.book)
