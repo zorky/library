@@ -30,6 +30,11 @@
             <app-author-display [author]="book?.author_obj"></app-author-display>
           </p>
         </div>
+        <div fxLayoutAlign="end center">
+          <button mat-icon-button
+                  matTooltip="Emprunter ce livre"
+                  [disabled]="isLoaning(book)"><mat-icon class="2xl:bg-green-100 opacity-100">bookmark_add</mat-icon></button>
+        </div>
       </mat-card>
     </div>
     <mat-paginator [length]="total" [pageSize]="PAGE_SIZE"

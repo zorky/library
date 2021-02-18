@@ -51,6 +51,9 @@ export class BooksListComponent implements OnInit, OnDestroy {
     this._initPaginator();
     this.fetchBooks();
   }
+  isLoaning(book: Book) {
+    return book.borrowers.length > 0;
+  }
   editBook(book: Book) {
     this.router.navigate(['/gestion/book/edit', {id: book.id}], {relativeTo: this.route.parent});
   }

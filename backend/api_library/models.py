@@ -30,8 +30,9 @@ class Book(TimeStampedModel):
 
     enabled = models.BooleanField(default=True, help_text='disponible ou non')
 
-    loans = models.ManyToManyField(User,
+    borrowers = models.ManyToManyField(User,
                                    through='Loan',
+                                   through_fields=('book', 'user'),
                                    related_name='users_loans',
                                    help_text='les emprunts du livre')
 

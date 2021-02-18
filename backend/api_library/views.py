@@ -1,5 +1,6 @@
 # api_library/views.py
 from django.contrib.auth.models import User
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import viewsets, status
@@ -73,7 +74,17 @@ class BookViewSet(viewsets.ModelViewSet):
     page_size = 10
 
     def get_queryset(self):
-        qs = Book.objects.prefetch_related('author__books').select_related('author')
+        progress = self.request.query_params.get('in_progress', None)
+        qs_load = Loan.objects.filter(in_progress=progress) if progress else Loan.objects.all()
+        loans = Prefetch('loan_set',
+                         queryset=qs_load
+                           .select_related('user', 'book', ))
+        qs = Book.objects\
+            .prefetch_related('author__books', 'borrowers',
+                              # 'loan_set',
+                              loans)\
+            .select_related('author', )
+        # loans)\
         return qs
 
     def list(self, request, *args, **kwargs):
