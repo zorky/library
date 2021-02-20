@@ -2,6 +2,8 @@
 # SQLite bd
 .sqlite3
 
+books/
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
