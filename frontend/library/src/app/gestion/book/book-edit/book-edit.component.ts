@@ -20,6 +20,7 @@ import {ListParameters} from '../../../services/base/list-parameters.model';
 export class BookEditComponent implements OnInit {
   bookForm: FormGroup;
   maxName = 100;
+  goUpload = false;
   /*
     Observable liste des auteurs pour le select
    */
@@ -28,6 +29,8 @@ export class BookEditComponent implements OnInit {
   loading = false;
   disabled = false;
   formDirty = false;
+  book: Book = null;
+  file: File = null;
   subSink = new SubSink();
 
   constructor(private router: Router, private route: ActivatedRoute,
@@ -50,6 +53,8 @@ export class BookEditComponent implements OnInit {
       .pipe(finalize(() => this.disabled = false))
       .subscribe((book: Book) => {
         if (book) {
+          this.book = book;
+          this.goUpload = true;
           this.snackBar.open(`"${book.name}" bien ${this.isUpdateMode ? 'mis à jour' : 'ajouté'}`,
             'Livre',
             {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
@@ -57,6 +62,14 @@ export class BookEditComponent implements OnInit {
           this.formDirty = false;
         }
     });
+  }
+  uploaded(event) {
+    if (event) {
+      this.snackBar.open(
+        `Couverture bien mise à jour`,
+        'Livre',
+        {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+    }
   }
   addAuthor() {
     const dialogRef = this.dialog.open(AuthorContainerComponent, {});
@@ -87,6 +100,8 @@ export class BookEditComponent implements OnInit {
         .fetch(id)
         .subscribe((book: Book) => {
           this._initForm(book);
+          this.file = ({name: book.picture} as File);
+          this.book = book;
         });
     } else {
       this._initForm();

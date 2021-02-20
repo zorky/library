@@ -30,6 +30,11 @@
             <app-author-display [author]="book?.author_obj"></app-author-display>
           </p>
         </div>
+        <div>
+          <img *ngIf="book.picture"
+               width="50"
+               [src]="book.picture" alt="couverture">
+        </div>
         <div fxLayoutAlign="end center">
           <button mat-icon-button
                   matTooltip="Emprunter ce livre"

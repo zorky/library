@@ -3,7 +3,7 @@
   <mat-card-content>
     <mat-progress-bar [mode]="'indeterminate'" color="warn" *ngIf="loading"></mat-progress-bar>
     <div [formGroup]="bookForm" *ngIf="bookForm">
-      <div fxLayout="column">
+      <div fxLayout="column" fxLayoutGap="10">
         <div>
           <mat-form-field fxFlex="70">
             <label>
@@ -31,7 +31,7 @@
                        formControlName="author"
                         [matTooltip]="'Sélectionner l\'auteur du livre...'">
               <ng-container>
-                <mat-option *ngFor="let author of(authors$ | async)?.list" [value]="author.id">
+                <mat-option *ngFor="let author of (authors$ | async)?.list" [value]="author.id">
                   {{author.first_name}} {{author.last_name}}
                 </mat-option>
               </ng-container>
@@ -44,6 +44,12 @@
           </button>
         </div>
         <mat-checkbox formControlName="enabled">Disponible</mat-checkbox>
+        <div>
+          <app-upload (onUploaded)="uploaded($event)"
+                      [book]="book"
+                      [file]="file"
+                      [startUpload]="goUpload"></app-upload>
+        </div>
       </div>
     </div>
   </mat-card-content>

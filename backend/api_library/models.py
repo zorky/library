@@ -36,6 +36,8 @@ class Book(TimeStampedModel):
                                    related_name='users_loans',
                                    help_text='les emprunts du livre')
 
+    picture = models.ImageField(upload_to='books/', max_length=250, null=True, blank=True)
+
     def __str__(self):
         return '{} : {}'.format(self.name, self.author)
 

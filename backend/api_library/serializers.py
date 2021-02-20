@@ -46,8 +46,8 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ('id', 'name', 'summary', 'nb_pages', 'enabled',
                   'dt_created', 'dt_updated',
-                  'borrowers',
-                  'author_obj', )
+                  'borrowers', 'picture',
+                  'author', 'author_obj', )
 
 class BookAuthorSimpleSerializer(serializers.ModelSerializer):
     author_obj = AuthorSimpleSerializer(source='author', read_only=True)

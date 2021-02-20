@@ -10,6 +10,7 @@ export interface Book {
   author_obj?: Author;
   borrowers_obj?: User[];
   borrowers?: number[];
+  picture?: string;
   dt_created?: string;
   dt_updated?: string;
 }

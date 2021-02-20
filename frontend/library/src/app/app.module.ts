@@ -39,6 +39,7 @@ import { BookEnabledComponent } from './components/book/books-dt-list/columns-co
 import { BookNameComponent } from './components/book/books-dt-list/columns-components/book-name/book-name.component';
 import {LayoutHeaderComponent} from './components/layout/header/layout-header.component';
 import {DataTableModule} from 'data-table';
+// import { UploadComponent } from './components/upload/upload.component';
 
 registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
 
@@ -73,7 +74,9 @@ export function tokenGetter(): string {
     BookEnabledComponent,
     BookNameComponent,
 
-    LayoutHeaderComponent
+    LayoutHeaderComponent,
+
+    // UploadComponent
   ],
   imports: [
     HttpClientModule,

@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, DjangoModelPermissions, \
     DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 
@@ -64,6 +65,7 @@ class BookViewSet(viewsets.ModelViewSet):
     # permission_classes = [AllowAny]
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     # permission_classes = [DjangoModelPermissions]
+    parser_classes = (MultiPartParser, JSONParser,)
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter,)
     filterset_class = BookFilter
 
@@ -110,3 +112,9 @@ class LoansViewSet(viewsets.ModelViewSet):
 
     pagination_class = LimitOffsetPagination
     page_size = 10
+
+# class PieceJointeViewSet(viewsets.ModelViewSet):
+#    queryset = PieceJointe.objects.all()
+#    serializer_class = PieceJointeSerializer
+#    parser_classes = (MultiPartParser, JSONParser,)
+#    permission_classes = [IsAuthenticated]

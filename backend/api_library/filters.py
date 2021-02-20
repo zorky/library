@@ -44,7 +44,9 @@ class BookFilter(FilterSet):
 
     class Meta:
         model = Book
-        fields = ['name', 'nb_pages', 'author', 'author__last_name', 'author__first_name', 'enabled']
+        fields = ['name', 'nb_pages', 'author',
+                  'author__last_name', 'author__first_name',
+                  'enabled',]
 
 
 class LoansFilter(FilterSet):
