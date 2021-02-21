@@ -46,8 +46,10 @@
         <mat-checkbox formControlName="enabled">Disponible</mat-checkbox>
         <div>
           <app-upload (onUploaded)="uploaded($event)"
-                      [book]="book"
+                      [id]="book?.id"
                       [file]="file"
+                      [svcUpload]="bookSvc"
+                      [fctUpload]="bookSvc?.upLoadPicture"
                       [startUpload]="goUpload"></app-upload>
         </div>
       </div>

@@ -17,9 +17,9 @@ export class BookService extends ServiceGeneric<Book> {
   getRootUrl(urlApp?: string): string {
     return this.url;
   }
-  public upLoadPicture(book: Book, file: File) {
+  public upLoadPicture(id: number | string, file: File) {
     let upload$: Observable<Upload>;
-    if (!file || !book) {
+    if (!file || !id) {
       return new Observable<Upload>(observer => {
         observer.next({progress: 100, state: 'DONE'} as Upload);
         observer.complete();
@@ -28,7 +28,7 @@ export class BookService extends ServiceGeneric<Book> {
     const data = new FormData();
     data.append('picture', file);
     upload$ = this.httpClient
-      .patch(`${this.url}${book.id}/`, data, {
+      .patch(`${this.url}${id}/`, data, {
         reportProgress: true,
         observe: 'events'
       }).pipe(upload());

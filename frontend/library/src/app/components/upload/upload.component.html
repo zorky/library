@@ -1,7 +1,12 @@
 <span class="text-2xl text-blue-300" *ngIf="label">{{label}}</span>
-<button mat-raised-button (click)="fileInput.click()">
-  {{ file ? file.name : 'Choisir l\'image de couverture' }}
-</button>
+<div *ngIf="! _file">
+  <button mat-raised-button (click)="fileInput.click()">
+    Choisir l'image de couverture
+  </button>
+</div>
+<div *ngIf="_file">
+  {{_file?.name}}
+</div>
 <input hidden type="file" #fileInput (change)="setFile(fileInput.files)"/>
 <mat-progress-bar class="h-4"
   *ngIf="upload$ | async as upload"

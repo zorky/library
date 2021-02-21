@@ -37,7 +37,7 @@ export class BookEditComponent implements OnInit {
               private fb: FormBuilder, private snackBar: MatSnackBar,
               private dialog: MatDialog,
               private authorSvc: AuthorService,
-              private bookSvc: BookService) {
+              public bookSvc: BookService) {
   }
 
   ngOnInit(): void {
