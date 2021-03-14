@@ -74,7 +74,8 @@
     <!-- colonnes champs -->
 
     <ng-container *ngFor="let column of columns; let first = first; let idx = index"
-                  [cdkColumnDef]="column.sortField ? column.sortField : column.column">
+                  [matColumnDef]="column.sortField ? column.sortField : column.column">
+      <!-- [sticky]="column?.sticky" -->
       <!-- entête : libellé de la colonne + le filtre le cas échéant -->
       <ng-container *cdkHeaderCellDef="let row">
         <mat-header-cell [style.color]="getColor(column, row, 'header')"

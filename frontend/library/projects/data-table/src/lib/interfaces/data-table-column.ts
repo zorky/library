@@ -15,6 +15,8 @@ export interface HeaderFilterOptions {
 export interface ColumnDataTable {
   /* champs 'table' à afficher (et à trier le cas échéant) */
   column: string;
+  /* sticket colonne ? */
+  sticky?: boolean;
   /* composant cellule */
   columnComponent?: () => ColumnComponentItem;
 

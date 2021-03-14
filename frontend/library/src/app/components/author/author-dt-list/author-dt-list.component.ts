@@ -101,7 +101,7 @@ export class AuthorDtListComponent implements OnInit {
       if (result) {
         this.subSink.sink = this.authorSvc.delete(author).subscribe(() => {
           this.snackBar.open(`"${author.first_name} ${author.last_name}" bien supprimé`,
-            'Auteur',{duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+            'Auteur', {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
           this.matDataTable.reload();
         });
       }

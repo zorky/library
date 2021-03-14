@@ -18,6 +18,16 @@ class Author(TimeStampedModel):
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
+class Category(TimeStampedModel):
+    name = models.CharField(max_length=100, null=False, blank=False, db_index=True)
+    enabled = models.BooleanField(default=True, help_text='Catégorie activée ?')
+
+    class Meta:
+        verbose_name_plural = "catégories"
+
+    def __str__(self):
+        return '{} : {}'.format(self.name, self.enabled)
+
 class Book(TimeStampedModel):
     name = models.CharField(max_length=100, null=False, blank=False, db_index=True)
     summary = models.TextField(null=True, blank=True)
@@ -37,6 +47,8 @@ class Book(TimeStampedModel):
                                    help_text='les emprunts du livre')
 
     picture = models.ImageField(upload_to='books/', max_length=250, null=True, blank=True)
+
+    category = models.ForeignKey(Category, related_name='books', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return '{} : {}'.format(self.name, self.author)

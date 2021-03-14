@@ -31,6 +31,7 @@ import {
 export class BooksDtListComponent implements OnInit {
   columns: ColumnDataTable[] = [{
     column: 'name', header: 'Livre', sortField: 'name',
+    sticky: true,
     display: (element: Book) => {
       return `${element.name}`;
     },
