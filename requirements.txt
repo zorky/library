@@ -8,6 +8,6 @@ coreapi==2.3.3
 coreapi-cli==1.0.9
 requests==2.23.0
 django-extensions==2.2.9
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 #django-rest-swagger==2.2.0
 drf-yasg==1.17.1
