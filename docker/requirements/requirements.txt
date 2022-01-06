@@ -15,5 +15,5 @@ graphene-django==2.12.1
 graphql-core==2.3.2
 graphql-relay==2.0.1
 pyyaml==5.1
-celery==4.4.2
+celery==5.2.2
 redis==3.4.1
