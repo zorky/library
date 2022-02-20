@@ -69,7 +69,7 @@ class UserGroupsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'groups',
+        fields = ['id', 'username', 'groups',
                   'user_permissions',
                   'first_name', 'last_name',
                   'is_active', 'date_joined']

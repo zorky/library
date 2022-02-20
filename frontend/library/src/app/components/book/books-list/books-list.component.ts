@@ -16,6 +16,8 @@ import {UserGroups} from '../../../common/roles/usergroups.model';
 import {roles} from '../../../common/roles/roles.enum';
 import {AuthService} from '../../../services/authent/auth.service';
 import {PubSubService} from '../../../services/pubsub/pub-sub.service';
+import {LoanService} from '../../../services';
+import {Loan} from '../../../services';
 
 @Component({
   selector: 'app-books-list',
@@ -40,7 +42,8 @@ export class BooksListComponent implements OnInit, OnDestroy {
               private pubSubSvc: PubSubService,
               private authSvc: AuthService,
               public userGrpsSvc: UserGroupsService, // TODO voir Ngrx pour un accès global au connecté
-              private bookSvc: BookService) { }
+              private bookSvc: BookService,
+              private loanSvc: LoanService) { }
 
   ngOnInit(): void {
     this.subSink.sink = this.userGrpsSvc.connecte$.subscribe((connecte) => this.connecte = connecte);
@@ -53,6 +56,33 @@ export class BooksListComponent implements OnInit, OnDestroy {
   }
   isLoaning(book: Book) {
     return book.borrowers.length > 0;
+  }
+  loanBook(book: Book) {
+    const data = new DialogData();
+    data.title = 'Livre';
+    data.message = `Souhaitez-vous emprunter le livre "${book.name}" ?`;
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data });
+    dialogRef.updatePosition({top: '50px'});
+    this.subSink.sink = dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const loan: Loan = {
+          id: 0,
+          user: this.connecte.id,
+          book: book.id,
+          in_progress: true,
+          date_loan: new Date().toLocaleDateString(),
+          date_return: null
+        }
+        this.subSink.sink = this.loanSvc
+          .updateOrcreate(loan)
+          .subscribe(_ => {
+            this.snackBar.open(`"${book.name}" bien emprunté`,
+              'Livre',
+              {duration: 2000, verticalPosition: 'top', horizontalPosition: 'end'});
+          });
+        this.fetchBooks();
+      }
+    });
   }
   editBook(book: Book) {
     this.router.navigate(['/gestion/book/edit', {id: book.id}], {relativeTo: this.route.parent});

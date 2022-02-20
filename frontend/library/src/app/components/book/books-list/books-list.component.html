@@ -38,7 +38,8 @@
         <div fxLayoutAlign="end center">
           <button mat-icon-button
                   matTooltip="Emprunter ce livre"
-                  [disabled]="isLoaning(book)"><mat-icon class="2xl:bg-green-100 opacity-100">bookmark_add</mat-icon></button>
+                  [disabled]="isLoaning(book)"
+                  (click)="loanBook(book)"><mat-icon class="2xl:bg-green-100 opacity-100">bookmark_add</mat-icon></button>
         </div>
       </mat-card>
     </div>

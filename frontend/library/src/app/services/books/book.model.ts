@@ -1,4 +1,4 @@
-import {Author} from '..';
+import {Author, Loan} from '..';
 import {User} from '../authent/user.model';
 
 export interface Book {
@@ -10,6 +10,8 @@ export interface Book {
   author_obj?: Author;
   borrowers_obj?: User[];
   borrowers?: number[];
+  loans?: number[];
+  loans_obj?: Loan[];
   picture?: string;
   dt_created?: string;
   dt_updated?: string;
