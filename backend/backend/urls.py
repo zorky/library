@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import re_path as url, include
 from django.conf.urls.static import static
 from rest_framework import permissions
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token, impersonate_jwt_token

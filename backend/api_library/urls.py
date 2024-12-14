@@ -1,7 +1,7 @@
 # coding=utf-8
 # api_library/urls.py
 
-from django.conf.urls import url, include
+from django.urls import re_path as url, include
 from rest_framework import routers
 from . import views
 
