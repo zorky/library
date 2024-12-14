@@ -1,28 +1,44 @@
-ARG PYTHON_VERSION=3.8.6-slim-buster
-# ARG PYTHON_VERSION=3.7-slim-stretch
+# docker build -t  api-plateform-mstages -f Dockerfile .
+# difference en taille entre un mode simple et multi-stages = 45 % d'économiser
+# api-plateform               latest      eda100e7037f   15 minutes ago   486MB
+# api-plateform-mstages       latest      bc1842dc9065   4 minutes ago    254MB
+
+ARG PYTHON_VERSION=3.11-slim-bullseye
 
 FROM python:${PYTHON_VERSION} AS builder
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONIOENCODING=UTF-8
-RUN apt-get clean
-RUN apt-get update
-RUN mkdir /code && mkdir /static
-RUN apt-get clean
-RUN rm -fr /var/cache/apk/*
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /code
+
 COPY ./requirements/ /code/requirements/
-RUN pip install -U pip \
-  && pip wheel -w /code -r /code/requirements/requirements.txt
+RUN pip install --upgrade pip \
+    && pip wheel --no-cache-dir --wheel-dir=/code/wheels -r /code/requirements/requirements.txt
 
 FROM python:${PYTHON_VERSION}
-COPY --from=builder /code /code
-WORKDIR /code
-RUN pip install -U pip \
-    && pip install -r /code/requirements/requirements.txt \
-                   -f /code \
-    && rm -fr /code \
-    && rm -fr /root/.cache/pip/*
-EXPOSE 8100
-ADD . /code
-ENV TZ=Europe/Paris
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8 \
+    TZ=Europe/Paris
+
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+WORKDIR /code
+
+COPY --from=builder /code/wheels /wheels
+COPY ./requirements/requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --find-links=/wheels -r /code/requirements.txt \
+    && rm -rf /wheels /root/.cache/pip
+
+COPY . /code
+
+EXPOSE 8100

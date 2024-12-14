@@ -1,14 +1,26 @@
-FROM python:3.8.6-slim-buster
-RUN apt-get clean
-RUN apt-get update
-RUN mkdir /code && mkdir /static
-RUN apt-get clean
-ENV PYTHONIOENCODING=UTF-8
-WORKDIR /code
-COPY requirements/requirements.txt requirements.txt
-RUN pip install --upgrade pip && pip install -r requirements.txt
-EXPOSE 8100
-ADD . /code
-ENV TZ=Europe/Paris
-RUN apt-get update && apt-get install -y cron
+# docker build -t api-plateform -f Dockerfile .
+ARG PYTHON_VERSION=3.11-slim-bullseye
+
+FROM python:${PYTHON_VERSION}
+
+ENV PYTHONIOENCODING=UTF-8 \
+    TZ=Europe/Paris
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    && mkdir /code /static \
+    && rm -rf /var/lib/apt/lists/*
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+WORKDIR /code
+
+COPY requirements/requirements.txt requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt \
+    && rm -rf /root/.cache/pip
+
+COPY . /code
+
+EXPOSE 8100
