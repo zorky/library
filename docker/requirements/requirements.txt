@@ -9,6 +9,6 @@ coreapi==2.3.3
 requests==2.32.3
 django-debug-toolbar==4.4.6
 django-mail-templated==2.6.5
-pyyaml==5.1
+pyyaml==6.0.2
 celery==5.4.0
 redis==5.2.1
